@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Jiandanmao.Extension
 {
@@ -25,6 +25,37 @@ namespace Jiandanmao.Extension
                 return name;
             }
             return attribute == null ? null : attribute.Description;
+        }
+
+        /// <summary>
+        /// 循环
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> list, Action<T> action)
+        {
+            foreach (var item in list)
+            {
+                action(item);
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// 替换集合元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="item1"></param>
+        /// <param name="item2"></param>
+        /// <returns></returns>
+        public static Collection<T> Replace<T>(this Collection<T> list, T item1, T item2)
+        {
+            var index = list.IndexOf(item1);
+            list[index] = item2;
+            return list;
         }
     }
 }

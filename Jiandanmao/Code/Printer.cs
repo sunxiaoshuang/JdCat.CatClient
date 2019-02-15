@@ -1,5 +1,10 @@
 ﻿using Jiandanmao.Enum;
+using Jiandanmao.Helper;
 using Jiandanmao.Model;
+using Jiandanmao.Uc;
+using Jiandanmao.ViewModel;
+using MaterialDesignThemes.Wpf;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,15 +16,20 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Jiandanmao.Code
 {
-    public class Printer : INotifyPropertyChanged, ICloneable, IDisposable
+    public partial class Printer : INotifyPropertyChanged, ICloneable, IDisposable
     {
         private System.Windows.Controls.ListBox ctl = new System.Windows.Controls.ListBox();            // 确保打印时线程安全
         private object printLock = new object();                                                        // 确保每台打印机运行时的只有一个线程连接
         private bool[] isStop = new bool[] { false };                                                                    // 是否停止打印任务
-        private List<Order> PrintQueue = new List<Order>();
+        private List<Order> _printQueue = new List<Order>();
+
+        private static Dictionary<string, object> dicLock = new Dictionary<string, object>();  // 打印锁，同一个ip同一时间只能接受一个打印任务
+
         public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>
         /// 打印商品中数量占用的纸张长度
@@ -141,6 +151,28 @@ namespace Jiandanmao.Code
             }
         }
 
+        private string _foodIds;
+        /// <summary>
+        /// 菜品id
+        /// </summary>
+        public string FoodIds
+        {
+            get { return _foodIds; }
+            set
+            {
+                _foodIds = value;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    Foods = new ObservableCollection<int>();
+                    foreach (var item in JsonConvert.DeserializeObject<List<int>>(FoodIds))
+                    {
+                        Foods.Add(item);
+                    }
+                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FoodIds"));
+            }
+        }
+
         private int _format;
         /// <summary>
         /// 打印规格，58mm(32字符), 80mm(48字符)
@@ -191,6 +223,19 @@ namespace Jiandanmao.Code
             }
         }
 
+        /// <summary>
+        /// 将菜单列表写入属性菜单id中
+        /// </summary>
+        public void CopyFoodsToIds()
+        {
+            if (Foods == null || Foods.Count == 0)
+            {
+                _foodIds = null;
+                return;
+            }
+            _foodIds = JsonConvert.SerializeObject(Foods);
+        }
+
         public object Clone()
         {
             return this.MemberwiseClone();
@@ -203,7 +248,7 @@ namespace Jiandanmao.Code
         /// <returns></returns>
         public void Print(Order order)
         {
-            PrintQueue.Add(order);
+            _printQueue.Add(order);
         }
 
         private Task PrintTask { get; set; }
@@ -219,55 +264,75 @@ namespace Jiandanmao.Code
                 while (true)
                 {
                     if (isStop[0]) break;      // 是否停止任务
-                    lock (printLock)
+                    if (_printQueue.Count > 0)
                     {
-                        if (PrintQueue.Count > 0)
+                        try
                         {
-                            try
+                            lock (GetLock(IP))
                             {
                                 var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                                 socket.Connect(new IPEndPoint(IPAddress.Parse(IP), Port));
                                 while (true)
                                 {
-                                    var order = PrintQueue.FirstOrDefault();
+                                    var order = _printQueue.FirstOrDefault();
                                     if (order == null) break;
                                     ctl.Dispatcher.Invoke(() =>
                                     {
                                         PrintOrder(order, socket);
                                     });
-                                    PrintQueue.Remove(order);
+                                    _printQueue.Remove(order);
+                                    Thread.Sleep(200);              // 每次打印一单，停顿200毫秒
                                 }
                                 socket.Close();
                             }
-                            catch (Exception ex)
-                            {
-                                var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
-                                if (!Directory.Exists(dirPath))
-                                {
-                                    Directory.CreateDirectory(dirPath);
-                                }
-                                var filepath = Path.Combine(dirPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
-                                var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 打印出错，打印机[{Name}]连接错误，原因：{ex}";
-                                ctl.Dispatcher.Invoke(() =>
-                                {
-                                    var stream = File.AppendText(filepath);
-                                    stream.WriteLine(content);
-                                    stream.Close();
-                                });
-
-                                // 打印失败后，线程等待2秒再开始执行打印任务
-                                Thread.Sleep(2000);
-                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            // 每0.2秒轮询一次，查看是否有打印任务
-                            Thread.Sleep(200);
+                            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
+                            if (!Directory.Exists(dirPath))
+                            {
+                                Directory.CreateDirectory(dirPath);
+                            }
+                            var filepath = Path.Combine(dirPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                            var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 打印出错，打印机[{Name}]连接错误，原因：{ex}";
+                            ctl.Dispatcher.Invoke(() =>
+                            {
+                                var stream = File.AppendText(filepath);
+                                stream.WriteLine(content);
+                                stream.Close();
+                            });
+
+                            // 打印失败后，线程等待2秒再开始执行打印任务
+                            Thread.Sleep(2000);
                         }
                     }
+                    else
+                    {
+                        // 每0.2秒轮询一次，查看是否有打印任务
+                        Thread.Sleep(200);
+                    }
+
                 }
             });
         }
+        /// <summary>
+        /// 获取锁
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public object GetLock(string ip)
+        {
+            if (!dicLock.ContainsKey(ip))
+            {
+                dicLock.Add(ip, new object());
+            }
+            return dicLock[ip];
+        }
+        /// <summary>
+        /// 打印订单
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="socket"></param>
         private void PrintOrder(Order order, Socket socket)
         {
             if (Type == 2)
@@ -402,7 +467,7 @@ namespace Jiandanmao.Code
         private void Backstage(Order order, Socket socket)
         {
             var enumName = System.Enum.GetName(typeof(PrinterMode), Mode);
-            var type = System.Type.GetType($"CatPrint.Code.{enumName}Print");
+            var type = System.Type.GetType($"Jiandanmao.Code.{enumName}Print");
             var obj = (BackstagePrint)Activator.CreateInstance(type, order, this, socket);
             obj.Print();
         }
@@ -435,7 +500,7 @@ namespace Jiandanmao.Code
                 {
                     PrintTask.Dispose();
                     PrintTask = null;
-                    PrintQueue.RemoveAll(a => true);
+                    _printQueue.RemoveAll(a => true);
                     break;
                 }
             }

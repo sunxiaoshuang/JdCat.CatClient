@@ -7,7 +7,7 @@ namespace Jiandanmao.Model
     /// <summary>
     /// 商品类别表
     /// </summary>
-    public class ProductType : BaseEntity
+    public partial class ProductType : BaseEntity
     {
         /// <summary>
         /// 分类名称

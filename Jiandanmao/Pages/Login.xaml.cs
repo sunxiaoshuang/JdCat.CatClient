@@ -48,12 +48,17 @@ namespace Jiandanmao.Pages
             ReadLastUser(out string name, out string password);
             NameTextBox.Text = name;
             PasswordBox.Password = password;
+            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
+                PasswordBox.Focus();
+                PasswordBox.SelectAll();
+            }));
         }
 
         private void Login_click(object sender, RoutedEventArgs e)
         {
-            string name = NameTextBox.Text;
-            string pw = PasswordBox.Password;
+            string name = NameTextBox.Text?.Trim();
+            string pw = PasswordBox.Password?.Trim();
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(pw)) return;
 
             ShowLoadingDialog(name, pw);
 
@@ -89,7 +94,7 @@ namespace Jiandanmao.Pages
                         args.Session.Close(false);
                         if (result.Success)
                         {
-                            var business = JsonConvert.DeserializeObject<Business>(result.Data.ToString());
+                            var business = result.Data;
                             ApplicationObject.App.Business = business;
                             ApplicationObject.App.Init();
                             SaveLoginUser(name, pw);

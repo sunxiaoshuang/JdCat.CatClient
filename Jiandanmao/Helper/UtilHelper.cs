@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Jiandanmao.Uc;
+using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -79,5 +81,25 @@ namespace Jiandanmao.Helper
             tStr = tStr.Substring(0, tStr.Length - 1);
             return tStr;
         }
+
+        /// <summary>
+        /// 将字符串转化为二进制数组
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static byte[] TextToByte(string text)
+        {
+            return Encoding.Default.GetBytes(text);
+        }
+
+        /// <summary>
+        /// 信息提示
+        /// </summary>
+        /// <param name="msg"></param>
+        public async static void MessageTip(string msg)
+        {
+            await DialogHost.Show(new MessageDialog { Message = { Text = msg } }, "RootDialog");
+        }
+
     }
 }

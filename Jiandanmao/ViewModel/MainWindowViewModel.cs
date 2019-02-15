@@ -16,7 +16,9 @@ namespace Jiandanmao.ViewModel
         {
             Items = new[]
             {
-                new ContorllerItem("主页", new Home(){ DataContext = new HomeViewModel() })
+                new ContorllerItem("今日订单", new OrderList(){ DataContext = new OrderListViewModel() }),
+                new ContorllerItem("打印机配置", new PrinterSetting(){ DataContext = new PrinterSettingViewModel() })
+                //new ContorllerItem("主页", new Home(){ DataContext = new HomeViewModel() })
             };
             
 

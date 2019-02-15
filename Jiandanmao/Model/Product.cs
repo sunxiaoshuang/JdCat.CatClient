@@ -1,7 +1,9 @@
 ﻿
 using Jiandanmao.Enum;
+using Jiandanmao.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Jiandanmao.Model
@@ -9,7 +11,7 @@ namespace Jiandanmao.Model
     /// <summary>
     /// 商品表
     /// </summary>
-    public class Product : BaseEntity
+    public partial class Product : BaseEntity
     {
         /// <summary>
         /// 商品名称
@@ -43,10 +45,6 @@ namespace Jiandanmao.Model
         /// 产品单位
         /// </summary>
         public string UnitName { get; set; }
-        /// <summary>
-        /// 是否选中
-        /// </summary>
-        public bool Checked { get; set; }
         /// <summary>
         /// 最小购买量
         /// </summary>

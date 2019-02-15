@@ -3,6 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Jiandanmao"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+             xmlns:showMeTheXaml="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+             xmlns:smtxAe="clr-namespace:ShowMeTheXAML.AvalonEdit;assembly=ShowMeTheXAML.AvalonEdit"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -18,6 +22,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepOrange.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ShowMeTheXAML.AvalonEdit;component/Themes/xamldisplayer.xaml" />
 
                 <!-- Dragablz Material Design -->
                 <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/materialdesign.xaml"/>
@@ -103,6 +108,68 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+
+            <Style TargetType="showMeTheXaml:XamlDisplay" BasedOn="{StaticResource {x:Type showMeTheXaml:XamlDisplay}}">
+                <Style.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+                        </ResourceDictionary.MergedDictionaries>
+
+                        <smtxAe:TextDocumentValueConverter x:Key="TextDocumentValueConverter"/>
+                    </ResourceDictionary>
+                </Style.Resources>
+                <Setter Property="VerticalContentAlignment" Value="Bottom" />
+                <Setter Property="HorizontalContentAlignment" Value="Right" />
+                <Setter Property="Formatter">
+                    <Setter.Value>
+                        <showMeTheXaml:XamlFormatter NewLineOnAttributes="True" Indent="  ">
+                            <showMeTheXaml:XamlFormatter.NamespacesToRemove>
+                                <system:String>http://materialdesigninxaml.net/winfx/xaml/themes</system:String>
+                            </showMeTheXaml:XamlFormatter.NamespacesToRemove>
+                        </showMeTheXaml:XamlFormatter>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="showMeTheXaml:XamlDisplay">
+                            <DockPanel>
+                                <Grid>
+                                    <AdornerDecorator>
+                                        <Border BorderBrush="{DynamicResource SecondaryAccentBrush}" Opacity=".4" Margin="-5">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="BorderThickness" Value="0" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=PopupBox, Path=IsPopupOpen}" Value="True">
+                                                            <Setter Property="BorderThickness" Value="5" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                    </AdornerDecorator>
+                                    <ContentPresenter />
+                                </Grid>
+                            </DockPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--我的样式-->
+
+            <Style TargetType="{x:Type TextElement}">
+                <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif"/>
+            </Style>
+
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif"/>
+            </Style>
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

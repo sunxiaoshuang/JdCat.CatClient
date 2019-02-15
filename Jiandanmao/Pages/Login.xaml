@@ -35,7 +35,7 @@
                     <!--<RowDefinition Height="10*"/>-->
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <TextBlock Opacity="0.6" Margin="25 0 0 20" Style="{StaticResource MaterialDesignDisplay1TextBlock}" ToolTip="跳转到网页后台"><Hyperlink NavigateUri="{Binding Path=BackStageWebSite}" Click="Hyperlink_OnClick">简单猫</Hyperlink></TextBlock>
+                    <TextBlock FontFamily="MSYH" Opacity="0.6" Margin="25 0 0 20" Style="{StaticResource MaterialDesignDisplay1TextBlock}" ToolTip="跳转到网页后台"><Hyperlink NavigateUri="{Binding Path=BackStageWebSite}" Click="Hyperlink_OnClick">简单猫</Hyperlink></TextBlock>
                 </Grid>
                 <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="30,6" ToolTip="输入用户名" >
                     <materialDesign:PackIcon  Margin="10 10 10 0" Kind="Account" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />

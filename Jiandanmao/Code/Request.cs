@@ -56,17 +56,41 @@ namespace Jiandanmao.Code
         }
 
         /// <summary>
+        /// 发送请求
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="postData"></param>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static async Task<JsonData<T>> HttpRequest<T>(string url, StringContent postData = null, string method = "GET") where T : class, new()
+        {
+            var result = await HttpRequest(url, postData, method);
+            return JsonConvert.DeserializeObject<JsonData<T>>(result);
+        }
+
+        /// <summary>
+        /// 发送请求
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="postData"></param>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static async Task<T> GetData<T>(string url, StringContent postData = null, string method = "GET") where T : class,new()
+        {
+            var result = await HttpRequest(url, postData, method);
+            return JsonConvert.DeserializeObject<T>(result);
+        }
+
+        /// <summary>
         /// 商户登录
         /// </summary>
         /// <param name="code"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public static async Task<JsonData> Login(string code, string pwd)
+        public static async Task<JsonData<Business>> Login(string code, string pwd)
         {
-            var url = $"{ApiUrl}/Business/Login?username={code}&pwd={pwd}";
-            var content = await HttpRequest(url);
-            var data = JsonConvert.DeserializeObject<JsonData>(content);
-            return data;
+            var url = $"{ApiUrl}/Client/Login?code={code}&pwd={pwd}";
+            return await HttpRequest<Business>(url);
         }
 
         /// <summary>
@@ -77,57 +101,156 @@ namespace Jiandanmao.Code
         /// <returns></returns>
         public async static Task<List<Order>> GetOrders(Business business, PagingQuery paging)
         {
-            using (var client = new HttpClient())
-            {
-                var param = new StringContent(JsonConvert.SerializeObject(paging));
-                param.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                var res = await client.PostAsync(ApiUrl + $"/order/getOrderFromClient/0?businessId={ApplicationObject.App.Business.ID}&createTime={DateTime.Now:yyyy-MM-dd}", param);
-                var content = await res.Content.ReadAsStringAsync();
-                var jObj = JObject.Parse(content);
-                var list = JsonConvert.DeserializeObject<List<Order>>(jObj["data"]["list"].ToString());
-                paging.RecordCount = int.Parse(jObj["data"]["rows"].ToString());
-                double a1 = paging.RecordCount, a2 = paging.PageSize;
-                paging.PageCount = (int)Math.Ceiling(a1 / a2);
-                return list;
-            }
+            var url = $"{ApiUrl}/Client/GetOrders/{business.ID}?PageIndex={paging.PageIndex}&PageSize={paging.PageSize}&CreateTime={DateTime.Now:yyyy-MM-dd}";
+            var result = await HttpRequest(url);
+            var jObj = JObject.Parse(result);
+            var list = JsonConvert.DeserializeObject<List<Order>>(jObj["data"]["list"].ToString());
+            paging.RecordCount = int.Parse(jObj["data"]["rows"].ToString());
+            return list;
         }
+
         /// <summary>
-        /// 根据订单编号获取东单
+        /// 获取订单详细信息
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        public async static Task<Order> GetOrder(string code)
+        public async static Task<Order> GetOrderDetail(int id)
         {
-            try
+            var url = $"{ApiUrl}/Client/GetOrderDetail/{id}";
+            var result = await HttpRequest<Order>(url);
+            return result.Data;
+        }
+        
+        /// <summary>
+        /// 获取商户客户端打印机列表
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async static Task<List<Printer>> GetPrinters(int id)
+        {
+            var url = $"{ApiUrl}/Client/GetPrinters/{id}";
+            var result = await HttpRequest<List<Printer>>(url);
+            return result.Data;
+        }
+
+        /// <summary>
+        /// 保存客户端打印机设置
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="printers"></param>
+        /// <returns></returns>
+        public async static Task<JsonData<List<Printer>>> SavePrinters(int id, IEnumerable<Printer> printers)
+        {
+            var url = $"{ApiUrl}/Client/SavePrinters/{id}";
+            foreach (var item in printers)
             {
-                using (var client = new HttpClient())
+                item.CopyFoodsToIds();
+                if (!int.TryParse(item.Id, out int num))
                 {
-                    var res = await client.GetAsync(ApiUrl + $"/order/singleByCode?code={code}");
-                    var content = await res.Content.ReadAsStringAsync();
-                    var order = JsonConvert.DeserializeObject<Order>(content);
-                    return order;
+                    item.Id = "0";
                 }
             }
-            catch (Exception e)
-            {
-                return null;
-            }
+            var content = JsonConvert.SerializeObject(printers);
+            var postData = new StringContent(content);
+            var result = await HttpRequest<List<Printer>>(url, postData, "POST");
+            return result;
         }
+
         /// <summary>
-        /// 获取商品类型列表
+        /// 保存客户端打印机设置
         /// </summary>
-        /// <param name="business"></param>
+        /// <param name="id"></param>
+        /// <param name="printer"></param>
         /// <returns></returns>
-        public async static Task<List<ProductType>> GetTypes(Business business)
+        public async static Task<JsonData<Printer>> SavePrinter(int id, Printer printer)
         {
-            using (var client = new HttpClient())
+            var url = $"{ApiUrl}/Client/SavePrinter/{id}";
+            printer.CopyFoodsToIds();
+            if (!int.TryParse(printer.Id, out int num))
             {
-                var res = await client.GetAsync(ApiUrl + $"/product/types/{business.ID}");
-                var content = await res.Content.ReadAsStringAsync();
-                var list = JsonConvert.DeserializeObject<List<ProductType>>(content);
-                return list;
+                printer.Id = "0";
             }
+            var content = JsonConvert.SerializeObject(printer);
+            var postData = new StringContent(content);
+            var result = await HttpRequest<Printer>(url, postData, "POST");
+            return result;
         }
+
+        /// <summary>
+        /// 删除客户端打印机
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async static Task<JsonData> DeletePrinter(int id)
+        {
+            var url = $"{ApiUrl}/Client/DeletePrinter/{id}";
+            var result = await HttpRequest(url);
+            return JsonConvert.DeserializeObject<JsonData>(result);
+        }
+
+        /// <summary>
+        /// 获取商户菜单
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async static Task<List<ProductType>> GetProducts(int id)
+        {
+            var url = $"{ApiUrl}/Client/GetProducts/{id}";
+            var result = await GetData<List<ProductType>>(url);
+            return result;
+        }
+
+        /// <summary>
+        /// 更新打印机关联的菜品
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async static Task<JsonData> PutPrinterProducts(int id, string ids)
+        {
+            var url = $"{ApiUrl}/Client/PutPrinterProducts/{id}?ids={ids}";
+            var result = await GetData<JsonData>(url);
+            return result;
+        }
+        
+        #region 备注
+        ///// <summary>
+        ///// 根据订单编号获取订单
+        ///// </summary>
+        ///// <param name="code"></param>
+        ///// <returns></returns>
+        //public async static Task<Order> GetOrder(string code)
+        //{
+        //    try
+        //    {
+        //        using (var client = new HttpClient())
+        //        {
+        //            var res = await client.GetAsync(ApiUrl + $"/order/singleByCode?code={code}");
+        //            var content = await res.Content.ReadAsStringAsync();
+        //            var order = JsonConvert.DeserializeObject<Order>(content);
+        //            return order;
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return null;
+        //    }
+        //}
+        ///// <summary>
+        ///// 获取商品类型列表
+        ///// </summary>
+        ///// <param name="business"></param>
+        ///// <returns></returns>
+        //public async static Task<List<ProductType>> GetTypes(Business business)
+        //{
+        //    using (var client = new HttpClient())
+        //    {
+        //        var res = await client.GetAsync(ApiUrl + $"/product/types/{business.ID}");
+        //        var content = await res.Content.ReadAsStringAsync();
+        //        var list = JsonConvert.DeserializeObject<List<ProductType>>(content);
+        //        return list;
+        //    }
+        //}
 
         ///// <summary>
         ///// 自动接单
@@ -205,15 +328,6 @@ namespace Jiandanmao.Code
         //    mySocket.Close();
         //    return true;
         //}
-
-        /// <summary>
-        /// 将字符串转化为二进制数组
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        private static byte[] TextToByte(string text)
-        {
-            return Encoding.Default.GetBytes(text);
-        }
+        #endregion
     }
 }

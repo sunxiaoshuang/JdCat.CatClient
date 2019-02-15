@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Jiandanmao.ViewModel
 {
@@ -33,6 +34,7 @@ namespace Jiandanmao.ViewModel
             }
         }
 
+        [Description("名称")]
         public string Name
         {
             get { return _name; }
@@ -83,6 +85,5 @@ namespace Jiandanmao.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

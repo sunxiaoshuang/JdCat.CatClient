@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Jiandanmao.Uc;
+using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,6 +13,16 @@ namespace Jiandanmao.ViewModel
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
+        public void MessageTips(string message)
+        {
+            var sampleMessageDialog = new MessageDialog
+            {
+                Message = { Text = message }
+            };
+
+            DialogHost.Show(sampleMessageDialog, "RootDialog");
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

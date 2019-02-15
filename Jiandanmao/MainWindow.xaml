@@ -1,6 +1,7 @@
 ﻿<controls:MetroWindow x:Class="Jiandanmao.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Jiandanmao.ViewModel"
@@ -13,16 +14,15 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
+        FontFamily="Arial,SimSun,宋体,Sans-serif,Serif"
         Title="简单猫" Height="600" Width="1000" 
         Icon="favicon.ico" 
-        WindowState="Maximized"
-        SaveWindowPosition="True">
+        WindowState="Maximized">
 
-    <controls:MetroWindow.RightWindowCommands>
+    <!--<controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands ShowLastSeparator="False">
-            <!--<Button ToolTip="版本更新" 
-                    Content="更新" Click="Update_OnClick"/>-->
+            --><!--<Button ToolTip="版本更新" 
+                    Content="更新" Click="Update_OnClick"/>--><!--
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
 
@@ -53,7 +53,7 @@
                               Margin="10 0 0 0"
                               HorizontalAlignment="Left" 
                               />
-                        <!--<StackPanel HorizontalAlignment="Right"  DockPanel.Dock="Right"   Orientation="Horizontal">
+                        --><!--<StackPanel HorizontalAlignment="Right"  DockPanel.Dock="Right"   Orientation="Horizontal">
                             <Button Style="{StaticResource MaterialDesignFlatButton}" Width="30" Padding="0" 
                                     Click="ButtonBase_OnClick" ToolTip="最小化">
                                 <md:PackIcon Kind="MinusCircleOutline" Width="30" Height="30" Foreground="{DynamicResource MaterialDesignBody}" />
@@ -62,7 +62,7 @@
                                      Click="CloseWindow_OnClick" ToolTip="关闭软件">
                                 <md:PackIcon Kind="CloseCircleOutline" Width="30" Height="30" Foreground="#e64a19" />
                             </Button>
-                        </StackPanel>-->
+                        </StackPanel>--><!--
                     </DockPanel>
                 </materialDesign:ColorZone>
                 <Grid>
@@ -75,6 +75,84 @@
                     <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar"/>
                 </Grid>
 
+            </DockPanel>
+        </materialDesign:DrawerHost>
+    </materialDesign:DialogHost>-->
+
+
+    <Window.CommandBindings>
+        <!--<CommandBinding Command="Copy" Executed="OnCopy"></CommandBinding>-->
+    </Window.CommandBindings>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- data template used for the dialogs example, defines a View for a ViewModel of type DateTime  -->
+            <DataTemplate DataType="{x:Type system:DateTime}">
+                <StackPanel Margin="16">
+                    <TextBlock>England win the World Cup:</TextBlock>
+                    <TextBlock Margin="0 8 0 0" Text="{Binding }" />
+                    <TextBlock Margin="0 8 0 0" >You will never see that again.</TextBlock>
+                    <Button  Margin="0 8 0 0" IsDefault="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Style="{DynamicResource MaterialDesignFlatButton}">AWESOME</Button>
+                </StackPanel>
+            </DataTemplate>
+            
+            <Style TargetType="{x:Type Window}">
+                <Setter Property="FontFamily" Value="MSYH" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <materialDesign:DialogHost Identifier="RootDialog" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
+        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+            <materialDesign:DrawerHost.LeftDrawerContent>
+                <DockPanel MinWidth="212">
+                    <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" DockPanel.Dock="Top" HorizontalAlignment="Right" Margin="16" IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
+                    <ListBox x:Name="DemoItemsListBox" Margin="0 16 0 16" SelectedIndex="0"                         
+                             ItemsSource="{Binding Items}"
+                             PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="domain:DemoItem">
+                                <TextBlock Text="{Binding Name}" Margin="32 0 32 0" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </materialDesign:DrawerHost.LeftDrawerContent>
+            <DockPanel>
+                <materialDesign:ColorZone Padding="16" materialDesign:ShadowAssist.ShadowDepth="Depth2" Mode="PrimaryMid" DockPanel.Dock="Top">
+                    <DockPanel>
+                        <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False" x:Name="MenuToggleButton"/>
+                        <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
+                            <StackPanel>
+                                <!--<Button Content="帐号信息" Click="MenuPopupButton_OnClick"/>
+                                <Button Content="备注" IsEnabled="False" />
+                                <Separator/>-->
+                                <!--<Button Content="退出" Click="MetroWindow_Closed"/>-->
+                            </StackPanel>
+                        </materialDesign:PopupBox>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22" x:Name="title">简单猫</TextBlock>
+                    </DockPanel>
+                </materialDesign:ColorZone>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="1" 
+                                  HorizontalScrollBarVisibility="{Binding ElementName=DemoItemsListBox, Path=SelectedItem.HorizontalScrollBarVisibilityRequirement}"
+                                  VerticalScrollBarVisibility="{Binding ElementName=DemoItemsListBox, Path=SelectedItem.VerticalScrollBarVisibilityRequirement}" 
+                                  Padding="{Binding ElementName=DemoItemsListBox, Path=SelectedItem.MarginRequirement}">
+                        <ContentControl Content="{Binding ElementName=DemoItemsListBox, Path=SelectedItem.Content}" />
+                    </ScrollViewer>
+
+                    <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar"
+                                            Grid.Row="1" />
+                </Grid>
             </DockPanel>
         </materialDesign:DrawerHost>
     </materialDesign:DialogHost>

@@ -9,7 +9,7 @@ namespace Jiandanmao.Model
     /// <summary>
     /// 用户订单表
     /// </summary>
-    public class Order : BaseEntity
+    public partial class Order : BaseEntity
     {
         /// <summary>
         /// 订单编号

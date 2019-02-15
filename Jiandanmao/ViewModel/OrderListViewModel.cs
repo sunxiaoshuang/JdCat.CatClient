@@ -11,6 +11,9 @@ using System.Windows.Threading;
 using MaterialDesignThemes.Wpf;
 using Jiandanmao.Uc;
 using Jiandanmao.Code;
+using System.Collections.Generic;
+using Jiandanmao.Extension;
+using Jiandanmao.Model;
 
 namespace Jiandanmao.ViewModel
 {
@@ -23,12 +26,32 @@ namespace Jiandanmao.ViewModel
 
         public object ThisContorler;
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
-        private ObservableCollection<OrderListInfoViewModel> _items;
-        public ObservableCollection<OrderListInfoViewModel> Items => _items;
+        public ICommand PrePageCommand => new AnotherCommandImplementation(PrePage);
+        public ICommand NextPageCommand => new AnotherCommandImplementation(NextPage);
+        public ICommand RefreshCommand => new AnotherCommandImplementation(Refresh);
 
-        private int pageSize = 20;
-        private int pageIndex = 1;
-        private int recordCount = 0;
+        private ObservableCollection<Order> _items = new ObservableCollection<Order>();
+        public ObservableCollection<Order> Items => _items;
+        private PagingQuery _pagingQuery;
+        private PagingQuery PagingQuery => _pagingQuery;
+        private bool _preEnable;
+        public bool PreEnable
+        {
+            get { return _preEnable; }
+            set
+            {
+                this.MutateVerbose(ref _preEnable, value, RaisePropertyChanged());
+            }
+        }
+        private bool _nextEnable;
+        public bool NextEnable
+        {
+            get { return _nextEnable; }
+            set
+            {
+                this.MutateVerbose(ref _nextEnable, value, RaisePropertyChanged());
+            }
+        }
 
         #endregion
 
@@ -38,20 +61,12 @@ namespace Jiandanmao.ViewModel
 
         Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
 
-        public OrderListViewModel()
-        {
-
-        }
-
         public void Loaded(object o)
         {
+            _pagingQuery = new PagingQuery { PageSize = 2, PageIndex = 1 };
             Init(o);
         }
-
-
-        /// <summary>
-        /// 初始化，读取在线配置信息
-        /// </summary>
+        
         private void Init(object o)
         {
             var loadingDialog = new LoadingDialog();
@@ -64,8 +79,9 @@ namespace Jiandanmao.ViewModel
                     {
                         //Thread.Sleep(1000);
                         args.Session.Close(false);
-                    });
+                        LoadOrders();
 
+                    });
                 };
 
                 new Thread(start).Start(); // 启动线程
@@ -74,7 +90,34 @@ namespace Jiandanmao.ViewModel
 
         }
 
-        private 
+        private async void LoadOrders()
+        {
+            _items.Clear();
+            var list = await Request.GetOrders(ApplicationObject.App.Business, PagingQuery);
+            if (list == null || list.Count == 0) return;
+            list.ForEach(a => _items.Add(a));
+            PreEnable = PagingQuery.CanPre;
+            NextEnable = PagingQuery.CanNext;
+        }
+
+        private void PrePage(object obj)
+        {
+            PagingQuery.PageIndex--;
+            LoadOrders();
+        }
+
+        private void NextPage(object obj)
+        {
+            PagingQuery.PageIndex++;
+            LoadOrders();
+        }
+
+        private void Refresh(object obj)
+        {
+            PagingQuery.PageIndex = 1;
+            LoadOrders();
+        }
+
         #endregion
     }
 }

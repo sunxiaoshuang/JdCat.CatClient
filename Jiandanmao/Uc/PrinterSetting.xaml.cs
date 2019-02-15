@@ -16,24 +16,13 @@ using System.Windows.Shapes;
 namespace Jiandanmao.Uc
 {
     /// <summary>
-    /// OrderList.xaml 的交互逻辑
+    /// PrinterSetting.xaml 的交互逻辑
     /// </summary>
-    public partial class OrderList : UserControl
+    public partial class PrinterSetting : UserControl
     {
-
-        public OrderList()
+        public PrinterSetting()
         {
             InitializeComponent();
-
-        }
-
-        private void Cat(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void Print(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

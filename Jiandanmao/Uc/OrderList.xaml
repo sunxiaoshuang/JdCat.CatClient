@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+             xmlns:convert="clr-namespace:Jiandanmao.Converter"
              mc:Ignorable="d" 
              x:Name="OrderListControl"
              d:DesignHeight="300" d:DesignWidth="800">
@@ -14,18 +16,133 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=OrderListControl}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="108*"/>
-            <RowDefinition Height="10"/>
-        </Grid.RowDefinitions>
+    <UserControl.Resources>
 
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <convert:DateTimeToStringValueConverter x:Key="dtts" />
+            <convert:OrderStatusToStringValueConverter x:Key="osts" />
+            <convert:OrderIdentifierToStringValueConverter x:Key="oits" />
+            <convert:MoneyToStringValueConverter x:Key="moneyts" />
+
+            <Style TargetType="{x:Type TextBlock}" x:Key="ColumnCenter">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="30">今日订单</TextBlock>
+                    <Button Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding RefreshCommand}" Margin="20 0 0 0">订单刷新</Button>
+                </StackPanel>
+                <ListView ItemsSource="{Binding Items}" ItemContainerStyle="{StaticResource ListViewItemStyle}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Identifier, Converter={StaticResource oits}}"  Header="当日编号" />
+                            <GridViewColumn DisplayMemberBinding="{Binding OrderCode}" Header="订单编号" />
+                            <GridViewColumn DisplayMemberBinding="{Binding CreateTime, Converter={StaticResource dtts}}" Header="下单时间" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Status, Converter={StaticResource osts}}" Header="订单状态" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Price, Converter={StaticResource moneyts}}" Header="订单金额" />
+                            <GridViewColumn DisplayMemberBinding="{Binding ReceiverName}" Header="收货人" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Phone}" Header="收货电话" />
+                            <GridViewColumn>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding CatCommand}" CommandParameter="{Binding ElementName=OrderListControl}" Width="100" Height="30" ToolTip="查看订单详情" Content="查看"></Button>
+                                            <!--<materialDesign:PopupBox Style="{StaticResource   MaterialDesignMultiFloatingActionPopupBox}" PlacementMode="RightAndAlignMiddles" ToolTipService.Placement="Left" ToolTip="订单打印">
+                                                <materialDesign:PopupBox.ToggleCheckedContent>
+                                                    <materialDesign:PackIcon Kind="Printer" Width="24" Height="24" />
+                                                </materialDesign:PopupBox.ToggleCheckedContent>
+                                                <StackPanel>
+                                                    <Button Content="整单" Command="{Binding PrintCommand}" CommandParameter="0"></Button>
+                                                    <Button Content="前台" Command="{Binding PrintCommand}" CommandParameter="1"></Button>
+                                                    <Button Content="后厨" Command="{Binding PrintCommand}" CommandParameter="2"></Button>
+                                                </StackPanel>
+                                            </materialDesign:PopupBox>-->
+
+                                            <Menu>
+                                                <MenuItem Header="打印">
+                                                    <MenuItem Header="整单" Command="{Binding PrintCommand}" CommandParameter="0">
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Printer" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="前台单" Command="{Binding PrintCommand}" CommandParameter="1">
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Printer" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="后台单" Command="{Binding PrintCommand}" CommandParameter="2">
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Printer" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </MenuItem>
+                                            </Menu>
+
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <!--<smtx:XamlDisplay Key="grid">
+                <DataGrid Margin="0 8 0 0" ItemsSource="{Binding Items}" CanUserSortColumns="False" CanUserAddRows="False" AutoGenerateColumns="False" materialDesign:DataGridAssist.CellPadding="13 8 8 8" materialDesign:DataGridAssist.ColumnHeaderPadding="8">
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Identifier, Converter={StaticResource oits}}" Header="当日编号" ElementStyle="{StaticResource ColumnCenter}" Width="100"/>
+                        <DataGridTextColumn Binding="{Binding OrderCode}" Header="订单编号" ElementStyle="{StaticResource ColumnCenter}"/>
+                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding CreateTime, Converter={StaticResource dtts}}" Header="下单时间" ElementStyle="{StaticResource ColumnCenter}"/>
+                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Status, Converter={StaticResource osts}}" Header="订单状态" Width="80" ElementStyle="{StaticResource ColumnCenter}"/>
+                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Price, Converter={StaticResource moneyts}}" Header="订单金额" Width="80" ElementStyle="{StaticResource ColumnCenter}"/>
+                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding ReceiverName}" Header="收货人" Width="120" ElementStyle="{StaticResource ColumnCenter}"/>
+                        <DataGridTextColumn IsReadOnly="True" Binding="{Binding Phone}" Header="收货电话" Width="120" ElementStyle="{StaticResource ColumnCenter}"/>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding CatCommand}" CommandParameter="{Binding ElementName=OrderListControl}" Width="100" Height="30" ToolTip="查看订单详情" Content="查看"></Button>
+                                        <materialDesign:PopupBox Style="{StaticResource   MaterialDesignMultiFloatingActionPopupBox}" PlacementMode="RightAndAlignMiddles" ToolTipService.Placement="Left" ToolTip="订单打印">
+                                            <materialDesign:PopupBox.ToggleCheckedContent>
+                                                <materialDesign:PackIcon Kind="Printer" Width="24" Height="24" />
+                                            </materialDesign:PopupBox.ToggleCheckedContent>
+                                            <StackPanel>
+                                                <Button Content="整单" Command="{Binding PrintCommand}" CommandParameter="0"></Button>
+                                                <Button Content="前台" Command="{Binding PrintCommand}" CommandParameter="1"></Button>
+                                                <Button Content="后厨" Command="{Binding PrintCommand}" CommandParameter="2"></Button>
+                                            </StackPanel>
+                                        </materialDesign:PopupBox>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </smtx:XamlDisplay>-->
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="100" Margin="0 0 20 0" Command="{Binding PrePageCommand}" IsEnabled="{Binding PreEnable}">上一页</Button>
+            <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="100" Command="{Binding NextPageCommand}" IsEnabled="{Binding NextEnable}">下一页</Button>
+        </StackPanel>
     </Grid>
 </UserControl>

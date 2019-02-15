@@ -1,4 +1,7 @@
-﻿using Jiandanmao.Model;
+﻿using Jiandanmao.Enum;
+using Jiandanmao.Model;
+using Jiandanmao.Uc;
+using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -71,22 +74,24 @@ namespace Jiandanmao.Code
         /// <summary>
         /// 初始化应用数据
         /// </summary>
-        public void Init()
+        public async void Init()
         {
+            Printers = new ObservableCollection<Printer>();
             if (Business == null) return;
-            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), PrinterDir);
-            Directory.CreateDirectory(dirPath);
-            var filepath = Path.Combine(dirPath, Business.ID + ".json");
-            if (!File.Exists(filepath))
+
+            var printers = await Request.GetPrinters(Business.ID);
+            if (printers == null || printers.Count == 0)
             {
-                Printers = new ObservableCollection<Printer>();
-                return;
+                await LoadOldPrinters();
             }
-            var data = File.ReadAllText(filepath);
-            Printers = JsonConvert.DeserializeObject<ObservableCollection<Printer>>(data);
+            else
+            {
+                printers.ForEach(a => Printers.Add(a));
+            }
+
             foreach (var printer in Printers)
             {
-                if(printer.Foods == null)
+                if (printer.Foods == null)
                 {
                     printer.Foods = new ObservableCollection<int>();
                 }
@@ -98,25 +103,50 @@ namespace Jiandanmao.Code
         }
 
         /// <summary>
-        /// 保存打印机设置
+        /// 加载旧的打印设置
         /// </summary>
-        public void Save()
+        private async Task LoadOldPrinters()
         {
-            if (Business == null) return;
             var dirPath = Path.Combine(Directory.GetCurrentDirectory(), PrinterDir);
+            if (!Directory.Exists(dirPath)) return;
             var filepath = Path.Combine(dirPath, Business.ID + ".json");
-            if (Printers == null || Printers.Count == 0) return;
-            var data = JsonConvert.SerializeObject(Printers);
-            File.WriteAllText(filepath, data, Encoding.UTF8);
+            if (!File.Exists(filepath)) return;
+            var data = File.ReadAllText(filepath);
+            var printers = JsonConvert.DeserializeObject<List<Printer>>(data);
+            var result = await Request.SavePrinters(Business.ID, printers);
+            if (!result.Success)
+            {
+                await DialogHost.Show(new MessageDialog { Message = { Text = result.Msg } }, "RootDialog");
+                return;
+            }
+            result.Data.ForEach(a => Printers.Add(a));
         }
+
+        ///// <summary>
+        ///// 保存打印机设置
+        ///// </summary>
+        //public void Save()
+        //{
+        //    if (Business == null) return;
+        //    var dirPath = Path.Combine(Directory.GetCurrentDirectory(), PrinterDir);
+        //    var filepath = Path.Combine(dirPath, Business.ID + ".json");
+        //    if (Printers == null || Printers.Count == 0) return;
+        //    var data = JsonConvert.SerializeObject(Printers);
+        //    File.WriteAllText(filepath, data, Encoding.UTF8);
+        //}
 
         /// <summary>
         /// 打印订单
         /// </summary>
         /// <param name="order"></param>
-        public static void Print(Order order)
+        public static void Print(Order order, int type = 0)
         {
-            foreach (var printer in App.Printers.Where(a => a.State == 1))
+            var printers = App.Printers.Where(a => a.State == 1);
+            if (type != 0)
+            {
+                printers = printers.Where(a => a.Type == type);
+            }
+            foreach (var printer in printers)
             {
                 for (int i = 0; i < printer.Quantity; i++)
                 {

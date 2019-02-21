@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="简单猫" Language="2052" Codepage="936" Version="2.0.1" Manufacturer="简单猫科技（武汉）有限公司" UpgradeCode="b2249de8-bc85-41be-b6b3-a2e6a2f735a2">
+    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="您的电脑已经安装一个更新的版本，无需重新安装！" />
+    <MediaTemplate />
+
+    <Feature Id="ProductFeature" Title="简单猫" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="DesktopFolderShortcut" />
+    </Feature>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    <!--安装许可-->
+    <WixVariable Id="WixUIDialogBmp" Value="bb.bmp"/>
+    <!--安装时对话框顶部的显示图片-->
+    <WixVariable Id="WixUIBannerBmp" Value="top.bmp"/>
+    <!--安装完成后的提示语-->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="安装完成！" />
+    <!--完成安装后提示语-->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="启动简单猫" />
+    <!--安装完成后执行的应用程序-->
+    <Property Id="WixShellExecTarget" Value="[#Jiandanmao.exe]" />
+    <!--安装完成后启动应用-->
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!--安装目录Program Files（x86）-->
+      <Directory Id="ProgramFilesFolder">
+        <!--程序文件夹-->
+        <Directory Id="INSTALLFOLDER" Name="简单猫">
+          <!--安装项目目录结构-->
+          <Directory Id="Assets" Name="Assets">
+            <Directory Id="Video" Name="Video" />
+          </Directory>
+          <Directory Id="Lib" Name="Lib"/>
+        </Directory>
+      </Directory>
+
+      <!--开始菜单文件夹-->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="简单猫"/>
+      </Directory>
+
+      <!--桌面快捷方式-->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="ProductComponent">
+        <File Source="$(var.Jiandanmao.TargetPath)" />
+      </Component>
+
+      <ComponentRef Id="a.mp3"/>
+      <ComponentRef Id="b.mp3"/>
+      <ComponentRef Id="c.mp3"/>
+      <ComponentRef Id="d.mp3"/>
+      <ComponentRef Id="ControlzEx.dll"/>
+      <ComponentRef Id="Dragablz.dll"/>
+      <ComponentRef Id="ICSharpCode.AvalonEdit.dll"/>
+      <ComponentRef Id="Jiandanmao.exe.config"/>
+      <ComponentRef Id="MahApps.Metro.dll"/>
+      <ComponentRef Id="MaterialDesignColors.dll"/>
+      <ComponentRef Id="MaterialDesignThemes.Wpf.dll"/>
+      <ComponentRef Id="Newtonsoft.Json.dll"/>
+      <ComponentRef Id="ShowMeTheXAML.AvalonEdit.dll"/>
+      <ComponentRef Id="ShowMeTheXAML.dll"/>
+      <ComponentRef Id="System.Net.Http.dll"/>
+      <ComponentRef Id="System.Windows.Interactivity.dll"/>
+
+    </ComponentGroup>
+
+    <!--开始菜单-->
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="5A259985-DD5F-453D-8333-144457282026">
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="简单猫" Description="简单猫" Target="[INSTALLFOLDER]Jiandanmao.exe" WorkingDirectory="INSTALLFOLDER" />
+        <Shortcut Id="UninstallProduct" Name="卸载简单猫" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Description="卸载简单猫" />
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\简单猫" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!--快捷方式-->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopFolderShortcut" Guid="5A254682-DD1F-453D-4123-144457282026">
+        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="简单猫" Target="[INSTALLFOLDER]Jiandanmao.exe" WorkingDirectory="INSTALLFOLDER">
+          <Icon Id="WebIcon" SourceFile="favicon.ico"/>
+        </Shortcut>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\简单猫" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!--资源文件-->
+    <DirectoryRef Id="Video">
+      <Component Id="a.mp3" Guid="4039b7c2-b7be-48fe-b082-231215c34412">
+        <File Id="a.mp3" Source="Assets\Video\1.mp3" KeyPath="yes"/>
+      </Component>
+      <Component Id="b.mp3" Guid="D8462456-BC6D-4B9C-8EC4-A0B543B57C2B">
+        <File Id="b.mp3" Source="Assets\Video\2.mp3" KeyPath="yes"/>
+      </Component>
+      <Component Id="c.mp3" Guid="33A0B0E7-39B5-4A06-B7D4-D1D3F7F9FF08">
+        <File Id="c.mp3" Source="Assets\Video\3.mp3" KeyPath="yes"/>
+      </Component>
+      <Component Id="d.mp3" Guid="F1D0C083-A5EA-4BAC-B0BF-EB9E6BF8C190">
+        <File Id="d.mp3" Source="Assets\Video\4.mp3" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="ControlzEx.dll" Guid="4C0830DD-968F-4CEC-82A3-A31E9ABE6ECB">
+        <File Id="ControlzEx.dll" Source="Lib\ControlzEx.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="Dragablz.dll" Guid="9E3D6CC8-D27D-467F-AB4B-12DD37BD4C52">
+        <File Id="Dragablz.dll" Source="Lib\Dragablz.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="ICSharpCode.AvalonEdit.dll" Guid="52ABA59E-FABA-4ABC-8E42-22106481CD35">
+        <File Id="ICSharpCode.AvalonEdit.dll" Source="Lib\ICSharpCode.AvalonEdit.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="Jiandanmao.exe.config" Guid="79A33B90-8E16-4E5B-939A-8C7C88FB3C0F">
+        <File Id="Jiandanmao.exe.config" Source="Lib\Jiandanmao.exe.config" KeyPath="yes"/>
+      </Component>
+      <Component Id="MahApps.Metro.dll" Guid="30F45960-73CE-4CD8-BBA7-BF5339AF761A">
+        <File Id="MahApps.Metro.dll" Source="Lib\MahApps.Metro.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="MaterialDesignColors.dll" Guid="EEDD339B-C2CF-403C-9321-7EBF6B705EF3">
+        <File Id="MaterialDesignColors.dll" Source="Lib\MaterialDesignColors.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="MaterialDesignThemes.Wpf.dll" Guid="DADA3DB6-5E4D-41F9-BB4F-02C9C84A8708">
+        <File Id="MaterialDesignThemes.Wpf.dll" Source="Lib\MaterialDesignThemes.Wpf.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="Newtonsoft.Json.dll" Guid="FEEBD21D-DD28-4880-BA1A-95115B012232">
+        <File Id="Newtonsoft.Json.dll" Source="Lib\Newtonsoft.Json.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="ShowMeTheXAML.AvalonEdit.dll" Guid="607DB1F0-CD04-4413-AF4B-F439DB86D683">
+        <File Id="ShowMeTheXAML.AvalonEdit.dll" Source="Lib\ShowMeTheXAML.AvalonEdit.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="ShowMeTheXAML.dll" Guid="D33DC714-3915-49E3-865E-77644ECD858B">
+        <File Id="ShowMeTheXAML.dll" Source="Lib\ShowMeTheXAML.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="System.Net.Http.dll" Guid="C8421091-19F2-4FAA-87B0-5D416F0D7D18">
+        <File Id="System.Net.Http.dll" Source="Lib\System.Net.Http.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="System.Windows.Interactivity.dll" Guid="90F9FFF2-E458-4165-9ED9-66594A3DE7A6">
+        <File Id="System.Windows.Interactivity.dll" Source="Lib\System.Windows.Interactivity.dll" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+  </Fragment>
+
+</Wix>

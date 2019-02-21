@@ -94,6 +94,7 @@ namespace Jiandanmao.Code
             var viewModel = new SelectProductViewModel(this);
             var dialog = new SelectProduct { DataContext = viewModel };
             await DialogHost.Show(dialog, "RootDialog");
+            if (!viewModel.IsSubmit) return;
             if (viewModel.Types == null || viewModel.Types.Count == 0) return;
             Foods.Clear();
             viewModel.Types.ForEach(type => {

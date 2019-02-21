@@ -39,8 +39,8 @@ namespace Jiandanmao.Uc
             foreach (var item in type.Products)
             {
                 ViewModel.Products.Add(item);
-                if (!ViewModel.Printer.Foods.Any(a => a == item.ID)) continue;
-                item.IsCheck = true;
+                //if (!ViewModel.Printer.Foods.Any(a => a == item.ID)) continue;
+                //item.IsCheck = true;
             }
         }
         

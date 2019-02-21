@@ -63,7 +63,7 @@ namespace Jiandanmao.ViewModel
 
         public void Loaded(object o)
         {
-            _pagingQuery = new PagingQuery { PageSize = 2, PageIndex = 1 };
+            _pagingQuery = new PagingQuery { PageSize = 20, PageIndex = 1 };
             Init(o);
         }
         

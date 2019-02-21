@@ -4,6 +4,7 @@ using Jiandanmao.Pages;
 using Jiandanmao.Uc;
 using Jiandanmao.ViewModel;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -137,6 +138,32 @@ namespace Jiandanmao
         private void MenuPopupButton_OnClick(object sender, RoutedEventArgs e)
         {
             MessageTips(((ButtonBase)sender).Content.ToString(), null, null);
+        }
+
+        private void AutoStart_Click(object sender, RoutedEventArgs e)
+        {
+            string starupPath = System.IO.Path.Combine(Environment.CurrentDirectory, "Jiandanmao.exe");
+
+
+            RegistryKey rgkRun = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if (rgkRun == null)
+            {
+                rgkRun = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+            }
+            try
+            {
+                rgkRun.SetValue("Jiandanmao", starupPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
+
+
+            //RegistryKey run = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+            //loca.Close();
+            //run.Close();
         }
 
 

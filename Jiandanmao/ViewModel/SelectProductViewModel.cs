@@ -31,7 +31,11 @@ namespace Jiandanmao.ViewModel
         public object ThisContorler;
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
         public ICommand CheckCommand => new AnotherCommandImplementation(Check);
-
+        public ICommand SubmitCommand => new AnotherCommandImplementation(Submit);
+        /// <summary>
+        /// 是否提交修改
+        /// </summary>
+        public bool IsSubmit { get; set; }
 
         #endregion
 
@@ -52,7 +56,7 @@ namespace Jiandanmao.ViewModel
             //var types = res.Result;
             if (types != null && types.Count > 0)
             {
-                types.ForEach(a => Types.Add(a));
+                // 选中第一个分类
                 var type = types.First();
                 type.IsCheck = true;
                 var products = type.Products;
@@ -63,10 +67,17 @@ namespace Jiandanmao.ViewModel
                         Products.Add(item);
                     }
                 }
-                Products.ForEach(item =>
-                {
-                    if (!Printer.Foods.Any(a => a == item.ID)) return;
-                    item.IsCheck = true;
+                types.ForEach(a => {
+                    Types.Add(a);
+                    // 勾选已经选择过的商品
+                    if (a.Products!= null && a.Products.Count > 0)
+                    {
+                        a.Products.ForEach(item =>
+                        {
+                            if (!Printer.Foods.Any(b => b == item.ID)) return;
+                            item.IsCheck = true;
+                        });
+                    }
                 });
             }
         }
@@ -101,6 +112,11 @@ namespace Jiandanmao.ViewModel
         {
             var obj = (CheckBox)o;
             Products.ForEach(a => a.IsCheck = obj.IsChecked.Value);
+        }
+        private void Submit(object o)
+        {
+            IsSubmit = true;
+            DialogHost.CloseDialogCommand.Execute(null, null);
         }
         #endregion
     }

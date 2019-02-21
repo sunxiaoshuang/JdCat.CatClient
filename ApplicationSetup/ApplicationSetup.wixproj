@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.10</ProductVersion>
+    <ProjectGuid>e0c307af-bc80-40dd-bb97-ca58670ad08e</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>ApplicationSetup</OutputName>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="location.wxl" />
+    <EmbeddedResource Include="WixUI_zh-CN.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Assets\Video\" />
+    <Folder Include="Lib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\a.mp3" />
+    <Content Include="Assets\Video\1.mp3" />
+    <Content Include="Assets\Video\2.mp3" />
+    <Content Include="Assets\Video\3.mp3" />
+    <Content Include="Assets\Video\4.mp3" />
+    <Content Include="bb.bmp" />
+    <Content Include="favicon.ico" />
+    <Content Include="Lib\ControlzEx.dll" />
+    <Content Include="Lib\Dragablz.dll" />
+    <Content Include="Lib\ICSharpCode.AvalonEdit.dll" />
+    <Content Include="Lib\Jiandanmao.exe.config" />
+    <Content Include="Lib\MahApps.Metro.dll" />
+    <Content Include="Lib\MaterialDesignColors.dll" />
+    <Content Include="Lib\MaterialDesignThemes.Wpf.dll" />
+    <Content Include="Lib\Newtonsoft.Json.dll" />
+    <Content Include="Lib\ShowMeTheXAML.AvalonEdit.dll" />
+    <Content Include="Lib\ShowMeTheXAML.dll" />
+    <Content Include="Lib\System.Net.Http.dll" />
+    <Content Include="Lib\System.Windows.Interactivity.dll" />
+    <Content Include="license.rtf" />
+    <Content Include="packages.config" />
+    <Content Include="top.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jiandanmao\Jiandanmao.csproj">
+      <Name>Jiandanmao</Name>
+      <Project>{3a212d39-33c4-411c-a7a6-3570a5d907a3}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

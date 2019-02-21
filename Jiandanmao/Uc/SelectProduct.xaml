@@ -58,7 +58,7 @@
 
         <ScrollViewer Grid.Row="1" Grid.Column="2">
             <StackPanel>
-                <CheckBox Margin="8 0 0 0" x:Name="allCheck" Command="{Binding CheckCommand}" CommandParameter="{Binding ElementName=allCheck}" Content="全选">
+                <CheckBox Margin="8 0 0 0" x:Name="allCheck" HorizontalAlignment="Left" Command="{Binding CheckCommand}" Width="50" CommandParameter="{Binding ElementName=allCheck}" Content="全选">
                 </CheckBox>
                 <ListBox HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Products}">
                     <ListBox.ItemsPanel>
@@ -71,12 +71,14 @@
                             <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth2">
                                 <Grid Margin="8" Width="110" Height="70">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"></ColumnDefinition>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <!--<ColumnDefinition Width="*"></ColumnDefinition>-->
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{Binding IsCheck}" HorizontalAlignment="Right">
+                                    <CheckBox IsChecked="{Binding IsCheck}" ToolTip="{Binding Name}" HorizontalAlignment="Left">
+                                        <ContentControl>
+                                            <TextBlock TextWrapping="Wrap" Grid.Column="1" Text="{Binding Name}" ToolTip="{Binding Name}" HorizontalAlignment="Center" Margin="5,5,5,5" />
+                                        </ContentControl>
                                     </CheckBox>
-                                    <TextBlock TextWrapping="Wrap" Grid.Column="1" Text="{Binding Name}" ToolTip="{Binding Name}" HorizontalAlignment="Center" Margin="5,5,5,5" />
                                 </Grid>
                             </materialDesign:Card>
                         </DataTemplate>
@@ -85,7 +87,8 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="确定" Height="30" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Width="60" Padding="6" Style="{DynamicResource MaterialDesignFlatButton}"></Button>
+            <Button Content="取消" Height="30" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Width="60" Padding="6" Style="{DynamicResource MaterialDesignFlatButton}"></Button>
+            <Button Content="确定" Height="30" Command="{Binding SubmitCommand}" Width="60" Padding="6" Style="{DynamicResource MaterialDesignFlatButton}"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

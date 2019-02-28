@@ -44,6 +44,23 @@ namespace Jiandanmao.Extension
         }
 
         /// <summary>
+        /// 循环
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static ObservableCollection<T> ToObservable<T>(this IEnumerable<T> list)
+        {
+            var result = new ObservableCollection<T>();
+            foreach (var item in list)
+            {
+                result.Add(item);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// 替换集合元素
         /// </summary>
         /// <typeparam name="T"></typeparam>

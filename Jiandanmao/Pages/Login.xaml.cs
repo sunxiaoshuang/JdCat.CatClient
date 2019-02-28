@@ -1,25 +1,13 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using Jiandanmao.Helper;
 using Jiandanmao.Uc;
-using System.Configuration;
 using Jiandanmao.Code;
 using Newtonsoft.Json;
-using Jiandanmao.Model;
 
 namespace Jiandanmao.Pages
 {
@@ -89,14 +77,14 @@ namespace Jiandanmao.Pages
                 async void start()
                 {
                     var result = await Request.Login(name, pw);
-                    await Mainthread.BeginInvoke((Action)delegate ()
+                    await Mainthread.BeginInvoke((Action)async delegate ()
                     {
                         args.Session.Close(false);
                         if (result.Success)
                         {
                             var business = result.Data;
                             ApplicationObject.App.Business = business;
-                            ApplicationObject.App.Init();
+                            await ApplicationObject.App.Init();
                             SaveLoginUser(name, pw);
                             LoginSuccess = true;
                             Close();

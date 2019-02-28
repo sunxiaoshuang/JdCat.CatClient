@@ -1,15 +1,11 @@
-﻿using Jiandanmao.Model;
+﻿using Jiandanmao.Entity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Jiandanmao.Code
@@ -212,7 +208,89 @@ namespace Jiandanmao.Code
             var result = await GetData<JsonData>(url);
             return result;
         }
+
+        /// <summary>
+        /// 登录成功后，获取初始化数据
+        /// </summary>
+        /// <returns></returns>
+        public async static Task<RemoteDataObject> GetInitData(int id)
+        {
+            var url = $"{ApiUrl}/Client/InitClient/{id}";
+            return await GetData<RemoteDataObject>(url);
+        }
         
+        /// <summary>
+        /// 保存餐桌区域
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public async static Task<JsonData<DeskType>> SaveDeskType(DeskType type)
+        {
+            var url = $"{ApiUrl}/Client/SaveDeskType";
+            var content = JsonConvert.SerializeObject(type);
+            return await HttpRequest<DeskType>(url, new StringContent(content), "POST");
+        }
+
+        /// <summary>
+        /// 保存餐桌区域
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public async static Task<JsonData<DeskType>> UpdateDeskType(DeskType type)
+        {
+            var url = $"{ApiUrl}/Client/UpdateDeskType";
+            var content = JsonConvert.SerializeObject(type);
+            return await HttpRequest<DeskType>(url, new StringContent(content), "POST");
+        }
+
+        /// <summary>
+        /// 删除餐桌区域
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public async static Task<JsonData> DeleteDeskType(DeskType type)
+        {
+            var url = $"{ApiUrl}/Client/DeleteDeskType/{type.Id}";
+            var result = await HttpRequest(url);
+            return JsonConvert.DeserializeObject<JsonData>(result);
+        }
+
+        /// <summary>
+        /// 保存餐桌
+        /// </summary>
+        /// <param name="desk"></param>
+        /// <returns></returns>
+        public async static Task<JsonData<Desk>> SaveDesk(Desk desk)
+        {
+            var url = $"{ApiUrl}/Client/SaveDesk";
+            var content = JsonConvert.SerializeObject(desk);
+            return await HttpRequest<Desk>(url, new StringContent(content), "POST");
+        }
+
+        /// <summary>
+        /// 修改餐桌
+        /// </summary>
+        /// <param name="desk"></param>
+        /// <returns></returns>
+        public async static Task<JsonData<Desk>> UpdateDesk(Desk desk)
+        {
+            var url = $"{ApiUrl}/Client/UpdateDesk";
+            var content = JsonConvert.SerializeObject(desk);
+            return await HttpRequest<Desk>(url, new StringContent(content), "POST");
+        }
+
+        /// <summary>
+        /// 删除餐桌
+        /// </summary>
+        /// <param name="desk"></param>
+        /// <returns></returns>
+        public async static Task<JsonData> DeleteDesk(Desk desk)
+        {
+            var url = $"{ApiUrl}/Client/DeleteDesk/{desk.Id}";
+            var result = await HttpRequest(url);
+            return JsonConvert.DeserializeObject<JsonData>(result);
+        }
+
         #region 备注
         ///// <summary>
         ///// 根据订单编号获取订单

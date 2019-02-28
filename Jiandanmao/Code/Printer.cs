@@ -1,9 +1,5 @@
-﻿using Jiandanmao.Enum;
-using Jiandanmao.Helper;
-using Jiandanmao.Model;
-using Jiandanmao.Uc;
-using Jiandanmao.ViewModel;
-using MaterialDesignThemes.Wpf;
+﻿using Jiandanmao.Entity;
+using Jiandanmao.Enum;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,8 +12,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Jiandanmao.Code
 {

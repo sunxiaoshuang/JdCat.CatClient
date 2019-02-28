@@ -1,11 +1,9 @@
-﻿using Jiandanmao.Enum;
-using Jiandanmao.Model;
-using System;
+﻿using Jiandanmao.Entity;
+using Jiandanmao.Enum;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Jiandanmao.Code
 {

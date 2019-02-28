@@ -1,17 +1,15 @@
-﻿using Jiandanmao.Enum;
-using Jiandanmao.Model;
+﻿using Jiandanmao.Extension;
 using Jiandanmao.Uc;
 using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Jiandanmao.Entity;
 
 namespace Jiandanmao.Code
 {
@@ -61,7 +59,9 @@ namespace Jiandanmao.Code
             DependencyProperty.Register("Orders", typeof(ObservableCollection<Order>), typeof(ApplicationObject));
 
 
-
+        /// <summary>
+        /// 本地打印机
+        /// </summary>
         public ObservableCollection<Printer> Printers
         {
             get { return (ObservableCollection<Printer>)GetValue(PrintersProperty); }
@@ -72,10 +72,38 @@ namespace Jiandanmao.Code
             DependencyProperty.Register("Printers", typeof(ObservableCollection<Printer>), typeof(ApplicationObject));
 
         /// <summary>
+        /// 餐桌类别
+        /// </summary>
+        public ObservableCollection<DeskType> DeskTypes { get; set; }
+
+        public static readonly DependencyProperty DeskTypesProperty =
+            DependencyProperty.Register("DeskTypes", typeof(ObservableCollection<DeskType>), typeof(ApplicationObject));
+
+        /// <summary>
+        /// 所有餐桌
+        /// </summary>
+        public ObservableCollection<Desk> Desks
+        {
+            get
+            {
+                if (DeskTypes == null) return null;
+                var desks = new ObservableCollection<Desk>();
+                DeskTypes.ForEach(a => {
+                    if (a.Desks == null) return;
+                    a.Desks.ForEach(b => desks.Add(b));
+                });
+                return desks;
+            }
+        }
+
+        public List<Product> Products { get; set; }
+
+        /// <summary>
         /// 初始化应用数据
         /// </summary>
-        public async void Init()
+        public async Task Init()
         {
+            // 打印机初始化
             Printers = new ObservableCollection<Printer>();
             if (Business == null) return;
 
@@ -100,6 +128,15 @@ namespace Jiandanmao.Code
                     printer.Open();
                 }
             }
+
+            // 初始化门店数据
+            var initData = await Request.GetInitData(Business.ID);
+            DeskTypes = new ObservableCollection<DeskType>();
+            initData.Desk.ForEach(a => {
+                a.ReloadDeskQuantity();
+                DeskTypes.Add(a);
+            });
+            Products = initData.Products;
         }
 
         /// <summary>

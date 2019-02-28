@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Jiandanmao.Entity;
+using Jiandanmao.Enum;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using Jiandanmao.Model;
 
 namespace Jiandanmao.Code
 {
@@ -21,7 +17,7 @@ namespace Jiandanmao.Code
             if (Products.Count == 0) return;
             foreach (var product in Products)
             {
-                if (product.Feature == Enum.ProductFeature.SetMeal)
+                if (product.Feature == ProductFeature.SetMeal)
                 {
                     if (product.Tag1 == null) continue;
                     product.Tag1.ForEach(item =>

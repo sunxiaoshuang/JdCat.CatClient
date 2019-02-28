@@ -6,8 +6,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Jiandanmao.ViewModel
 {
@@ -21,6 +23,27 @@ namespace Jiandanmao.ViewModel
             };
 
             DialogHost.Show(sampleMessageDialog, "RootDialog");
+        }
+        protected Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
+
+        public async Task ShowLoadingDialog(Task task)
+        {
+            var loadingDialog = new LoadingDialog();
+
+            await DialogHost.Show(loadingDialog, "RootDialog", delegate (object sender, DialogOpenedEventArgs args)
+            {
+                async void start()
+                {
+                    await Mainthread.BeginInvoke((Action)async delegate ()
+                    {
+                        await task;
+                        args.Session.Close(false);
+                    });
+                }
+
+                new Thread(start).Start();
+            });
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

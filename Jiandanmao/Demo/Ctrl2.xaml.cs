@@ -23,6 +23,13 @@ namespace Jiandanmao.Demo
         public Ctrl2()
         {
             InitializeComponent();
+            this.FocusableChanged += Ctrl2_FocusableChanged;
+            
+        }
+
+        private void Ctrl2_FocusableChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            
         }
     }
 }

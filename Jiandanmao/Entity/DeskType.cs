@@ -74,6 +74,9 @@ namespace Jiandanmao.Entity
 
 
         public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// 重新计算餐桌类型对应餐桌的数量
+        /// </summary>
         public void ReloadDeskQuantity()
         {
             DeskQuantity = Desks == null ? 0 : Desks.Count();

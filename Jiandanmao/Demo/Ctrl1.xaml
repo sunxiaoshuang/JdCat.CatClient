@@ -19,6 +19,7 @@
             </Button>
             <Button Click="Button_Click">打开键盘</Button>
             <Button Click="Close_Click">关闭键盘</Button>
+            <Button Click="Play_Click">播放</Button>
         </StackPanel>
     </materialDesign:ColorZone>
 </UserControl>

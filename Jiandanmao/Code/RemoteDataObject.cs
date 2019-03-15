@@ -6,6 +6,6 @@ namespace Jiandanmao.Code
     public class RemoteDataObject
     {
         public List<DeskType> Desk { get; set; }
-        public List<Product> Products { get; set; }
+        public List<ProductType> Types { get; set; }
     }
 }

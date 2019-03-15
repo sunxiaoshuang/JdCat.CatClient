@@ -4,12 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:Jiandanmao.Demo"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <materialDesign:ColorZone Mode="PrimaryLight" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch">
         <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
               MaxWidth="600">
             <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
@@ -31,6 +34,8 @@
                     >
                 <materialDesign:PackIcon Kind="StepForward" />
             </Button>
+            <local:TextBoxKeyboard Grid.Row="2" materialDesign:HintAssist.Hint="端口号" Style="{StaticResource MaterialDesignFloatingHintTextBox}"></local:TextBoxKeyboard>
+            <local:TextBoxKeyboard Grid.Row="3" Style="{StaticResource MaterialDesignFloatingHintTextBox}"></local:TextBoxKeyboard>
         </Grid>
     </materialDesign:ColorZone>
 </UserControl>

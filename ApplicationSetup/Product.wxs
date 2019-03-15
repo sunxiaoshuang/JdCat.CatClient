@@ -79,7 +79,8 @@
       <ComponentRef Id="ShowMeTheXAML.dll"/>
       <ComponentRef Id="System.Net.Http.dll"/>
       <ComponentRef Id="System.Windows.Interactivity.dll"/>
-
+      <ComponentRef Id="keyboard.exe"/>
+      
     </ComponentGroup>
 
     <!--开始菜单-->
@@ -154,6 +155,9 @@
       </Component>
       <Component Id="System.Windows.Interactivity.dll" Guid="90F9FFF2-E458-4165-9ED9-66594A3DE7A6">
         <File Id="System.Windows.Interactivity.dll" Source="Lib\System.Windows.Interactivity.dll" KeyPath="yes"/>
+      </Component>
+      <Component Id="keyboard.exe" Guid="90F9FFF2-E458-5236-9ED9-66594A3DE7A6">
+        <File Id="keyboard.exe" Source="Lib\keyboard.exe" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
 

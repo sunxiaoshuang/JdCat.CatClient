@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Uc;
+﻿using Jiandanmao.Code;
+using Jiandanmao.Uc;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
@@ -9,23 +10,61 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Jiandanmao.ViewModel
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public void MessageTips(string message)
+        protected Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
+        protected ISnackbarMessageQueue SnackbarMessageQueue;
+
+        public ICommand SubmitCommand => new AnotherCommandImplementation(Submit);
+        private object _submitParameter { get; set; }
+        public object SubmitParameter
+        {
+            get
+            {
+                return _submitParameter;
+            }
+            set
+            {
+                _submitParameter = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SubmitParameter"));
+            }
+        }
+
+        /// <summary>
+        /// 弹出框提醒
+        /// </summary>
+        /// <param name="message"></param>
+        public void MessageTips(string message, string dialog = null)
         {
             var sampleMessageDialog = new MessageDialog
             {
                 Message = { Text = message }
             };
 
-            DialogHost.Show(sampleMessageDialog, "RootDialog");
+            DialogHost.Show(sampleMessageDialog, dialog??"RootDialog");
         }
-        protected Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
-
+        /// <summary>
+        /// 消息提醒
+        /// </summary>
+        /// <param name="message"></param>
+        public void SnackbarTips(string message)
+        {
+            SnackbarMessageQueue?.Enqueue(message);
+        }
+        public async Task Confirm(string message, string dialog = null)
+        {
+            var sampleMessageDialog = new ConfirmDialog
+            {
+                Message = { Text = message },
+                DataContext = this
+            };
+            await DialogHost.Show(sampleMessageDialog, dialog??"RootDialog");
+        }
         public async Task ShowLoadingDialog(Task task)
         {
             var loadingDialog = new LoadingDialog();
@@ -55,6 +94,11 @@ namespace Jiandanmao.ViewModel
         public Action<PropertyChangedEventArgs> RaisePropertyChanged()
         {
             return args => PropertyChanged?.Invoke(this, args);
+        }
+
+        public virtual void Submit(object o)
+        {
+            DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
     }

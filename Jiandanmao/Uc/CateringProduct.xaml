@@ -8,8 +8,7 @@
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
              xmlns:local="clr-namespace:Jiandanmao.Uc"
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" >
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -19,17 +18,75 @@
 
             <convert:ProductTypeCheckColorTypeConverter x:Key="pctc" />
             <convert:DeskQuantityTypeConverter x:Key="dqtc" />
+            <convert:ProductBackgroundTypeConverter x:Key="pbtc" />
+            <convert:ProductFontColorTypeConverter x:Key="pfctc" />
+            <convert:BlockCheckBackgroundTypeConverter x:Key="bcbtc" />
 
         </ResourceDictionary>
 
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="10 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        
-        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Button Margin="0 0 10 0" Height="40" Command="{Binding AllProductsCommand}">
+                全部分类
+            </Button>
+            <Button Grid.Column="1" Height="40" Click="Pre_Click">
+                <materialDesign:PackIcon Kind="KeyboardArrowLeft" />
+            </Button>
+            <ScrollViewer Grid.Column="2" Margin="0 -8 0 0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" x:Name="scrollProductType">
+                <ListBox Grid.Column="2" ItemsSource="{Binding ProductViewModel.Types}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding ProductType.Name}" BorderThickness="0" Background="{Binding IsCheck, Converter={StaticResource bcbtc}}" Margin="0" Height="40"></Button>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+            <Button Grid.Column="3" Height="40" Click="Next_Click">
+                <materialDesign:PackIcon Kind="KeyboardArrowRight" />
+            </Button>
+        </Grid>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding ProductViewModel.Products}" Width="Auto" Margin="0 10 0 0">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <materialDesign:Badged Margin="5 0">
+                        <materialDesign:Badged.Badge>
+                            <TextBlock Text="{Binding Quantity}"></TextBlock>
+                        </materialDesign:Badged.Badge>
+                        <Button Background="{Binding Quantity, Converter={StaticResource pbtc}}" Foreground="{Binding Quantity, Converter={StaticResource pfctc}}" BorderThickness="0" Height="120" Width="120" Padding="10">
+                            <Button.Content>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding Product.Name}"></TextBlock>
+                            </Button.Content>
+                        </Button>
+                    </materialDesign:Badged>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

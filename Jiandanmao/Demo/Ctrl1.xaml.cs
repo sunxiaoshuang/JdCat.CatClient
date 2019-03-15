@@ -55,5 +55,20 @@ namespace Jiandanmao.Demo
                 return;
             PostMessage(TouchhWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
         }
+        MediaPlayer player = new MediaPlayer();
+        int num = 1;
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            if (num > 4) num = 0;
+            player.Open(new Uri($"Assets/Video/{num++}.mp3", UriKind.Relative));
+            player.SpeedRatio = 1.0;
+            player.Volume = 20;
+            player.Balance = 20;
+            player.Play();
+            player.MediaEnded += (a, b) =>
+            {
+                player.Close();
+            };
+        }
     }
 }

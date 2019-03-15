@@ -39,6 +39,7 @@
     <Content Include="Lib\Dragablz.dll" />
     <Content Include="Lib\ICSharpCode.AvalonEdit.dll" />
     <Content Include="Lib\Jiandanmao.exe.config" />
+    <Content Include="Lib\keyboard.exe" />
     <Content Include="Lib\MahApps.Metro.dll" />
     <Content Include="Lib\MaterialDesignColors.dll" />
     <Content Include="Lib\MaterialDesignThemes.Wpf.dll" />

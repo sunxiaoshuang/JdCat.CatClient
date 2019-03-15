@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Jiandanmao.Uc
 {
@@ -10,6 +11,15 @@ namespace Jiandanmao.Uc
         public CateringProduct()
         {
             InitializeComponent();
+        }
+
+        public void Pre_Click(object sender, RoutedEventArgs e)
+        {
+            scrollProductType.ScrollToHorizontalOffset(scrollProductType.HorizontalOffset - 50);
+        }
+        public void Next_Click(object sender, RoutedEventArgs e)
+        {
+            scrollProductType.ScrollToHorizontalOffset(scrollProductType.HorizontalOffset + 50);
         }
     }
 }

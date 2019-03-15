@@ -10,6 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Jiandanmao.Entity;
+using Autofac;
+using Jiandanmao.DataBase;
+using System;
+using Jiandanmao.Redis;
 
 namespace Jiandanmao.Code
 {
@@ -29,6 +33,10 @@ namespace Jiandanmao.Code
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ApplicationConfig Config { get; set; }
+
+        public ClientData ClientData { get; set; }
+
+        public Autofac.IContainer DataBase { get; set; }
 
         public Business Business
         {
@@ -96,20 +104,62 @@ namespace Jiandanmao.Code
             }
         }
 
-        public List<Product> Products { get; set; }
+        /// <summary>
+        /// 菜单类别与菜品
+        /// </summary>
+        public List<ProductType> Types { get; set; }
 
         /// <summary>
         /// 初始化应用数据
         /// </summary>
         public async Task Init()
         {
-            // 打印机初始化
+            // 加载客户端数据
+            LoadClientData();
+
+            // 加载打印机数据
+            await LoadPrinter();
+
+            // 初始化餐厅信息
+            await InitCatering();
+        }
+
+        /// <summary>
+        /// 加载客户端本地数据
+        /// </summary>
+        public void LoadClientData()
+        {
+            // 读取客户端数据
+            var path = Path.Combine(Environment.CurrentDirectory, "Info", "clientdata.json");
+            if (File.Exists(path))
+            {
+                ClientData = JsonConvert.DeserializeObject<ClientData>(File.ReadAllText(path));
+            }
+            else
+            {
+                ClientData = new ClientData { IsHost = true, IsReceive = true };
+            }
+        }
+        /// <summary>
+        /// 保存客户端本地数据
+        /// </summary>
+        public void SaveClientData()
+        {
+            var path = Path.Combine(Environment.CurrentDirectory, "Info", "clientdata.json");
+            File.WriteAllText(path, JsonConvert.SerializeObject(ClientData));
+        }
+        /// <summary>
+        /// 加载打印机
+        /// </summary>
+        public async Task LoadPrinter()
+        {
             Printers = new ObservableCollection<Printer>();
             if (Business == null) return;
 
             var printers = await Request.GetPrinters(Business.ID);
             if (printers == null || printers.Count == 0)
             {
+                // 如果远程数据库中不存在打印机列表，则加载本地保存的打印机列表
                 await LoadOldPrinters();
             }
             else
@@ -125,20 +175,10 @@ namespace Jiandanmao.Code
                 }
                 if (printer.State == 1)
                 {
-                    printer.Open();
+                    printer.Open();         // 开启打印机监听
                 }
             }
-
-            // 初始化门店数据
-            var initData = await Request.GetInitData(Business.ID);
-            DeskTypes = new ObservableCollection<DeskType>();
-            initData.Desk.ForEach(a => {
-                a.ReloadDeskQuantity();
-                DeskTypes.Add(a);
-            });
-            Products = initData.Products;
         }
-
         /// <summary>
         /// 加载旧的打印设置
         /// </summary>
@@ -158,19 +198,45 @@ namespace Jiandanmao.Code
             }
             result.Data.ForEach(a => Printers.Add(a));
         }
+        /// <summary>
+        /// 初始化堂食数据
+        /// </summary>
+        /// <returns></returns>
+        private async Task InitCatering()
+        {
+            var initData = await Request.GetInitData(Business.ID);      // 读取远程数据库数据
 
-        ///// <summary>
-        ///// 保存打印机设置
-        ///// </summary>
-        //public void Save()
-        //{
-        //    if (Business == null) return;
-        //    var dirPath = Path.Combine(Directory.GetCurrentDirectory(), PrinterDir);
-        //    var filepath = Path.Combine(dirPath, Business.ID + ".json");
-        //    if (Printers == null || Printers.Count == 0) return;
-        //    var data = JsonConvert.SerializeObject(Printers);
-        //    File.WriteAllText(filepath, data, Encoding.UTF8);
-        //}
+            DeskTypes = new ObservableCollection<DeskType>();           // 餐桌
+            initData.Desk.ForEach(a => {
+                a.ReloadDeskQuantity();
+                DeskTypes.Add(a);
+            });
+            Types = initData.Types;                                     // 菜单
+            // 读取数据库本地数据库
+            //using (var scope = DataBase.BeginLifetimeScope())
+            //{
+            //    // 获取正在使用中的订单，并绑定到餐桌上
+            //    var service = scope.Resolve<ClientDbService>();
+            //    if (service != null)
+            //    {
+            //        var unFinishOrder = service.GetUsingOrder(Business.ID);
+            //        Desks.ForEach(a =>
+            //        {
+            //            var order = unFinishOrder.FirstOrDefault(b => b.DeskId == a.Id);
+            //            if (order == null) return;
+            //            a.Order = order;
+            //        });
+            //    }
+            //}
+            using (var scope = DataBase.BeginLifetimeScope())
+            {
+                // 读取堂食
+                // todo
+
+            }
+        }
+        
+
 
         /// <summary>
         /// 打印订单
@@ -199,5 +265,7 @@ namespace Jiandanmao.Code
         public string ApiUrl { get; set; }
         public string OrderUrl { get; set; }
         public string BackStageWebSite { get; set; }
+        public string RedisDefaultKey { get; set; }
+        public string StaffPrefix { get; set; }
     }
 }

@@ -10,6 +10,10 @@ using Jiandanmao.Code;
 using Jiandanmao.Extension;
 using MaterialDesignThemes.Wpf.Transitions;
 using Jiandanmao.Entity;
+using Jiandanmao.DataBase;
+using Autofac;
+using Jiandanmao.Enum;
+using Jiandanmao.Helper;
 
 namespace Jiandanmao.ViewModel
 {
@@ -20,8 +24,17 @@ namespace Jiandanmao.ViewModel
     {
 
         public object ThisContorler;
+        /// <summary>
+        /// 订单与餐桌过度
+        /// </summary>
         public Transitioner Transitioner { get; set; }
+        /// <summary>
+        /// 菜单与结算过度
+        /// </summary>
+        public Transitioner Transitioner2 { get; set; }
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
+        public ICommand StoreOrderLoadedCommand => new AnotherCommandImplementation(StoreOrderLoaded);
+
         #region 餐桌命令
 
         public ICommand SubmitNumberCommand => new AnotherCommandImplementation(SubmitNumber);
@@ -57,6 +70,22 @@ namespace Jiandanmao.ViewModel
             set
             {
                 this.MutateVerbose(ref _desk, value, RaisePropertyChanged());
+                // 每次赋值餐桌，重新加载一遍菜单
+                ResetMenu();
+            }
+        }
+        /// <summary>
+        /// 点餐控件viewmodel
+        /// </summary>
+        public CateringProductViewModel _productViewModel;
+        public CateringProductViewModel ProductViewModel
+        {
+            get { return _productViewModel; }
+            set
+            {
+                this.MutateVerbose(ref _productViewModel, value, RaisePropertyChanged());
+                // 每次赋值餐桌，重新加载一遍菜单
+                ResetMenu();
             }
         }
 
@@ -77,6 +106,16 @@ namespace Jiandanmao.ViewModel
         }
         #endregion
 
+        #region 订单命令
+        public ICommand DeleteOrderCommand => new AnotherCommandImplementation(DeleteOrder);
+        public ICommand AddProductCommand => new AnotherCommandImplementation(AddProduct);
+        public ICommand PayCommand => new AnotherCommandImplementation(Pay);
+        public ICommand BackDeskCommand => new AnotherCommandImplementation(BackDesk);
+
+
+
+        #endregion
+
         #region 订单页声明
 
         public ICommand ProductSearchCommand => new AnotherCommandImplementation(ProductSearch);
@@ -95,6 +134,11 @@ namespace Jiandanmao.ViewModel
         {
             Init(o);
         }
+        public void StoreOrderLoaded(object o)
+        {
+            var control = o as CateringOrder;
+            Transitioner2 = control.transition2;
+        }
 
         private void Init(object o)
         {
@@ -106,11 +150,27 @@ namespace Jiandanmao.ViewModel
                 {
                     Mainthread.BeginInvoke((Action)delegate ()// 异步更新界面
                     {
-                        //Thread.Sleep(1000);
-                        args.Session.Close(false);
-                        if (DeskTypes == null || DeskTypes.Count == 0) return;
+                    //Thread.Sleep(1000);
+                    args.Session.Close(false);
+                    // 餐桌初始化
+                    if (DeskTypes == null || DeskTypes.Count == 0) return;
                         DeskTypes.ForEach(a => a.IsCheck = false);
                         Desks = ApplicationObject.App.Desks;
+                    // 菜单初始化
+                    ProductViewModel = new CateringProductViewModel
+                        {
+                            Types = new ObservableCollection<CateringProductViewModel.ProductTypeViewModel>()
+                        };
+                        ApplicationObject.App.Types.ForEach(type =>
+                        {
+                            var viewmodel = new CateringProductViewModel.ProductTypeViewModel
+                            {
+                                ProductType = type,
+                                Products = new ObservableCollection<CateringProductViewModel.ProductViewModel>()
+                            };
+                            type.Products.ForEach(product => viewmodel.Products.Add(new CateringProductViewModel.ProductViewModel { Product = product }));
+                            ProductViewModel.Types.Add(viewmodel);
+                        });
                     });
                 };
 
@@ -120,9 +180,40 @@ namespace Jiandanmao.ViewModel
 
         }
 
-        private void SubmitNumber(object o)
+        public override void Submit(object o)
+        {
+            var desk = (Desk)o;
+            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<ClientDbService>();
+                service.Delete(desk.Order);
+            }
+            Transitioner.SelectedIndex = 0;
+            desk.Order = null;
+            base.Submit(o);
+        }
+
+        private async void SubmitNumber(object o)
         {
             Transitioner.SelectedIndex = 1;
+            if (Desk.Order == null)
+            {
+                using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+                {
+                    var service = scope.Resolve<ClientDbService>();
+                    var order = new StoreOrder
+                    {
+                        Code = UtilHelper.CreateOrderCode(ApplicationObject.App.Business.ID),
+                        BusinessId = ApplicationObject.App.Business.ID,
+                        DeskId = Desk.Id,
+                        DeskName = Desk.Name,
+                        PeopleQuantity = PeopleNumber,
+                        Status = StoreOrderStatus.Ordering
+                    };
+                    await service.AddAsync(order);
+                    Desk.Order = order;
+                }
+            }
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
@@ -150,7 +241,7 @@ namespace Jiandanmao.ViewModel
             var key = ((TextBox)o).Text?.Trim().ToLower();
             var type = DeskTypes.FirstOrDefault(a => a.IsCheck);
             ObservableCollection<Desk> desks;
-            if(type == null)
+            if (type == null)
             {
                 desks = ApplicationObject.App.Desks;
             }
@@ -174,13 +265,64 @@ namespace Jiandanmao.ViewModel
             var key = txt.Text?.Trim();
 
         }
+
         private void ClearProductKey(object o)
         {
             var txt = (TextBox)o;
             txt.Text = string.Empty;
-            
+
         }
 
+        private async void DeleteOrder(object o)
+        {
+            SubmitParameter = o;
+            await Confirm("确定删除订单吗？");
+        }
+
+        /// <summary>
+        /// 加菜
+        /// </summary>
+        /// <param name="o"></param>
+        private void AddProduct(object o)
+        {
+
+        }
+
+        /// <summary>
+        /// 付款
+        /// </summary>
+        /// <param name="o"></param>
+        private void Pay(object o)
+        {
+
+        }
+
+        /// <summary>
+        /// 返回餐桌
+        /// </summary>
+        /// <param name="o"></param>
+        private void BackDesk(object o)
+        {
+            Transitioner.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 重新加载菜单
+        /// </summary>
+        private void ResetMenu()
+        {
+            if (Desk == null) return;
+            var order = Desk.Order;
+            ProductViewModel.Types.ForEach(a => a.IsCheck = false);
+            ProductViewModel.Products = ProductViewModel.All;
+            ProductViewModel.All.ForEach(a => a.Quantity = 0);
+            if (order == null || order.OrderProducts == null) return;
+            order.OrderProducts.ForEach(a => {
+                var product = ProductViewModel.All.FirstOrDefault(b => b.Product.ID == a.ProductId);
+                if (product == null) return;
+                product.Quantity += (int)a.Quantity.Value;
+            });
+        }
         #endregion
     }
 }

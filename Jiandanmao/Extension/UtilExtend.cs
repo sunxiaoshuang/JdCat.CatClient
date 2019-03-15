@@ -52,6 +52,7 @@ namespace Jiandanmao.Extension
         /// <returns></returns>
         public static ObservableCollection<T> ToObservable<T>(this IEnumerable<T> list)
         {
+            if (list == null) return null;
             var result = new ObservableCollection<T>();
             foreach (var item in list)
             {

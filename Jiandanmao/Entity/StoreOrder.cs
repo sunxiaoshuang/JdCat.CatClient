@@ -1,13 +1,25 @@
 ﻿using Jiandanmao.Entity;
+using Jiandanmao.Enum;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Jiandanmao.Enum
+namespace Jiandanmao.Entity
 {
     /// <summary>
     /// 堂食订单
     /// </summary>
+    [Table("StoreOrder")]
     public class StoreOrder : ClientBaseEntity
     {
+        public string Name { get; set; }
+        /// <summary>
+        /// 订单编号
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
+        /// 当日流水码
+        /// </summary>
+        public int Identifier { get; set; }
         /// <summary>
         /// 用餐人数
         /// </summary>
@@ -27,15 +39,11 @@ namespace Jiandanmao.Enum
         /// <summary>
         /// 订单商品
         /// </summary>
-        public ICollection<OrderProduct> OrderProducts { get; set; }
+        public ICollection<StoreOrderProduct> OrderProducts { get; set; }
         /// <summary>
         /// 餐桌id
         /// </summary>
         public int DeskId { get; set; }
-        /// <summary>
-        /// 餐桌
-        /// </summary>
-        public Desk Desk { get; set; }
         /// <summary>
         /// 餐桌名称
         /// </summary>
@@ -48,10 +56,6 @@ namespace Jiandanmao.Enum
         /// 门店id
         /// </summary>
         public int BusinessId { get; set; }
-        /// <summary>
-        /// 门店
-        /// </summary>
-        public Business Business { get; set; }
 
     }
 }

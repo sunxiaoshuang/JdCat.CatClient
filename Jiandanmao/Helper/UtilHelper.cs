@@ -1,5 +1,6 @@
 ﻿using Jiandanmao.Uc;
 using MaterialDesignThemes.Wpf;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -91,9 +92,38 @@ namespace Jiandanmao.Helper
         /// 信息提示
         /// </summary>
         /// <param name="msg"></param>
-        public async static void MessageTip(string msg)
+        public async static void MessageTip(string msg, string dialog = "RootDialog")
         {
-            await DialogHost.Show(new MessageDialog { Message = { Text = msg } }, "RootDialog");
+            await DialogHost.Show(new MessageDialog { Message = { Text = msg } }, dialog);
+        }
+
+        /// <summary>
+        /// 创建订单号
+        /// </summary>
+        /// <param name="id">指定订单的商户id</param>
+        /// <returns></returns>
+        public static string CreateOrderCode(int id)
+        {
+            var sign = id.ToString().PadLeft(5, '0');
+            var code = DateTime.Now.ToString("yyyyMMddHHmmss");
+            code += $"{sign}{GetRandom(5)}";
+            return code;
+        }
+
+        /// <summary>
+        /// 获取指定位数的随机码
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static string GetRandom(int num)
+        {
+            var random = new Random();
+            var code = string.Empty;
+            for (int i = 0; i < num; i++)
+            {
+                code += random.Next(0, 9);
+            }
+            return code;
         }
 
     }

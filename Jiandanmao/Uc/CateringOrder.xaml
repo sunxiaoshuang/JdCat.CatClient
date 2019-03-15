@@ -9,7 +9,13 @@
              xmlns:local="clr-namespace:Jiandanmao.Uc"
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
              mc:Ignorable="d" 
+             x:Name="CateringOrderControl"
              d:DesignHeight="450" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding StoreOrderLoadedCommand}" CommandParameter="{Binding ElementName=CateringOrderControl}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -19,9 +25,11 @@
 
             <convert:DeskQuantityTypeConverter x:Key="dqtc" />
             <convert:DateTimeToStringValueConverter x:Key="dtts" />
+            <convert:StoreOrderOperate1TypeConverter x:Key="sootc1" />
+            <convert:StoreOrderOperate2TypeConverter x:Key="sootc2" />
 
             <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="FontSize" Value="18"/>
             </Style>
 
         </ResourceDictionary>
@@ -74,18 +82,70 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
                             <TextBlock>人数：</TextBlock>
-                            <TextBlock Text="{Binding PeopleNumber}"></TextBlock>
+                            <TextBlock Text="{Binding Desk.Order.PeopleQuantity}"></TextBlock>
                         </StackPanel>
                     </Grid>
-                    <TextBlock>开台时间：</TextBlock>
-                    <TextBlock></TextBlock>
+                    <StackPanel Margin="8" Orientation="Horizontal" Grid.Column="1">
+                        <TextBlock>开台时间：</TextBlock>
+                        <TextBlock Text="{Binding Desk.Order.CreateTime, Converter={StaticResource dtts}}"></TextBlock>
+                    </StackPanel>
                 </StackPanel>
             </Border>
+            <Border Grid.Row="2" BorderBrush="#ddd" BorderThickness="1">
+
+            </Border>
+            <Border Grid.Row="3" BorderBrush="#ddd" BorderThickness="1">
+
+            </Border>
+            <Grid Grid.Row="4" Visibility="{Binding Desk.Order, Converter={StaticResource sootc1}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Height="70" Command="{Binding BackDeskCommand}">
+                    <Button.Content>
+                        <TextBlock>返回餐桌</TextBlock>
+                    </Button.Content>
+                </Button>
+                <Button Grid.Column="1" Height="70" Command="{Binding DeleteOrderCommand}" CommandParameter="{Binding Desk}">
+                    <Button.Content>
+                        <TextBlock>整单删除</TextBlock>
+                    </Button.Content>
+                </Button>
+                <Button Grid.Column="2" Height="70">
+                    <Button.Content>
+                        <TextBlock>下单</TextBlock>
+                    </Button.Content>
+                </Button>
+            </Grid>
+            <Grid Grid.Row="4" Visibility="{Binding Desk.Order, Converter={StaticResource sootc2}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Height="70" Command="{Binding BackDeskCommand}">
+                    <Button.Content>
+                        <TextBlock>返回餐桌</TextBlock>
+                    </Button.Content>
+                </Button>
+                <Button Grid.Column="1" Height="70" Command="{Binding AddProductCommand}">
+                    <Button.Content>
+                        <TextBlock>加菜</TextBlock>
+                    </Button.Content>
+                </Button>
+                <Button Grid.Column="2" Height="70" Command="{Binding PayCommand}">
+                    <Button.Content>
+                        <TextBlock>结算</TextBlock>
+                    </Button.Content>
+                </Button>
+            </Grid>
         </Grid>
         <!--功能区-->
         <smtx:XamlDisplay Key="transitions2" Height="Auto" Grid.Column="1">
             <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transition2">
-                <!--选中菜品-->
+                <!--选择菜品-->
                 <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
                     <local:CateringProduct DataContext="{Binding}" />
                 </materialDesign:TransitionerSlide>

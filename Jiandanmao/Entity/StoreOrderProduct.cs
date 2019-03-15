@@ -7,8 +7,9 @@ using System.Text;
 namespace Jiandanmao.Entity
 {
     /// <summary>
-    /// 订单商品表
+    /// 堂食订单商品表
     /// </summary>
+    [Table("StoreOrderProduct")]
     public class StoreOrderProduct : ClientBaseEntity
     {
         /// <summary>
@@ -18,19 +19,19 @@ namespace Jiandanmao.Entity
         /// <summary>
         /// 商品数量
         /// </summary>
-        public decimal? Quantity { get; set; }
+        public double? Quantity { get; set; }
         /// <summary>
-        /// 商品价格（折扣价）
+        /// 商品价格（最终价格）
         /// </summary>
-        public decimal? Amount { get; set; }
+        public double? Amount { get; set; }
         /// <summary>
-        /// 原价
+        /// 商品原价
         /// </summary>
-        public decimal? OldAmount { get; set; }
+        public double? OldAmount { get; set; }
         /// <summary>
         /// 折扣
         /// </summary>
-        public decimal? Discount { get; set; }
+        public double? Discount { get; set; }
         /// <summary>
         /// 商品图片地址
         /// </summary>
@@ -40,10 +41,13 @@ namespace Jiandanmao.Entity
         /// </summary>
         public string Description { get; set; }
         /// <summary>
+        /// 商品备注
+        /// </summary>
+        public string Remark { get; set; }
+        /// <summary>
         /// 商品id
         /// </summary>
-        public int? ProductId { get; set; }
-        public virtual Product Product { get; set; }
+        public int ProductId { get; set; }
         /// <summary>
         /// 订单id
         /// </summary>
@@ -52,16 +56,15 @@ namespace Jiandanmao.Entity
         /// <summary>
         /// 商品规格id
         /// </summary>
-        public int? FormatId { get; set; }
-        public virtual ProductFormat Format { get; set; }
-        /// <summary>
-        /// 套餐商品的id集
-        /// </summary>
-        public string ProductIdSet { get; set; }
+        public int FormatId { get; set; }
         /// <summary>
         /// 商品特性
         /// </summary>
         public ProductFeature Feature { get; set; }
+        /// <summary>
+        /// 套餐商品的id集
+        /// </summary>
+        public string ProductIdSet { get; set; }
         /// <summary>
         /// 套餐商品
         /// </summary>

@@ -4,6 +4,7 @@ using Jiandanmao.ViewModel;
 using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -20,6 +21,21 @@ namespace Jiandanmao.Entity
         public ICommand DeleteCommand => new AnotherCommandImplementation(Delete);
         [JsonIgnore]
         public ICommand OpenPeopleNumberCommand => new AnotherCommandImplementation(OpenPeopleNumber);
+
+        private StoreOrder _order;
+        /// <summary>
+        /// 餐桌当前正在使用的订单
+        /// </summary>
+        [JsonIgnore]
+        public StoreOrder Order
+        {
+            get { return _order; }
+            set
+            {
+                _order = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Order"));
+            }
+        }
 
         private async void Save(object o)
         {
@@ -80,8 +96,14 @@ namespace Jiandanmao.Entity
 
         private async void OpenPeopleNumber(object o)
         {
-            ((CateringViewModel)o).Desk = this;
-            await DialogHost.Show(new PeopleNumber { DataContext = o });
+            var viewModel = (CateringViewModel)o;
+            viewModel.Desk = this;
+            if (this.Order == null)
+            {
+                await DialogHost.Show(new PeopleNumber { DataContext = o });
+                return;
+            }
+            viewModel.Transitioner.SelectedIndex = 1;
         }
     }
 }

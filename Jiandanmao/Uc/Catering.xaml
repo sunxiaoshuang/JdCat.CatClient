@@ -33,7 +33,6 @@
 
 
     <smtx:XamlDisplay Key="transitions" Height="Auto">
-        <!-- the transitioner will manage your transitions. notice how SelectedIndex is set to zero: the first slide (instead of the default of -1) -->
         <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transitioner">
             <!--<materialDesign:Transitioner.InputBindings>
                 <KeyBinding Key="Left" Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}" />

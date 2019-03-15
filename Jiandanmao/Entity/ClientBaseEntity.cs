@@ -33,5 +33,9 @@ namespace Jiandanmao.Entity
         /// 数据是否已经同步
         /// </summary>
         public bool IsSync { get; set; }
+        /// <summary>
+        /// 数据是否被删除
+        /// </summary>
+        public bool IsDelete { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using Jiandanmao.ViewModel;
+using System.Windows.Controls;
 
 namespace Jiandanmao.Uc
 {
@@ -9,6 +10,7 @@ namespace Jiandanmao.Uc
     {
         public CateringOrder()
         {
+            var viewModel = DataContext as CateringViewModel;
             //MaterialDesignThemes.Wpf.Transitions.TransitionEffectKind.SlideInFromLeft
             InitializeComponent();
         }

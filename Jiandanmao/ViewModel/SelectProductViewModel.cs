@@ -28,7 +28,6 @@ namespace Jiandanmao.ViewModel
         public object ThisContorler;
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
         public ICommand CheckCommand => new AnotherCommandImplementation(Check);
-        public ICommand SubmitCommand => new AnotherCommandImplementation(Submit);
         /// <summary>
         /// 是否提交修改
         /// </summary>
@@ -37,8 +36,6 @@ namespace Jiandanmao.ViewModel
         #endregion
 
         #region 界面绑定方法
-
-        Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
 
         public ObservableCollection<ProductType> Types { get; } = new ObservableCollection<ProductType>();
         public ObservableCollection<Product> Products { get; } = new ObservableCollection<Product>();
@@ -110,7 +107,7 @@ namespace Jiandanmao.ViewModel
             var obj = (CheckBox)o;
             Products.ForEach(a => a.IsCheck = obj.IsChecked.Value);
         }
-        private void Submit(object o)
+        public override void Submit(object o)
         {
             IsSubmit = true;
             DialogHost.CloseDialogCommand.Execute(null, null);

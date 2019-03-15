@@ -37,7 +37,7 @@ namespace Jiandanmao
             }
             InitializeComponent();
 
-            DataContext = new MainWindowViewModel();
+            DataContext = new MainWindowViewModel(MainSnackbar.MessageQueue);
 
             Init();
             //CheckUpdate();
@@ -54,6 +54,7 @@ namespace Jiandanmao
         private static bool isError = false;    // 记录是否出错
         private void InitTimer()
         {
+            if (!ApplicationObject.App.ClientData.IsReceive) return;            // 如果不接受外卖订单，则直接退出
             readDataTimer.Tick += new EventHandler(HandleOrder);
             readDataTimer.Interval = new TimeSpan(0, 0, 0, 5);          // 5秒取一次
             orderUrl = string.Format(ApplicationObject.App.Config.OrderUrl, ApplicationObject.App.Business.ID);
@@ -98,19 +99,19 @@ namespace Jiandanmao
             }
         }
 
+        MediaPlayer player = new MediaPlayer();
         /// <summary>
         /// 播放提示音
         /// </summary>
         /// <param name="path"></param>
         private void PlayMedia(string path)
         {
-            var player = new MediaPlayer();
             player.Open(new Uri(path, UriKind.Relative));
-            player.Play();
             player.Volume = 1;
+            player.Play();
             player.MediaEnded += (a, b) =>
             {
-                player.Clone();
+                player.Close();
             };
         }
 

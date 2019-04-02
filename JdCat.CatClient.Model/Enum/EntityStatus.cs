@@ -16,6 +16,10 @@ namespace JdCat.CatClient.Model.Enum
         /// <summary>
         /// 已删除
         /// </summary>
-        Deleted = 2
+        Deleted = 2,
+        /// <summary>
+        /// 所有状态
+        /// </summary>
+        All = 1 + 2
     }
 }

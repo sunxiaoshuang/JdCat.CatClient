@@ -38,7 +38,7 @@ namespace JdCat.CatClient.Model.Enum
         /// <summary>
         /// 已完成的订单
         /// </summary>
-        Finish = 4 + 8,
+        Finish = 4 + 8 + 32,
         /// <summary>
         /// 有效的订单
         /// </summary>
@@ -46,6 +46,10 @@ namespace JdCat.CatClient.Model.Enum
         /// <summary>
         /// 无效的订单
         /// </summary>
-        Invalid = 1 + 16 + 32
+        Invalid = 1 + 16 + 32,
+        /// <summary>
+        /// 未完成的订单
+        /// </summary>
+        Unfinish = 1 + 2
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Jiandanmao.Entity
@@ -24,7 +25,7 @@ namespace Jiandanmao.Entity
         /// <summary>
         /// 所属分类产品
         /// </summary>
-        public ICollection<Product> Products { get; set; }
+        public ObservableCollection<Product> Products { get; set; }
         /// <summary>
         /// 分类所属商家id
         /// </summary>

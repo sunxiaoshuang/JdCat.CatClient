@@ -8,16 +8,19 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Jiandanmao</RootNamespace>
     <AssemblyName>Jiandanmao</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>D:\Pub\temp\1\</PublishUrl>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <PublishUrl>D:\Pub\1111\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -25,14 +28,11 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/Jiandanmao/</UpdateUrl>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,6 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,6 +53,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>C3624596D17C56B81EBD8896F8E9E4622945D17A</ManifestCertificateThumbprint>
@@ -180,18 +182,26 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Code\AnotherCommandImplementation.cs" />
+    <Compile Include="Code\TangBackstagePrint.cs" />
     <Compile Include="Code\BackstagePrint.cs" />
     <Compile Include="Code\ClientData.cs" />
+    <Compile Include="Code\TangOrderPrint.cs" />
+    <Compile Include="Code\TangSharePrint.cs" />
+    <Compile Include="Code\TangFoodPrint.cs" />
     <Compile Include="Code\FoodPrint.cs" />
     <Compile Include="Code\JsonData.cs" />
     <Compile Include="Code\OrderPrint.cs" />
     <Compile Include="Code\PagingQuery.cs" />
     <Compile Include="Code\PostNewOrderData.cs" />
     <Compile Include="Code\PrinterCmdUtils.cs" />
+    <Compile Include="Code\PrintOption.cs" />
     <Compile Include="Code\RemoteDataObject.cs" />
     <Compile Include="Code\Request.cs" />
+    <Compile Include="Code\SelectItem.cs" />
     <Compile Include="Code\SharePrint.cs" />
     <Compile Include="Code\StateObject.cs" />
+    <Compile Include="Converter\TangOrderProductStatusNameTypeConvert.cs" />
+    <Compile Include="Converter\TangOrderProductOperateTypeConvert.cs" />
     <Compile Include="Converter\DateTimeToString3TypeConverter.cs" />
     <Compile Include="Converter\VisibilityTypeConverter.cs" />
     <Compile Include="Converter\DateTimeToString2TypeConverter.cs" />
@@ -201,7 +211,7 @@
     <Compile Include="Converter\BlockCheckBackgroundTypeConverter.cs" />
     <Compile Include="Converter\StoreOrderOperate2TypeConverter.cs" />
     <Compile Include="Converter\StoreOrderAmountTypeConverter.cs" />
-    <Compile Include="Converter\StoreOrderOperate1TypeConverter.cs" />
+    <Compile Include="Converter\StoreOrderOperateTypeConverter.cs" />
     <Compile Include="Converter\DeskNameColorTypeConverter.cs" />
     <Compile Include="Converter\DeskStatusColor2TypeConverter.cs" />
     <Compile Include="Converter\DeskStatusColorTypeConverter.cs" />
@@ -223,10 +233,6 @@
     <Compile Include="Converter\DeskTypeCheckColorTypeConverter.cs" />
     <Compile Include="Converter\ProductTypeCheckColorTypeConverter.cs" />
     <Compile Include="Converter\PrintTypeTypeConverter.cs" />
-    <Compile Include="DataBase\CatDbContext.cs" />
-    <Compile Include="DataBase\CatDbInitializer.cs" />
-    <Compile Include="DataBase\ClientDbService.cs" />
-    <Compile Include="DataBase\ModelConfiguration.cs" />
     <Compile Include="Demo\Ctrl1.xaml.cs">
       <DependentUpon>Ctrl1.xaml</DependentUpon>
     </Compile>
@@ -260,6 +266,7 @@
     <Compile Include="Entity\StoreOrder.cs" />
     <Compile Include="Entity\StoreOrderProduct.cs" />
     <Compile Include="Entity\User.cs" />
+    <Compile Include="Enum\DeskStatus.cs" />
     <Compile Include="Enum\ActivityStatus.cs" />
     <Compile Include="Enum\CouponStatus.cs" />
     <Compile Include="Enum\DadaCancelSource.cs" />
@@ -271,6 +278,7 @@
     <Compile Include="Enum\OrderType.cs" />
     <Compile Include="Enum\PaymentType.cs" />
     <Compile Include="Enum\PrinterMode.cs" />
+    <Compile Include="Enum\PrintMode.cs" />
     <Compile Include="Enum\ProductFeature.cs" />
     <Compile Include="Enum\ProductStatus.cs" />
     <Compile Include="Enum\ServiceProvider.cs" />
@@ -283,11 +291,8 @@
     <Compile Include="EntityPartial\ProductPartial.cs" />
     <Compile Include="EntityPartial\PrinterPartial.cs" />
     <Compile Include="EntityPartial\OrderPartial.cs" />
-    <Compile Include="Extension\UtilExtend.cs" />
     <Compile Include="Code\ApplicationObject.cs" />
     <Compile Include="Code\Printer.cs" />
-    <Compile Include="Redis\OrderType.cs" />
-    <Compile Include="Redis\RedisHelper.cs" />
     <Compile Include="Uc\AddDesk.xaml.cs">
       <DependentUpon>AddDesk.xaml</DependentUpon>
     </Compile>
@@ -312,8 +317,29 @@
     <Compile Include="Uc\CateringProduct.xaml.cs">
       <DependentUpon>CateringProduct.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\ChineseFood.xaml.cs">
+      <DependentUpon>ChineseFood.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\ChineseFoodDesk.xaml.cs">
+      <DependentUpon>ChineseFoodDesk.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\ChineseFoodDetail.xaml.cs">
+      <DependentUpon>ChineseFoodDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\ChineseFoodOrder.xaml.cs">
+      <DependentUpon>ChineseFoodOrder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\ChineseFoodPayment.xaml.cs">
+      <DependentUpon>ChineseFoodPayment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\ChineseFoodProduct.xaml.cs">
+      <DependentUpon>ChineseFoodProduct.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\ConfirmDialog.xaml.cs">
       <DependentUpon>ConfirmDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\DeskNumber.xaml.cs">
+      <DependentUpon>DeskNumber.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uc\DeskSetting.xaml.cs">
       <DependentUpon>DeskSetting.xaml</DependentUpon>
@@ -352,6 +378,8 @@
       <DependentUpon>SystemSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\ChineseFoodDetailViewModel.cs" />
+    <Compile Include="ViewModel\ChineseFoodViewModel.cs" />
     <Compile Include="ViewModel\EditStaffViewModel.cs" />
     <Compile Include="ViewModel\StaffViewModel.cs" />
     <Compile Include="ViewModel\ContorllerItem.cs" />
@@ -386,7 +414,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Extension\NotifyPropertyChangedExtension.cs" />
-    <Compile Include="Helper\LogHelper.cs" />
     <Compile Include="Helper\UtilHelper.cs" />
     <Compile Include="Helper\ShowOperation.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -429,7 +456,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Uc\ChineseFood.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodDesk.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodOrder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodPayment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodProduct.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Uc\ConfirmDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\DeskNumber.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -560,6 +615,7 @@
       <Name>JdCat.CatClient.Service</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

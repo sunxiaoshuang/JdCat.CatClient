@@ -12,7 +12,7 @@ namespace Jiandanmao.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "#555";
-            var quantity = (int)value;
+            var quantity = int.Parse(value.ToString());
             if (quantity > 0)
             {
                 return "#fff";

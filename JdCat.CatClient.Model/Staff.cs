@@ -46,6 +46,5 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public int BusinessId { get; set; }
 
-
     }
 }

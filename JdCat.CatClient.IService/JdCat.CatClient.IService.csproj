@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JdCat.CatClient.IService</RootNamespace>
     <AssemblyName>JdCat.CatClient.IService</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IBaseService.cs" />
+    <Compile Include="IOrderService.cs" />
+    <Compile Include="IPaymentTypeService.cs" />
     <Compile Include="IUtilService.cs" />
     <Compile Include="IStaffService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -19,6 +19,15 @@ namespace JdCat.CatClient.Model.Enum
         /// <summary>
         /// 微信
         /// </summary>
-        Wechat = 2
+        Wechat = 2,
+        /// <summary>
+        /// 现金
+        /// </summary>
+        Money = 3,
+        /// <summary>
+        /// 其他
+        /// </summary>
+        Other = 4
+
     }
 }

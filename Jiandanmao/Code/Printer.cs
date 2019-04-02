@@ -1,5 +1,9 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
+using Jiandanmao.Entity;
 using Jiandanmao.Enum;
+using Jiandanmao.Helper;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -244,6 +248,29 @@ namespace Jiandanmao.Code
         {
             _printQueue.Add(order);
         }
+        /// <summary>
+        /// 打印堂食订单
+        /// </summary>
+        /// <param name="order"></param>
+        public void Print(TangOrder order, PrintOption option)
+        {
+            lock (GetLock(IP))
+            {
+                try
+                {
+                    var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    socket.Connect(new IPEndPoint(IPAddress.Parse(IP), Port));
+                    PrintOrder(order, socket, option);
+                    socket.Close();
+                }
+                catch (SocketException ex)
+                {
+                    LogHelper.AddLog($"堂食订单打印异常：{ex.Message}");
+                    throw new Exception($"打印机[{Name}]连接异常");
+                }
+                Thread.Sleep(10);
+            }
+        }
 
         private Task PrintTask { get; set; }
         /// <summary>
@@ -270,6 +297,7 @@ namespace Jiandanmao.Code
                                 {
                                     var order = _printQueue.FirstOrDefault();
                                     if (order == null) break;
+                                    if (order.Products == null || order.Products.Count == 0 || Foods.Count == 0) break;
                                     ctl.Dispatcher.Invoke(() =>
                                     {
                                         PrintOrder(order, socket);
@@ -329,10 +357,6 @@ namespace Jiandanmao.Code
         /// <param name="socket"></param>
         private void PrintOrder(Order order, Socket socket)
         {
-            if (Type == 2)
-            {
-                if (order.Products.Count == 0 || Foods.Count == 0) return;
-            }
             if (Type == 1)
             {
                 ReceptionPrint(order, socket);
@@ -340,6 +364,22 @@ namespace Jiandanmao.Code
             else if (Type == 2)
             {
                 Backstage(order, socket);
+            }
+        }
+        /// <summary>
+        /// 打印订单（堂食）
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="socket"></param>
+        private void PrintOrder(TangOrder order, Socket socket, PrintOption option)
+        {
+            if (Type == 1)
+            {
+                ReceptionPrint(order, socket, option);
+            }
+            else if (Type == 2)
+            {
+                Backstage(order, socket, option);
             }
         }
         /// <summary>
@@ -454,16 +494,118 @@ namespace Jiandanmao.Code
             bufferArr.ForEach(a => socket.Send(a));
         }
         /// <summary>
+        /// 前台打印（堂食订单）
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="socket"></param>
+        private void ReceptionPrint(TangOrder order, Socket socket, PrintOption option)
+        {
+            var bufferArr = new List<byte[]>
+            {
+                // 打印当日序号
+                PrinterCmdUtils.AlignCenter(),
+                PrinterCmdUtils.FontSizeSetBig(2),
+                TextToByte(ApplicationObject.App.Business.Name),
+                PrinterCmdUtils.NextLine(),
+                TextToByte(option.Title??"结账单"),
+                PrinterCmdUtils.NextLine()
+            };
+            // 餐桌
+            if (order.DeskId != null)
+            {
+                bufferArr.Add(PrinterCmdUtils.AlignLeft());
+                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight($"餐桌：{order.DeskName}", $"人数：{order.PeopleNumber}", fontSize: 2));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
+            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+            // 订单编号
+            bufferArr.Add(TextToByte($"订单编号：{order.Code}"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 订单编号
+            bufferArr.Add(TextToByte($"下单时间：{order.CreateTime:yyyy-MM-dd HH:mm:ss}"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 服务员
+            bufferArr.Add(TextToByte($"收银员：{order.StaffName}"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 备注
+            if (!string.IsNullOrEmpty(order.Remark))
+            {
+                bufferArr.Add(TextToByte($"备注：{order.Remark}"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
+            // 商品分隔
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Format));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 打印商品
+            foreach (var product in option.Products)
+            {
+                var buffer = ProductLine(product);
+                buffer.ForEach(a =>
+                {
+                    bufferArr.Add(a);
+                    bufferArr.Add(PrinterCmdUtils.NextLine());
+                });
+            }
+            // 分隔
+            bufferArr.Add(PrinterCmdUtils.SplitLine("-", Format));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 金额
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("餐位费：", order.MealFee.ToString()));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("原价：", order.OriginalAmount.ToString()));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount).ToString()));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", order.Amount.ToString()));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 分隔
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Format));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 打印时间
+            bufferArr.Add(TextToByte($"打印时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(TextToByte(ApplicationObject.App.Business.Name));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(TextToByte($"电话：{ApplicationObject.App.Business.Mobile}"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(TextToByte($"地址：{ApplicationObject.App.Business.Address}"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.AlignCenter());
+            bufferArr.Add(TextToByte($"谢谢您的惠顾"));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.AlignLeft());
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+
+            // 切割
+            bufferArr.Add(PrinterCmdUtils.FeedPaperCutAll());
+
+            // 打印
+            bufferArr.ForEach(a => socket.Send(a));
+        }
+
+        /// <summary>
         /// 后台打印
         /// </summary>
         /// <param name="order"></param>
         /// <param name="socket"></param>
-        private void Backstage(Order order, Socket socket)
+        private void Backstage<T>(T order, Socket socket, PrintOption option = null) where T : class
         {
+            var printSign = string.Empty;
+            if (order is TangOrder)
+            {
+                printSign = "Tang";
+            }
             var enumName = System.Enum.GetName(typeof(PrinterMode), Mode);
-            var type = System.Type.GetType($"Jiandanmao.Code.{enumName}Print");
-            var obj = (BackstagePrint)Activator.CreateInstance(type, order, this, socket);
-            obj.Print();
+            var type = System.Type.GetType($"Jiandanmao.Code.{printSign}{enumName}Print");
+            if (order is Order)
+            {
+                ((BackstagePrint)Activator.CreateInstance(type, order, this, socket)).Print();
+            }
+            else
+            {
+                ((TangBackstagePrint)Activator.CreateInstance(type, order, this, socket, option)).Print();
+            }
         }
 
         /// <summary>
@@ -525,6 +667,31 @@ namespace Jiandanmao.Code
             }
             var middle = "*" + Convert.ToDouble(product.Quantity);
             var right = Convert.ToDouble(product.Price) + "";
+            var place = string.Empty;
+            for (int i = 0; i < maxRightLen - middle.Length - right.Length; i++)
+            {
+                place += " ";
+            }
+            right = middle + place + right;
+
+            var buffer = PrinterCmdUtils.PrintLineLeftRight(left, right, fontSize: fontSize);
+            return new List<byte[]> { buffer };
+        }
+
+        /// <summary>
+        /// 打印订单商品
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        private List<byte[]> ProductLine(TangOrderProduct product, int fontSize = 1)
+        {
+            var left = product.Name;
+            if (!string.IsNullOrEmpty(product.Description))
+            {
+                left += "(" + product.Description + ")";
+            }
+            var middle = "*" + Convert.ToDouble(product.Quantity);
+            var right = Convert.ToDouble(product.Amount) + "";
             var place = string.Empty;
             for (int i = 0; i < maxRightLen - middle.Length - right.Length; i++)
             {

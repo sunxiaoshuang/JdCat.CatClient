@@ -1,4 +1,6 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
+using Jiandanmao.Entity;
 using Jiandanmao.Enum;
 using System;
 using System.Globalization;
@@ -11,11 +13,11 @@ namespace Jiandanmao.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is StoreOrder order && order.Status != StoreOrderStatus.Ordering)
+            if(value is TangOrder order && order.OrderStatus != TangOrderStatus.Ordering)
             {
                 return Visibility.Visible;
             }
-            return Visibility.Hidden;
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

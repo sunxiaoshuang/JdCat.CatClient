@@ -11,7 +11,6 @@ namespace Jiandanmao.Entity
     [Table("StoreOrder")]
     public class StoreOrder : ClientBaseEntity
     {
-        public string Name { get; set; }
         /// <summary>
         /// 订单编号
         /// </summary>

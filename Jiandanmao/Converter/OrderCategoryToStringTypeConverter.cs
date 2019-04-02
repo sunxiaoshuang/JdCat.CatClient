@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows.Data;
 using Jiandanmao.Extension;
 using Jiandanmao.Enum;
+using JdCat.CatClient.Common;
 
 namespace Jiandanmao.Converter
 {

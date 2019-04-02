@@ -2,8 +2,6 @@
 using JdCat.CatClient.IService;
 using JdCat.CatClient.Service;
 using Jiandanmao.Code;
-using Jiandanmao.DataBase;
-using Jiandanmao.Redis;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -46,6 +44,9 @@ namespace Jiandanmao
             var conn = ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["RedisConnectionString"].ConnectionString);
             builder.Register<IConnectionMultiplexer>(a => conn).SingleInstance();
             builder.RegisterType<StaffService>().As<IStaffService>();
+            builder.RegisterType<OrderService>().As<IOrderService>();
+            builder.RegisterType<UtilService>().As<IUtilService>();
+            builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
             ApplicationObject.App.DataBase = builder.Build();
         }
     }

@@ -377,7 +377,7 @@ namespace Jiandanmao.Code
         }
 
         /// <summary>
-        /// 打印一行，左右两边对齐
+        /// 打印一行，左右两边对齐（如果超出，则左边换行）
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -398,19 +398,6 @@ namespace Jiandanmao.Code
             }
             else
             {
-                //var times = 1;
-                //while (true)
-                //{
-                //    if (formatLen * times + len > 0)
-                //    {
-                //        break;
-                //    }
-                //    times++;
-                //}
-                //for (int i = 0; i < (formatLen * times + len) / fontSize; i++)
-                //{
-                //    left += " ";
-                //}
                 var rightWidth = (zhRight * 2 + enRight) * fontSize;
                 var leftWidth = formatLen - rightWidth;
                 var spaceLen = rightWidth / fontSize;
@@ -467,6 +454,96 @@ namespace Jiandanmao.Code
                             else
                             {
                                 line1 += spaceChar;
+                            }
+                            content += line1;
+                            rowIndex++;
+                            index = index + i;
+                            break;
+                        }
+                    }
+
+                }
+            }
+            return Encoding.GetEncoding("gbk").GetBytes(left + right);
+        }
+        /// <summary>
+        /// 打印一行，左右两边对齐（如果超出，则右边换行）
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static byte[] PrintLineLeftRight2(string left, string right, int formatLen = 48, int fontSize = 1)
+        {
+            var zhLeft = CalcZhQuantity(left);          // 左边文本的中文字符长度
+            var enLeft = left.Length - zhLeft;          // 左边文本的其他字符长度
+            var zhRight = CalcZhQuantity(right);        // 右边文本的中文字符长度
+            var enRight = right.Length - zhRight;       // 右边文本的其他字符长度
+            var len = formatLen - ((zhLeft * 2 + enLeft + zhRight * 2 + enRight) * fontSize);            // 缺少的字符长度
+            if (len > 0)
+            {
+                for (int i = 0; i < len / fontSize; i++)
+                {
+                    left += " ";
+                }
+            }
+            else
+            {
+                var leftWidth = (zhLeft * 2 + enLeft) * fontSize;
+                var rightWidth = formatLen - leftWidth;
+                var spaceLen = leftWidth / fontSize;
+                var spaceChar = string.Empty;
+                for (int i = 0; i < spaceLen; i++)
+                {
+                    spaceChar += " ";
+                }
+                var content = string.Empty;
+                var index = 0;
+                var rowIndex = 1;
+                while (true)
+                {
+                    var line = string.Empty;
+                    for (int i = 0; i < int.MaxValue; i++)
+                    {
+                        if (index + i == right.Length)
+                        {
+                            return Encoding.GetEncoding("gbk").GetBytes(content + line);
+                        }
+                        line += right.Substring(index + i, 1);
+                        var zh = CalcZhQuantity(line);
+                        var en = line.Length - zh;
+                        var charLen = (zh * 2 + en) * fontSize;
+                        if (rightWidth == charLen)
+                        {
+                            content += line;
+                            if (rowIndex == 1)
+                            {
+                                content = left + content;
+                            }
+                            else
+                            {
+                                content = spaceChar + content;
+                            }
+                            rowIndex++;
+                            index = index + i + 1;
+                            break;
+                        }
+                        if (charLen > rightWidth)
+                        {
+                            var line1 = line.Substring(0, line.Length - 1);
+                            zh = CalcZhQuantity(line1);
+                            en = line1.Length - zh;
+                            charLen = (zh * 2 + en) * fontSize;
+                            for (var j = 0; j < (rightWidth - charLen) / fontSize; j++)
+                            {
+                                line1 = " " + line1;
+                            }
+                            if (rowIndex == 1)
+                            {
+                                line1 = left + line1;
+                            }
+                            else
+                            {
+                                line1 = spaceChar + line1;
                             }
                             content += line1;
                             rowIndex++;

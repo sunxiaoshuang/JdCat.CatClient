@@ -41,18 +41,24 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.ColumnSpan="3" FontFamily="Arial,SimSun,宋体,Sans-serif,Serif">选择关联菜品</TextBlock>
 
-        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Types}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <!--<materialDesign:Card Width="123" MouseUp="CardType_MouseUp" materialDesign:ShadowAssist.ShadowDepth="Depth2" Padding="32">
-                        <TextBlock TextWrapping="Wrap" Text="{Binding Name}"></TextBlock>
-                    </materialDesign:Card>-->
-                    <StackPanel Width="110" Height="50" MouseUp="CardType_MouseUp" Orientation="Horizontal" Background="{Binding IsCheck, Converter={StaticResource pctc}}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" Padding="10" TextWrapping="Wrap"></TextBlock>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Types}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border x:Name="Border" Width="110" Cursor="Hand" Height="50" BorderBrush="#ccc" Margin="0 0 0 10" BorderThickness="1" MouseUp="CardType_MouseUp" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Name}" x:Name="TextBlock" ToolTip="{Binding Name}" Padding="10" TextWrapping="Wrap"></TextBlock>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsCheck}" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#ff5722" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#ff5722" />
+                                <Setter TargetName="TextBlock" Property="Foreground" Value="#fff" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
         <Border Grid.Row="1"  Grid.Column="1" Width="2" VerticalAlignment="Stretch" Background="#FFCCCCCC"></Border>
 
@@ -60,15 +66,15 @@
             <StackPanel>
                 <CheckBox Margin="8 0 0 0" x:Name="allCheck" HorizontalAlignment="Left" Command="{Binding CheckCommand}" Width="50" CommandParameter="{Binding ElementName=allCheck}" Content="全选">
                 </CheckBox>
-                <ListBox HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Products}">
-                    <ListBox.ItemsPanel>
+                <ItemsControl HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Products}">
+                    <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel/>
                         </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                            <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth2" Margin="10 10 0 0">
                                 <Grid Margin="8" Width="110" Height="70">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
@@ -82,8 +88,8 @@
                                 </Grid>
                             </materialDesign:Card>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">

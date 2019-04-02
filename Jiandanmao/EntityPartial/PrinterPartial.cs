@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Extension;
+﻿using JdCat.CatClient.Common;
+using Jiandanmao.Extension;
 using Jiandanmao.Uc;
 using Jiandanmao.ViewModel;
 using MaterialDesignThemes.Wpf;

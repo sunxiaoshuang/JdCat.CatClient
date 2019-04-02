@@ -64,5 +64,6 @@ namespace JdCat.CatClient.Common
             strResult = strResult.Replace("-", "");
             return strResult.ToLower();
         }
+
     }
 }

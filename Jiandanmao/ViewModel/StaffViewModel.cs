@@ -10,12 +10,12 @@ using Jiandanmao.Code;
 using Jiandanmao.Extension;
 using MaterialDesignThemes.Wpf.Transitions;
 using Jiandanmao.Entity;
-using Jiandanmao.DataBase;
 using Autofac;
 using Jiandanmao.Enum;
 using Jiandanmao.Helper;
 using JdCat.CatClient.IService;
 using JdCat.CatClient.Model;
+using JdCat.CatClient.Common;
 
 namespace Jiandanmao.ViewModel
 {

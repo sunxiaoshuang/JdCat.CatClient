@@ -34,11 +34,11 @@
     <smtx:XamlDisplay Key="transitions" Height="Auto">
         <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transitioner">
             <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
-                <local:CateringDesk DataContext="{Binding}" />
+                <local:ChineseFoodDesk DataContext="{Binding}" x:Name="ucDesk" />
             </materialDesign:TransitionerSlide>
 
             <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect SlideInFromRight}">
-                <local:CateringOrder DataContext="{Binding}" />
+                <local:ChineseFoodOrder DataContext="{Binding}" x:Name="ucOrder" />
             </materialDesign:TransitionerSlide>
 
         </materialDesign:Transitioner>

@@ -11,6 +11,7 @@ using Jiandanmao.Uc;
 using Jiandanmao.Code;
 using Jiandanmao.Extension;
 using Jiandanmao.Entity;
+using JdCat.CatClient.Common;
 
 namespace Jiandanmao.ViewModel
 {

@@ -25,7 +25,7 @@
 
             <convert:DeskQuantityTypeConverter x:Key="dqtc" />
             <convert:DateTimeToStringValueConverter x:Key="dtts" />
-            <convert:StoreOrderOperate1TypeConverter x:Key="sootc1" />
+            <convert:StoreOrderOperateTypeConverter x:Key="sootc1" />
             <convert:StoreOrderOperate2TypeConverter x:Key="sootc2" />
 
             <Style TargetType="{x:Type TextBlock}">

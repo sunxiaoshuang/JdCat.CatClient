@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace Jiandanmao.Converter
 {
-    public class DeskTypeCheckColorTypeConverter : IValueConverter
+    public class ButtonColorTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

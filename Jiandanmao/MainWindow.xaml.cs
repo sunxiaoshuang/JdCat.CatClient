@@ -1,5 +1,7 @@
-﻿using Jiandanmao.Code;
+﻿using JdCat.CatClient.Common;
+using Jiandanmao.Code;
 using Jiandanmao.Entity;
+using Jiandanmao.Helper;
 using Jiandanmao.Pages;
 using Jiandanmao.Uc;
 using Jiandanmao.ViewModel;
@@ -24,6 +26,7 @@ namespace Jiandanmao
     /// </summary>
     public partial class MainWindow
     {
+        Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
         public MainWindow()
         {
             // 初始化登录窗口
@@ -47,14 +50,17 @@ namespace Jiandanmao
         {
             InitTimer();
             title.Text = ApplicationObject.App.Business.Name;
+            InitUploadTimer();
         }
+
+        #region 定时打印外卖订单
 
         private static DispatcherTimer readDataTimer = new DispatcherTimer();
         private static string orderUrl;
         private static bool isError = false;    // 记录是否出错
         private void InitTimer()
         {
-            if (!ApplicationObject.App.ClientData.IsReceive) return;            // 如果不接受外卖订单，则直接退出
+            if (!ApplicationObject.App.ClientData.IsReceive) return;            // 如果不接收外卖订单，则直接退出
             readDataTimer.Tick += new EventHandler(HandleOrder);
             readDataTimer.Interval = new TimeSpan(0, 0, 0, 5);          // 5秒取一次
             orderUrl = string.Format(ApplicationObject.App.Config.OrderUrl, ApplicationObject.App.Business.ID);
@@ -114,6 +120,28 @@ namespace Jiandanmao
                 player.Close();
             };
         }
+        #endregion
+
+        #region 定时上传客户端数据
+        private static DispatcherTimer uploadTimer = new DispatcherTimer();
+        private void InitUploadTimer()
+        {
+            if (!ApplicationObject.App.ClientData.IsHost) return;       // 如果不是主收银台，则直接退出
+            uploadTimer.Interval = new TimeSpan(0, 0, 10, 0);          // 10分钟上传一次
+            uploadTimer.Tick += async (sender, e) => {
+                try
+                {
+                    await ApplicationObject.UploadData();
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.AddLog($"数据同步出错：{ex.Message}");
+                }
+            };
+            uploadTimer.Start();
+        }
+        #endregion
+
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -131,6 +159,34 @@ namespace Jiandanmao
         private void MenuPopupButton_OnClick(object sender, RoutedEventArgs e)
         {
             MessageTips(((ButtonBase)sender).Content.ToString(), null, null);
+        }
+
+        private async void Sync_Click(object obj, RoutedEventArgs e)
+        {
+            var loadingDialog = new LoadingDialog();
+
+            await DialogHost.Show(loadingDialog, "RootDialog", delegate (object sender, DialogOpenedEventArgs args)
+            {
+                async void start()
+                {
+                    await Mainthread.BeginInvoke((Action)async delegate ()
+                    {
+                        try
+                        {
+                            await ApplicationObject.UploadData();
+                            MainSnackbar.MessageQueue.Enqueue("同步成功");
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.AddLog($"数据同步出错：{ex.Message}");
+                            MainSnackbar.MessageQueue.Enqueue("同步出错");
+                        }
+                        args.Session.Close();
+                    });
+                }
+
+                new Thread(start).Start();
+            });
         }
 
         private void AutoStart_Click(object sender, RoutedEventArgs e)
@@ -151,7 +207,7 @@ namespace Jiandanmao
             {
                 MessageBox.Show(ex.ToString());
             }
-            
+
 
 
             //RegistryKey run = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");

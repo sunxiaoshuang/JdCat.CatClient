@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>e0c307af-bc80-40dd-bb97-ca58670ad08e</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>ApplicationSetup</OutputName>
+    <OutputName>Jiandanmao</OutputName>
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -35,19 +35,135 @@
     <Content Include="Assets\Video\4.mp3" />
     <Content Include="bb.bmp" />
     <Content Include="favicon.ico" />
+    <Content Include="Lib\Autofac.dll" />
     <Content Include="Lib\ControlzEx.dll" />
     <Content Include="Lib\Dragablz.dll" />
+    <Content Include="Lib\EntityFramework.dll" />
+    <Content Include="Lib\EntityFramework.SqlServer.dll" />
     <Content Include="Lib\ICSharpCode.AvalonEdit.dll" />
+    <Content Include="Lib\JdCat.CatClient.Common.dll" />
+    <Content Include="Lib\JdCat.CatClient.IService.dll" />
+    <Content Include="Lib\JdCat.CatClient.Model.dll" />
+    <Content Include="Lib\JdCat.CatClient.Service.dll" />
     <Content Include="Lib\Jiandanmao.exe.config" />
     <Content Include="Lib\keyboard.exe" />
     <Content Include="Lib\MahApps.Metro.dll" />
     <Content Include="Lib\MaterialDesignColors.dll" />
     <Content Include="Lib\MaterialDesignThemes.Wpf.dll" />
+    <Content Include="Lib\Microsoft.Win32.Primitives.dll" />
+    <Content Include="Lib\netstandard.dll" />
     <Content Include="Lib\Newtonsoft.Json.dll" />
+    <Content Include="Lib\Pipelines.Sockets.Unofficial.dll" />
     <Content Include="Lib\ShowMeTheXAML.AvalonEdit.dll" />
     <Content Include="Lib\ShowMeTheXAML.dll" />
+    <Content Include="Lib\SQLite.CodeFirst.dll" />
+    <Content Include="Lib\StackExchange.Redis.dll" />
+    <Content Include="Lib\System.AppContext.dll" />
+    <Content Include="Lib\System.Buffers.dll" />
+    <Content Include="Lib\System.Collections.Concurrent.dll" />
+    <Content Include="Lib\System.Collections.dll" />
+    <Content Include="Lib\System.Collections.NonGeneric.dll" />
+    <Content Include="Lib\System.Collections.Specialized.dll" />
+    <Content Include="Lib\System.ComponentModel.dll" />
+    <Content Include="Lib\System.ComponentModel.EventBasedAsync.dll" />
+    <Content Include="Lib\System.ComponentModel.Primitives.dll" />
+    <Content Include="Lib\System.ComponentModel.TypeConverter.dll" />
+    <Content Include="Lib\System.Console.dll" />
+    <Content Include="Lib\System.Data.Common.dll" />
+    <Content Include="Lib\System.Data.SQLite.dll" />
+    <Content Include="Lib\System.Data.SQLite.EF6.dll" />
+    <Content Include="Lib\System.Data.SQLite.Linq.dll" />
+    <Content Include="Lib\System.Diagnostics.Contracts.dll" />
+    <Content Include="Lib\System.Diagnostics.Debug.dll" />
+    <Content Include="Lib\System.Diagnostics.FileVersionInfo.dll" />
+    <Content Include="Lib\System.Diagnostics.PerformanceCounter.dll" />
+    <Content Include="Lib\System.Diagnostics.Process.dll" />
+    <Content Include="Lib\System.Diagnostics.StackTrace.dll" />
+    <Content Include="Lib\System.Diagnostics.TextWriterTraceListener.dll" />
+    <Content Include="Lib\System.Diagnostics.Tools.dll" />
+    <Content Include="Lib\System.Diagnostics.TraceSource.dll" />
+    <Content Include="Lib\System.Diagnostics.Tracing.dll" />
+    <Content Include="Lib\System.Drawing.Primitives.dll" />
+    <Content Include="Lib\System.Dynamic.Runtime.dll" />
+    <Content Include="Lib\System.Globalization.Calendars.dll" />
+    <Content Include="Lib\System.Globalization.dll" />
+    <Content Include="Lib\System.Globalization.Extensions.dll" />
+    <Content Include="Lib\System.IO.Compression.dll" />
+    <Content Include="Lib\System.IO.Compression.ZipFile.dll" />
+    <Content Include="Lib\System.IO.dll" />
+    <Content Include="Lib\System.IO.FileSystem.dll" />
+    <Content Include="Lib\System.IO.FileSystem.DriveInfo.dll" />
+    <Content Include="Lib\System.IO.FileSystem.Primitives.dll" />
+    <Content Include="Lib\System.IO.FileSystem.Watcher.dll" />
+    <Content Include="Lib\System.IO.IsolatedStorage.dll" />
+    <Content Include="Lib\System.IO.MemoryMappedFiles.dll" />
+    <Content Include="Lib\System.IO.Pipelines.dll" />
+    <Content Include="Lib\System.IO.Pipes.dll" />
+    <Content Include="Lib\System.IO.UnmanagedMemoryStream.dll" />
+    <Content Include="Lib\System.Linq.dll" />
+    <Content Include="Lib\System.Linq.Expressions.dll" />
+    <Content Include="Lib\System.Linq.Parallel.dll" />
+    <Content Include="Lib\System.Linq.Queryable.dll" />
+    <Content Include="Lib\System.Memory.dll" />
     <Content Include="Lib\System.Net.Http.dll" />
+    <Content Include="Lib\System.Net.NameResolution.dll" />
+    <Content Include="Lib\System.Net.NetworkInformation.dll" />
+    <Content Include="Lib\System.Net.Ping.dll" />
+    <Content Include="Lib\System.Net.Primitives.dll" />
+    <Content Include="Lib\System.Net.Requests.dll" />
+    <Content Include="Lib\System.Net.Security.dll" />
+    <Content Include="Lib\System.Net.Sockets.dll" />
+    <Content Include="Lib\System.Net.WebHeaderCollection.dll" />
+    <Content Include="Lib\System.Net.WebSockets.Client.dll" />
+    <Content Include="Lib\System.Net.WebSockets.dll" />
+    <Content Include="Lib\System.Numerics.Vectors.dll" />
+    <Content Include="Lib\System.ObjectModel.dll" />
+    <Content Include="Lib\System.Reflection.dll" />
+    <Content Include="Lib\System.Reflection.Extensions.dll" />
+    <Content Include="Lib\System.Reflection.Primitives.dll" />
+    <Content Include="Lib\System.Resources.Reader.dll" />
+    <Content Include="Lib\System.Resources.ResourceManager.dll" />
+    <Content Include="Lib\System.Resources.Writer.dll" />
+    <Content Include="Lib\System.Runtime.CompilerServices.Unsafe.dll" />
+    <Content Include="Lib\System.Runtime.CompilerServices.VisualC.dll" />
+    <Content Include="Lib\System.Runtime.dll" />
+    <Content Include="Lib\System.Runtime.Extensions.dll" />
+    <Content Include="Lib\System.Runtime.Handles.dll" />
+    <Content Include="Lib\System.Runtime.InteropServices.dll" />
+    <Content Include="Lib\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <Content Include="Lib\System.Runtime.Numerics.dll" />
+    <Content Include="Lib\System.Runtime.Serialization.Formatters.dll" />
+    <Content Include="Lib\System.Runtime.Serialization.Json.dll" />
+    <Content Include="Lib\System.Runtime.Serialization.Primitives.dll" />
+    <Content Include="Lib\System.Runtime.Serialization.Xml.dll" />
+    <Content Include="Lib\System.Security.Claims.dll" />
+    <Content Include="Lib\System.Security.Cryptography.Algorithms.dll" />
+    <Content Include="Lib\System.Security.Cryptography.Csp.dll" />
+    <Content Include="Lib\System.Security.Cryptography.Encoding.dll" />
+    <Content Include="Lib\System.Security.Cryptography.Primitives.dll" />
+    <Content Include="Lib\System.Security.Cryptography.X509Certificates.dll" />
+    <Content Include="Lib\System.Security.Principal.dll" />
+    <Content Include="Lib\System.Security.SecureString.dll" />
+    <Content Include="Lib\System.Text.Encoding.dll" />
+    <Content Include="Lib\System.Text.Encoding.Extensions.dll" />
+    <Content Include="Lib\System.Text.RegularExpressions.dll" />
+    <Content Include="Lib\System.Threading.Channels.dll" />
+    <Content Include="Lib\System.Threading.dll" />
+    <Content Include="Lib\System.Threading.Overlapped.dll" />
+    <Content Include="Lib\System.Threading.Tasks.dll" />
+    <Content Include="Lib\System.Threading.Tasks.Extensions.dll" />
+    <Content Include="Lib\System.Threading.Tasks.Parallel.dll" />
+    <Content Include="Lib\System.Threading.Thread.dll" />
+    <Content Include="Lib\System.Threading.ThreadPool.dll" />
+    <Content Include="Lib\System.Threading.Timer.dll" />
+    <Content Include="Lib\System.ValueTuple.dll" />
     <Content Include="Lib\System.Windows.Interactivity.dll" />
+    <Content Include="Lib\System.Xml.ReaderWriter.dll" />
+    <Content Include="Lib\System.Xml.XDocument.dll" />
+    <Content Include="Lib\System.Xml.XmlDocument.dll" />
+    <Content Include="Lib\System.Xml.XmlSerializer.dll" />
+    <Content Include="Lib\System.Xml.XPath.dll" />
+    <Content Include="Lib\System.Xml.XPath.XDocument.dll" />
     <Content Include="license.rtf" />
     <Content Include="packages.config" />
     <Content Include="top.bmp" />
@@ -56,6 +172,38 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JdCat.CatClient.Common\JdCat.CatClient.Common.csproj">
+      <Name>JdCat.CatClient.Common</Name>
+      <Project>{c5fc20e9-8825-43de-8255-b8e8cb2a6c9a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\JdCat.CatClient.IService\JdCat.CatClient.IService.csproj">
+      <Name>JdCat.CatClient.IService</Name>
+      <Project>{09924363-f637-474f-8b67-ccabe5248036}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\JdCat.CatClient.Model\JdCat.CatClient.Model.csproj">
+      <Name>JdCat.CatClient.Model</Name>
+      <Project>{0c52aff4-79c9-4af9-a890-247d8d6777f1}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\JdCat.CatClient.Service\JdCat.CatClient.Service.csproj">
+      <Name>JdCat.CatClient.Service</Name>
+      <Project>{49597bce-d2b7-46d6-b066-f89c25c1ef68}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Jiandanmao\Jiandanmao.csproj">
       <Name>Jiandanmao</Name>
       <Project>{3a212d39-33c4-411c-a7a6-3570a5d907a3}</Project>

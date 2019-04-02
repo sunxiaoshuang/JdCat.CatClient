@@ -1,5 +1,6 @@
 ﻿using JdCat.CatClient.IService;
 using JdCat.CatClient.Model;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -23,10 +24,8 @@ namespace JdCat.CatClient.Service
 
         public void SaveStaff(Staff entity)
         {
-            if (!entity.IsExist())
-            {
-                entity.Code = CreateStaffCode();
-            }
+            var codeKey = AddKeyPrefix("StaffCode", typeof(RedisEntity).Name);
+            entity.Code = $"{DatabaseConfig.StaffPrefix}-{Database.StringIncrement(codeKey).ToString().PadLeft(7, '0')}";
             Save(entity);
             var key = AddKeyPrefix($"Alise:{entity.Alise}");
             Database.StringSet(key, entity.ObjectId);
@@ -38,21 +37,19 @@ namespace JdCat.CatClient.Service
             return Database.KeyExists(key);
         }
 
-
-        /// <summary>
-        /// 创建员工编号
-        /// </summary>
-        /// <returns></returns>
-        private string CreateStaffCode()
+        public Staff GetStaffByAlise(string alise)
         {
-            var lastObj = GetLastEntity();
-            var max = 0;
-            if(lastObj != null)
+            var businessIds = Database.SetMembers($"{DatabaseConfig.KeyPrefix}:Business");
+            if (businessIds.Length == 0) return null;
+            foreach (var id in businessIds)
             {
-                max = Convert.ToInt32(lastObj.Code.Split('-')[1]);
+                var key = $"{DatabaseConfig.KeyPrefix}:{id}:Staff:Alise:{alise}";
+                var result = Database.StringGet(key);
+                if (result.IsNull) continue;
+                var staffKey = $"{DatabaseConfig.KeyPrefix}:{id}:Staff:{result}";
+                return JsonConvert.DeserializeObject<Staff>(Database.StringGet(staffKey));
             }
-            max = max + 1;
-            return $"{DatabaseConfig.StaffPrefix}-{max.ToString().PadLeft(7, '0')}";
+            return null;
         }
 
     }

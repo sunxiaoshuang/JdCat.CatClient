@@ -1,0 +1,135 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.ChineseFoodProduct"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+             xmlns:local="clr-namespace:Jiandanmao.Uc"
+             xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             x:Name="ChineseFoodProductControl"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListView.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <convert:ButtonColorTypeConverter x:Key="dttc" />
+
+            <convert:ProductTypeCheckColorTypeConverter x:Key="pctc" />
+            <convert:DeskQuantityTypeConverter x:Key="dqtc" />
+            <convert:ProductBackgroundTypeConverter x:Key="pbtc" />
+            <convert:ProductFontColorTypeConverter x:Key="pfctc" />
+            <convert:BlockCheckBackgroundTypeConverter x:Key="bcbtc" />
+
+
+            <Style TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource MaterialDesignRaisedButton}" x:Key="ButtonStyle">
+                <Setter Property="Height" Value="44"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    <Grid Margin="10 0 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+        <Grid Margin="10 -2 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Button Margin="0 0 50 0" Command="{Binding AllProductsCommand}" Background="{Binding IsAllProduct, Converter={StaticResource dttc}}" Style="{StaticResource ButtonStyle}">
+                全部
+            </Button>
+            <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Command="{Binding TypePreCommand}" CommandParameter="{Binding ElementName=scrollProductType}">
+                <materialDesign:PackIcon Kind="KeyboardArrowLeft" />
+            </Button>
+            <ScrollViewer Grid.Column="2" Margin="10 -4 10 0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" x:Name="scrollProductType">
+                <ListBox Grid.Column="2" ItemsSource="{Binding ProductTypes}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Button BorderThickness="0" Margin="0" Style="{StaticResource ButtonStyle}"
+                                        Background="{Binding DataContext.IsCheck, Converter={StaticResource dttc}, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}"
+                                        Command="{Binding ClickProductTypeCommand}"
+                                        CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}"
+                                        DataContext="{Binding DataContext, ElementName=ChineseFoodProductControl}" 
+                                        Content="{Binding DataContext.Name, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}" ></Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+            <Button Grid.Column="3" Style="{StaticResource ButtonStyle}" Command="{Binding TypeNextCommand}" CommandParameter="{Binding ElementName=scrollProductType}">
+                <materialDesign:PackIcon Kind="KeyboardArrowRight" />
+            </Button>
+        </Grid>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Products}" Width="Auto" Margin="0 10 0 0">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <materialDesign:Badged>
+                        <materialDesign:Badged.Badge>
+                            <TextBlock Text="{Binding SelectedQuantity}"></TextBlock>
+                        </materialDesign:Badged.Badge>
+                        <Button DataContext="{Binding DataContext, ElementName=ChineseFoodProductControl}"
+                                Command="{Binding AddProductCommand}"
+                                CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}"
+                                Background="{Binding DataContext.SelectedQuantity, Converter={StaticResource pbtc}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}" 
+                                Foreground="{Binding DataContext.SelectedQuantity, Converter={StaticResource pfctc}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}" 
+                                BorderThickness="0" Height="120" Width="120">
+                            <Button.Content>
+                                <Grid Height="100">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="20" />
+                                    </Grid.RowDefinitions>
+                                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding DataContext.Name, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}"></TextBlock>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="￥" />
+                                        <TextBlock Text="{Binding DataContext.Formats[0].Price, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Button.Content>
+                        </Button>
+                    </materialDesign:Badged>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center">整单备注：</TextBlock>
+            <TextBox Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}" Text="{Binding SelectedDesk.Order.Remark}" Margin="0 0 10 0" materialDesign:HintAssist.IsFloating="False"  VerticalAlignment="Top" Height="70" AcceptsReturn="True" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="LostFocus">
+                        <i:InvokeCommandAction Command="{Binding RemarkChangeCommand}" CommandParameter="{Binding SelectedDesk.Order}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>
+        </Grid>
+    </Grid>
+</UserControl>

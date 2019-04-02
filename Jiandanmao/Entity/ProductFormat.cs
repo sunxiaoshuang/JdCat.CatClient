@@ -20,19 +20,19 @@ namespace Jiandanmao.Entity
         /// <summary>
         /// 价格
         /// </summary>
-        public decimal? Price { get; set; }
+        public double Price { get; set; }
         /// <summary>
         /// 库存，默认：-1，无限库存
         /// </summary>
-        public decimal? Stock { get; set; } = -1;
+        public double Stock { get; set; } = -1;
         /// <summary>
         /// 包装盒价格
         /// </summary>
-        public decimal? PackingPrice { get; set; }
+        public double PackingPrice { get; set; }
         /// <summary>
         /// 包装盒数量
         /// </summary>
-        public decimal? PackingQuantity { get; set; }
+        public double PackingQuantity { get; set; }
         /// <summary>
         /// UPC码
         /// </summary>

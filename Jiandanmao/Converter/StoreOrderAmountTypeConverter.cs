@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+using Jiandanmao.Entity;
 using Jiandanmao.Enum;
 using System;
 using System.Globalization;
@@ -10,11 +11,8 @@ namespace Jiandanmao.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is StoreOrder order)
-            {
-                return "￥" + order.Amount;
-            }
-            return "";
+            if (value == null) return "";
+            return "￥" + value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

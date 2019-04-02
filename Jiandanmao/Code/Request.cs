@@ -1,9 +1,11 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+using Jiandanmao.Entity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -71,7 +73,7 @@ namespace Jiandanmao.Code
         /// <param name="postData"></param>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static async Task<T> GetData<T>(string url, StringContent postData = null, string method = "GET") where T : class,new()
+        public static async Task<T> GetData<T>(string url, StringContent postData = null, string method = "GET") where T : class, new()
         {
             var result = await HttpRequest(url, postData, method);
             return JsonConvert.DeserializeObject<T>(result);
@@ -86,6 +88,18 @@ namespace Jiandanmao.Code
         public static async Task<JsonData<Business>> Login(string code, string pwd)
         {
             var url = $"{ApiUrl}/Client/Login?code={code}&pwd={pwd}";
+            return await HttpRequest<Business>(url);
+        }
+
+        /// <summary>
+        /// 获取商户
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
+        public static async Task<JsonData<Business>> GetBusiness(int id)
+        {
+            var url = $"{ApiUrl}/Client/GetBusiness/{id}";
             return await HttpRequest<Business>(url);
         }
 
@@ -116,7 +130,7 @@ namespace Jiandanmao.Code
             var result = await HttpRequest<Order>(url);
             return result.Data;
         }
-        
+
         /// <summary>
         /// 获取商户客户端打印机列表
         /// </summary>
@@ -218,7 +232,7 @@ namespace Jiandanmao.Code
             var url = $"{ApiUrl}/Client/InitClient/{id}";
             return await GetData<RemoteDataObject>(url);
         }
-        
+
         /// <summary>
         /// 保存餐桌区域
         /// </summary>
@@ -290,6 +304,22 @@ namespace Jiandanmao.Code
             var result = await HttpRequest(url);
             return JsonConvert.DeserializeObject<JsonData>(result);
         }
+
+
+        #region 上传接口
+        public async static Task<JsonData<List<T>>> UploadData<T>(IEnumerable<T> list) where T : JdCat.CatClient.Model.BaseEntity, new()
+        {
+            var url = $"{ApiUrl}/Client/Upload{typeof(T).Name}";
+            var body = new StringContent(JsonConvert.SerializeObject(list));
+            var result = await HttpRequest<List<T>>(url, body, "POST");
+            result.Data.ForEach(a => {
+                var entity = list.FirstOrDefault(b => a.ObjectId == b.ObjectId);
+                if (entity == null) return;
+                entity.Id = a.Id;
+            });
+            return result;
+        }
+        #endregion
 
         #region 备注
         ///// <summary>

@@ -32,6 +32,6 @@ namespace JdCat.CatClient.Model
         /// <summary>
         /// 状态
         /// </summary>
-        public PaymentTypeStatus Status { get; set; }
+        public PaymentTypeStatus TypeStatus { get; set; }
     }
 }

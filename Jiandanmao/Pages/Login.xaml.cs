@@ -8,6 +8,11 @@ using System.Windows.Threading;
 using Jiandanmao.Uc;
 using Jiandanmao.Code;
 using Newtonsoft.Json;
+using Autofac;
+using JdCat.CatClient.IService;
+using JdCat.CatClient.Model;
+using JdCat.CatClient.Common;
+using Jiandanmao.Entity;
 
 namespace Jiandanmao.Pages
 {
@@ -33,10 +38,16 @@ namespace Jiandanmao.Pages
             {
                 System.IO.Directory.CreateDirectory(InfoDir);
             }
+            var logDir = System.IO.Path.Combine(Environment.CurrentDirectory, "Log");
+            if (!System.IO.Directory.Exists(logDir))
+            {
+                System.IO.Directory.CreateDirectory(logDir);
+            }
             ReadLastUser(out string name, out string password);
             NameTextBox.Text = name;
             PasswordBox.Password = password;
-            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
+            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
+            {
                 PasswordBox.Focus();
                 PasswordBox.SelectAll();
             }));
@@ -76,23 +87,49 @@ namespace Jiandanmao.Pages
             {
                 async void start()
                 {
-                    var result = await Request.Login(name, pw);
+                    /* 登录流程
+                       1. 首先检测是否员工登录
+                       2. 如果登录成功，则直接读取远程商户数据，进入收银员系统
+                       3. 如果登录不成功，则选择商户登录
+                       4. 如果仍然登录失败，则提示登录失败
+                       5. 如果登录成功，则进入管理员系统
+                     */
                     await Mainthread.BeginInvoke((Action)async delegate ()
                     {
-                        args.Session.Close(false);
-                        if (result.Success)
+                        Staff staff = null;
+                        Business business = null;
+                        using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
                         {
-                            var business = result.Data;
-                            ApplicationObject.App.Business = business;
-                            await ApplicationObject.App.Init();
-                            SaveLoginUser(name, pw);
-                            LoginSuccess = true;
-                            Close();
+                            var service = scope.Resolve<IStaffService>();
+                            staff = service.GetStaffByAlise(name);
+                        }
+                        if (staff != null && staff.Password == UtilHelper.MD5(pw))
+                        {
+                            business = (await Request.GetBusiness(staff.BusinessId)).Data;
+                            ApplicationObject.App.Staff = staff;
+                            ApplicationObject.App.IsAdmin = false;
                         }
                         else
                         {
-                            MessageTips(result.Msg);
+                            var result = await Request.Login(name, pw);
+                            if (result.Success)
+                            {
+                                business = result.Data;
+                                ApplicationObject.App.IsAdmin = true;
+                            }
+                            else
+                            {
+                                args.Session.Close();
+                                MessageTips(result.Msg);
+                                return;
+                            }
                         }
+                        args.Session.Close();
+                        ApplicationObject.App.Business = business;
+                        SaveLoginUser(name, pw);
+                        await ApplicationObject.App.Init();
+                        LoginSuccess = true;
+                        Close();
                     });
                 }
 
@@ -201,6 +238,10 @@ namespace Jiandanmao.Pages
             var user = new Tuple<string, string>(username, pwd);
             var userStr = JsonConvert.SerializeObject(user);
             System.IO.File.WriteAllText(System.IO.Path.Combine(InfoDir, "user.json"), userStr);
+            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            {
+                scope.Resolve<IUtilService>().SetLoginBusiness(ApplicationObject.App.Business.ID);
+            }
         }
     }
 }

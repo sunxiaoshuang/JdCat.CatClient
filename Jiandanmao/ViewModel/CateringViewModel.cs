@@ -10,10 +10,10 @@ using Jiandanmao.Code;
 using Jiandanmao.Extension;
 using MaterialDesignThemes.Wpf.Transitions;
 using Jiandanmao.Entity;
-using Jiandanmao.DataBase;
 using Autofac;
 using Jiandanmao.Enum;
 using Jiandanmao.Helper;
+using JdCat.CatClient.Common;
 
 namespace Jiandanmao.ViewModel
 {
@@ -185,8 +185,8 @@ namespace Jiandanmao.ViewModel
             var desk = (Desk)o;
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
-                var service = scope.Resolve<ClientDbService>();
-                service.Delete(desk.Order);
+                //var service = scope.Resolve<ClientDbService>();
+                //service.Delete(desk.Order);
             }
             Transitioner.SelectedIndex = 0;
             desk.Order = null;
@@ -195,26 +195,26 @@ namespace Jiandanmao.ViewModel
 
         private async void SubmitNumber(object o)
         {
-            Transitioner.SelectedIndex = 1;
-            if (Desk.Order == null)
-            {
-                using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
-                {
-                    var service = scope.Resolve<ClientDbService>();
-                    var order = new StoreOrder
-                    {
-                        Code = UtilHelper.CreateOrderCode(ApplicationObject.App.Business.ID),
-                        BusinessId = ApplicationObject.App.Business.ID,
-                        DeskId = Desk.Id,
-                        DeskName = Desk.Name,
-                        PeopleQuantity = PeopleNumber,
-                        Status = StoreOrderStatus.Ordering
-                    };
-                    await service.AddAsync(order);
-                    Desk.Order = order;
-                }
-            }
-            DialogHost.CloseDialogCommand.Execute(null, null);
+            //Transitioner.SelectedIndex = 1;
+            //if (Desk.Order == null)
+            //{
+            //    using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            //    {
+            //        var service = scope.Resolve<ClientDbService>();
+            //        var order = new StoreOrder
+            //        {
+            //            Code = UtilHelper.CreateOrderCode(ApplicationObject.App.Business.ID),
+            //            BusinessId = ApplicationObject.App.Business.ID,
+            //            DeskId = Desk.Id,
+            //            DeskName = Desk.Name,
+            //            PeopleQuantity = PeopleNumber,
+            //            Status = StoreOrderStatus.Ordering
+            //        };
+            //        await service.AddAsync(order);
+            //        Desk.Order = order;
+            //    }
+            //}
+            //DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
         private void Cancle(object o)
@@ -311,17 +311,17 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         private void ResetMenu()
         {
-            if (Desk == null) return;
-            var order = Desk.Order;
-            ProductViewModel.Types.ForEach(a => a.IsCheck = false);
-            ProductViewModel.Products = ProductViewModel.All;
-            ProductViewModel.All.ForEach(a => a.Quantity = 0);
-            if (order == null || order.OrderProducts == null) return;
-            order.OrderProducts.ForEach(a => {
-                var product = ProductViewModel.All.FirstOrDefault(b => b.Product.ID == a.ProductId);
-                if (product == null) return;
-                product.Quantity += (int)a.Quantity.Value;
-            });
+            //if (Desk == null) return;
+            //var order = Desk.Order;
+            //ProductViewModel.Types.ForEach(a => a.IsCheck = false);
+            //ProductViewModel.Products = ProductViewModel.All;
+            //ProductViewModel.All.ForEach(a => a.Quantity = 0);
+            //if (order == null || order.OrderProducts == null) return;
+            //order.OrderProducts.ForEach(a => {
+            //    var product = ProductViewModel.All.FirstOrDefault(b => b.Product.ID == a.ProductId);
+            //    if (product == null) return;
+            //    product.Quantity += (int)a.Quantity.Value;
+            //});
         }
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+using Jiandanmao.Entity;
 using Jiandanmao.Enum;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +21,10 @@ namespace Jiandanmao.Code
 
         public BackstagePrint(Order order, Printer printer, Socket socket)
         {
-            this.Order = order;
-            this.Printer = printer;
+            Order = order;
+            Printer = printer;
             _socket = socket;
-            Products = Order.Products.Where(a => a.Feature == ProductFeature.SetMeal || Printer.Foods.Contains(a.ProductId.Value)).ToList();
+            Products = Order?.Products.Where(a => a.Feature == ProductFeature.SetMeal || Printer.Foods.Contains(a.ProductId.Value)).ToList();
         }
         public virtual void Print()
         {

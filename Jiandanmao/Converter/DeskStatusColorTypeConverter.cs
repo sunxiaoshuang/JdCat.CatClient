@@ -1,4 +1,6 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
+using Jiandanmao.Entity;
 using Jiandanmao.Enum;
 using System;
 using System.Globalization;
@@ -10,7 +12,7 @@ namespace Jiandanmao.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is StoreOrder order && (order.Status & StoreOrderStatus.Using) > 0)
+            if (value != null)
             {
                 return "White";
             }

@@ -12,6 +12,7 @@ using Jiandanmao.Code;
 using Jiandanmao.Extension;
 using Jiandanmao.Entity;
 using System.ComponentModel;
+using JdCat.CatClient.Common;
 
 namespace Jiandanmao.ViewModel
 {

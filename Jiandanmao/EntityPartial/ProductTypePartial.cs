@@ -21,7 +21,5 @@ namespace Jiandanmao.Entity
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsCheck"));
             }
         }
-        [JsonIgnore]
-        public string CheckedColor { get; set; } = "#e64a19";
     }
 }

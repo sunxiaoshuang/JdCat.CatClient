@@ -18,7 +18,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <convert:DeskTypeCheckColorTypeConverter x:Key="dttc" />
+            <convert:ButtonColorTypeConverter x:Key="dttc" />
             <convert:DeskStatusTypeConverter x:Key="dstc" />
             <convert:DeskStatusNoteTypeConverter x:Key="dsntc" />
             <convert:DeskStatusColorTypeConverter x:Key="dsctc" />

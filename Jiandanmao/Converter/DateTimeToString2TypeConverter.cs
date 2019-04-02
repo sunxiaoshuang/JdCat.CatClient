@@ -10,7 +10,7 @@ namespace Jiandanmao.Converter
         {
             if (value == null) return "";
             var time = (DateTime)value;
-            return time.ToString("M-d");
+            return time.ToString("HH:mm");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

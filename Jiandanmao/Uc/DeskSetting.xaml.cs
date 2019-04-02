@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Common;
+using Jiandanmao.Entity;
 using Jiandanmao.Extension;
 using Jiandanmao.ViewModel;
 using System.Windows;

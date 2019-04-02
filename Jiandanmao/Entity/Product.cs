@@ -31,7 +31,7 @@ namespace Jiandanmao.Entity
         /// <summary>
         /// 商品特色（后期可能使用这个属性，开发套餐的功能）
         /// </summary>
-        public ProductFeature Feature { get; set; }
+        public JdCat.CatClient.Model.Enum.ProductFeature Feature { get; set; }
         /// <summary>
         /// 套餐商品的id集
         /// </summary>

@@ -11,9 +11,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using Jiandanmao.Entity;
 using Autofac;
-using Jiandanmao.DataBase;
 using System;
-using Jiandanmao.Redis;
+using JdCat.CatClient.IService;
+using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
+using JdCat.CatClient.Common;
 
 namespace Jiandanmao.Code
 {
@@ -48,7 +50,7 @@ namespace Jiandanmao.Code
             }
         }
 
-        public static readonly DependencyProperty BusinessProperty =
+        private static readonly DependencyProperty BusinessProperty =
             DependencyProperty.Register("Business", typeof(Business), typeof(ApplicationObject));
 
 
@@ -63,7 +65,7 @@ namespace Jiandanmao.Code
             }
         }
 
-        public static readonly DependencyProperty OrdersProperty =
+        private static readonly DependencyProperty OrdersProperty =
             DependencyProperty.Register("Orders", typeof(ObservableCollection<Order>), typeof(ApplicationObject));
 
 
@@ -76,7 +78,7 @@ namespace Jiandanmao.Code
             set { SetValue(PrintersProperty, value); }
         }
 
-        public static readonly DependencyProperty PrintersProperty =
+        private static readonly DependencyProperty PrintersProperty =
             DependencyProperty.Register("Printers", typeof(ObservableCollection<Printer>), typeof(ApplicationObject));
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace Jiandanmao.Code
         /// </summary>
         public ObservableCollection<DeskType> DeskTypes { get; set; }
 
-        public static readonly DependencyProperty DeskTypesProperty =
+        private static readonly DependencyProperty DeskTypesProperty =
             DependencyProperty.Register("DeskTypes", typeof(ObservableCollection<DeskType>), typeof(ApplicationObject));
 
         /// <summary>
@@ -96,7 +98,8 @@ namespace Jiandanmao.Code
             {
                 if (DeskTypes == null) return null;
                 var desks = new ObservableCollection<Desk>();
-                DeskTypes.ForEach(a => {
+                DeskTypes.ForEach(a =>
+                {
                     if (a.Desks == null) return;
                     a.Desks.ForEach(b => desks.Add(b));
                 });
@@ -108,6 +111,43 @@ namespace Jiandanmao.Code
         /// 菜单类别与菜品
         /// </summary>
         public List<ProductType> Types { get; set; }
+        /// <summary>
+        /// 所有菜品
+        /// </summary>
+        public ObservableCollection<Product> Products
+        {
+            get
+            {
+                if (Types == null) return null;
+                var products = new ObservableCollection<Product>();
+                Types.ForEach(a =>
+                {
+                    a.Products?.ForEach(b => products.Add(b));
+                });
+                return products;
+            }
+        }
+
+        /// <summary>
+        /// 登录服务员
+        /// </summary>
+        public Staff Staff
+        {
+            get
+            {
+                return (Staff)GetValue(StaffProperty);
+            }
+            set
+            {
+                SetValue(StaffProperty, value);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Staff"));
+            }
+        }
+        private static readonly DependencyProperty StaffProperty = DependencyProperty.Register("Staff", typeof(Staff), typeof(ApplicationObject));
+        /// <summary>
+        /// 登录人是否是管理员
+        /// </summary>
+        public bool IsAdmin { get; set; }
 
         /// <summary>
         /// 初始化应用数据
@@ -122,6 +162,13 @@ namespace Jiandanmao.Code
 
             // 初始化餐厅信息
             await InitCatering();
+
+            // 数据库初始化
+            using (var scope = DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IUtilService>();
+                service.InitDatabase(Business.ID);
+            }
         }
 
         /// <summary>
@@ -207,27 +254,28 @@ namespace Jiandanmao.Code
             var initData = await Request.GetInitData(Business.ID);      // 读取远程数据库数据
 
             DeskTypes = new ObservableCollection<DeskType>();           // 餐桌
-            initData.Desk.ForEach(a => {
+            initData.Desk.ForEach(a =>
+            {
                 a.ReloadDeskQuantity();
                 DeskTypes.Add(a);
             });
             Types = initData.Types;                                     // 菜单
-            // 读取数据库本地数据库
-            //using (var scope = DataBase.BeginLifetimeScope())
-            //{
-            //    // 获取正在使用中的订单，并绑定到餐桌上
-            //    var service = scope.Resolve<ClientDbService>();
-            //    if (service != null)
-            //    {
-            //        var unFinishOrder = service.GetUsingOrder(Business.ID);
-            //        Desks.ForEach(a =>
-            //        {
-            //            var order = unFinishOrder.FirstOrDefault(b => b.DeskId == a.Id);
-            //            if (order == null) return;
-            //            a.Order = order;
-            //        });
-            //    }
-            //}
+                                                                        // 读取数据库本地数据库
+                                                                        //using (var scope = DataBase.BeginLifetimeScope())
+                                                                        //{
+                                                                        //    // 获取正在使用中的订单，并绑定到餐桌上
+                                                                        //    var service = scope.Resolve<ClientDbService>();
+                                                                        //    if (service != null)
+                                                                        //    {
+                                                                        //        var unFinishOrder = service.GetUsingOrder(Business.ID);
+                                                                        //        Desks.ForEach(a =>
+                                                                        //        {
+                                                                        //            var order = unFinishOrder.FirstOrDefault(b => b.DeskId == a.Id);
+                                                                        //            if (order == null) return;
+                                                                        //            a.Order = order;
+                                                                        //        });
+                                                                        //    }
+                                                                        //}
             using (var scope = DataBase.BeginLifetimeScope())
             {
                 // 读取堂食
@@ -235,14 +283,14 @@ namespace Jiandanmao.Code
 
             }
         }
-        
+
 
 
         /// <summary>
-        /// 打印订单
+        /// 打印外卖订单
         /// </summary>
         /// <param name="order"></param>
-        public static void Print(Order order, int type = 0)
+        public static void Print<T>(T order, int type = 0, PrintOption option = null) where T : class
         {
             var printers = App.Printers.Where(a => a.State == 1);
             if (type != 0)
@@ -253,11 +301,101 @@ namespace Jiandanmao.Code
             {
                 for (int i = 0; i < printer.Quantity; i++)
                 {
-                    printer.Print(order);
+                    if (order is Order entity)
+                    {
+                        printer.Print(entity);
+                    }
+                    else if (order is TangOrder tang)
+                    {
+                        printer.Print(tang, option);
+                    }
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// 上传本地数据到服务器
+        /// </summary>
+        public async static Task UploadData()
+        {
+            /* 同步流程
+             * 1. 上传员工数据
+             * 2. 上传支付类型
+             * 3. 上传已完成的订单
+             * 4. 删除7天前且已经上传的订单
+             */
+            await UploadStaff();
+            await UploadPaymentType();
+            await UploadOrder();
+            DeleteExpireOrder();
+        }
+
+        private async static Task UploadStaff()
+        {
+            using (var scope = App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IStaffService>();
+                var list = service.GetAll(EntityStatus.All)?.Where(a => !a.Sync).ToList();
+                if (list == null || list.Count == 0) return;
+                await Request.UploadData(list);
+                service.SyncFinish(list);
+            }
+        }
+        private async static Task UploadPaymentType()
+        {
+            using (var scope = App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IPaymentTypeService>();
+                var list = service.GetAll(EntityStatus.All)?.Where(a => !a.Sync).ToList();
+                if (list == null || list.Count == 0) return;
+                await Request.UploadData(list);
+                service.SyncFinish(list);
+            }
+        }
+        private async static Task UploadOrder()
+        {
+            using (var scope = App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IOrderService>();
+                var list = service.GetAll(EntityStatus.All)
+                    ?.Where(a => !a.Sync && (a.OrderStatus & TangOrderStatus.Finish) > 0)
+                    .ToList();
+                if (list == null || list.Count == 0) return;
+                await Request.UploadData(list);
+                var products = new List<TangOrderProduct>();
+                foreach (var item in list)
+                {
+                    var goods = service.GetOrderProduct(item.ObjectId);
+                    if (goods == null) continue;
+                    products.AddRange(goods);
+                }
+                await Request.UploadData(products);
+                service.SyncFinish(list);
+                service.SyncFinish(products);
+            }
+        }
+        private static void DeleteExpireOrder()
+        {
+            var paging = new JdCat.CatClient.Common.PagingQuery { PageIndex = 1, PageSize = 50 };
+            using (var scope = App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IOrderService>();
+                var count = service.Length();
+                var pageCount = Math.Ceiling(Convert.ToDouble(count) / Convert.ToDouble(paging.PageSize));
+                var now = DateTime.Now;
+                for (int i = 0; i < pageCount; i++)
+                {
+                    paging.PageIndex += i;
+                    var orders = service.GetRange(paging, EntityStatus.All);
+                    if (orders == null) break;
+                    orders.ForEach(order => {
+                        if (order.CreateTime.AddDays(7) > now) return;
+                        service.DeleteOrder(order);
+                    });
                 }
             }
         }
-
     }
 
     public class ApplicationConfig

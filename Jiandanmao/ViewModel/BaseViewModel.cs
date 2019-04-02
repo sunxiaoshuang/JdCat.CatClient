@@ -56,6 +56,7 @@ namespace Jiandanmao.ViewModel
         {
             SnackbarMessageQueue?.Enqueue(message);
         }
+        protected bool IsConfirm;
         public async Task Confirm(string message, string dialog = null)
         {
             var sampleMessageDialog = new ConfirmDialog
@@ -63,6 +64,7 @@ namespace Jiandanmao.ViewModel
                 Message = { Text = message },
                 DataContext = this
             };
+            IsConfirm = false;
             await DialogHost.Show(sampleMessageDialog, dialog??"RootDialog");
         }
         public async Task ShowLoadingDialog(Task task)
@@ -98,6 +100,7 @@ namespace Jiandanmao.ViewModel
 
         public virtual void Submit(object o)
         {
+            IsConfirm = true;
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
 

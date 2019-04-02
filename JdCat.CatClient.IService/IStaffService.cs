@@ -20,5 +20,11 @@ namespace JdCat.CatClient.IService
         /// <param name="alise"></param>
         /// <returns></returns>
         bool IsExistAlise(string alise);
+        /// <summary>
+        /// 根据登录名获取员工信息
+        /// </summary>
+        /// <param name="alise"></param>
+        /// <returns></returns>
+        Staff GetStaffByAlise(string alise);
     }
 }

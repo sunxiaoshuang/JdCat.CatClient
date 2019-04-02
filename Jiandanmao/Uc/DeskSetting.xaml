@@ -24,7 +24,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <convert:DeskTypeCheckColorTypeConverter x:Key="dttc" />
+            <convert:ButtonColorTypeConverter x:Key="dttc" />
             <convert:DeskQuantityTypeConverter x:Key="dqtc" />
 
         </ResourceDictionary>

@@ -15,7 +15,7 @@ namespace Jiandanmao.Entity
         public int Id { get; set; }
         private string _name;
         /// <summary>
-        /// 类别中包含的餐桌数量
+        /// 餐桌名称
         /// </summary>
         public string Name
         {
@@ -28,7 +28,7 @@ namespace Jiandanmao.Entity
         }
         private int _quantity;
         /// <summary>
-        /// 类别中包含的餐桌数量
+        /// 餐桌指定人数
         /// </summary>
         public int Quantity
         {
@@ -39,7 +39,13 @@ namespace Jiandanmao.Entity
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Quantity"));
             }
         }
+        /// <summary>
+        /// 所属的商户id
+        /// </summary>
         public int BusinessId { get; set; }
+        /// <summary>
+        /// 所属的餐桌类别
+        /// </summary>
         public int DeskTypeId { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

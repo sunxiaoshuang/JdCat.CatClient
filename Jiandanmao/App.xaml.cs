@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Jiandanmao
 {
@@ -21,6 +22,7 @@ namespace Jiandanmao
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
             // 加载配置
             ApplicationObject.App.Config = new ApplicationConfig();
             var type = typeof(ApplicationConfig);
@@ -48,6 +50,12 @@ namespace Jiandanmao
             builder.RegisterType<UtilService>().As<IUtilService>();
             builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
             ApplicationObject.App.DataBase = builder.Build();
+        }
+
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.ToString());
+            e.Handled = true;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Jiandanmao.Converter
             var quantity = int.Parse(value.ToString());
             if (quantity > 0)
             {
-                return "#ff5722";
+                return "#009789";
             }
             return "#eee";
         }

@@ -30,7 +30,7 @@ namespace Jiandanmao.Code
         /// <param name="postData"></param>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static async Task<string> HttpRequest(string url, StringContent postData = null, string method = "GET")
+        public static async Task<string> HttpRequestAsync(string url, StringContent postData = null, string method = "GET")
         {
             method = method.ToUpper();
             using (var client = new HttpClient())
@@ -60,9 +60,9 @@ namespace Jiandanmao.Code
         /// <param name="postData"></param>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static async Task<JsonData<T>> HttpRequest<T>(string url, StringContent postData = null, string method = "GET") where T : class, new()
+        public static async Task<JsonData<T>> HttpRequestAsync<T>(string url, StringContent postData = null, string method = "GET") where T : class, new()
         {
-            var result = await HttpRequest(url, postData, method);
+            var result = await HttpRequestAsync(url, postData, method);
             return JsonConvert.DeserializeObject<JsonData<T>>(result);
         }
 
@@ -73,9 +73,9 @@ namespace Jiandanmao.Code
         /// <param name="postData"></param>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static async Task<T> GetData<T>(string url, StringContent postData = null, string method = "GET") where T : class, new()
+        public static async Task<T> GetDataAsync<T>(string url, StringContent postData = null, string method = "GET") where T : class, new()
         {
-            var result = await HttpRequest(url, postData, method);
+            var result = await HttpRequestAsync(url, postData, method);
             return JsonConvert.DeserializeObject<T>(result);
         }
 
@@ -85,10 +85,10 @@ namespace Jiandanmao.Code
         /// <param name="code"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public static async Task<JsonData<Business>> Login(string code, string pwd)
+        public static async Task<JsonData<Business>> LoginAsync(string code, string pwd)
         {
             var url = $"{ApiUrl}/Client/Login?code={code}&pwd={pwd}";
-            return await HttpRequest<Business>(url);
+            return await HttpRequestAsync<Business>(url);
         }
 
         /// <summary>
@@ -97,10 +97,10 @@ namespace Jiandanmao.Code
         /// <param name="code"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public static async Task<JsonData<Business>> GetBusiness(int id)
+        public static async Task<JsonData<Business>> GetBusinessAsync(int id)
         {
             var url = $"{ApiUrl}/Client/GetBusiness/{id}";
-            return await HttpRequest<Business>(url);
+            return await HttpRequestAsync<Business>(url);
         }
 
         /// <summary>
@@ -109,10 +109,10 @@ namespace Jiandanmao.Code
         /// <param name="business">商户对象</param>
         /// <param name="paging">分页参数</param>
         /// <returns></returns>
-        public async static Task<List<Order>> GetOrders(Business business, PagingQuery paging)
+        public async static Task<List<Order>> GetOrdersAsync(Business business, PagingQuery paging)
         {
             var url = $"{ApiUrl}/Client/GetOrders/{business.ID}?PageIndex={paging.PageIndex}&PageSize={paging.PageSize}&CreateTime={DateTime.Now:yyyy-MM-dd}";
-            var result = await HttpRequest(url);
+            var result = await HttpRequestAsync(url);
             var jObj = JObject.Parse(result);
             var list = JsonConvert.DeserializeObject<List<Order>>(jObj["data"]["list"].ToString());
             paging.RecordCount = int.Parse(jObj["data"]["rows"].ToString());
@@ -124,10 +124,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async static Task<Order> GetOrderDetail(int id)
+        public async static Task<Order> GetOrderDetailAsync(int id)
         {
             var url = $"{ApiUrl}/Client/GetOrderDetail/{id}";
-            var result = await HttpRequest<Order>(url);
+            var result = await HttpRequestAsync<Order>(url);
             return result.Data;
         }
 
@@ -136,10 +136,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async static Task<List<Printer>> GetPrinters(int id)
+        public async static Task<List<Printer>> GetPrintersAsync(int id)
         {
             var url = $"{ApiUrl}/Client/GetPrinters/{id}";
-            var result = await HttpRequest<List<Printer>>(url);
+            var result = await HttpRequestAsync<List<Printer>>(url);
             return result.Data;
         }
 
@@ -149,7 +149,7 @@ namespace Jiandanmao.Code
         /// <param name="id"></param>
         /// <param name="printers"></param>
         /// <returns></returns>
-        public async static Task<JsonData<List<Printer>>> SavePrinters(int id, IEnumerable<Printer> printers)
+        public async static Task<JsonData<List<Printer>>> SavePrintersAsync(int id, IEnumerable<Printer> printers)
         {
             var url = $"{ApiUrl}/Client/SavePrinters/{id}";
             foreach (var item in printers)
@@ -162,7 +162,7 @@ namespace Jiandanmao.Code
             }
             var content = JsonConvert.SerializeObject(printers);
             var postData = new StringContent(content);
-            var result = await HttpRequest<List<Printer>>(url, postData, "POST");
+            var result = await HttpRequestAsync<List<Printer>>(url, postData, "POST");
             return result;
         }
 
@@ -172,7 +172,7 @@ namespace Jiandanmao.Code
         /// <param name="id"></param>
         /// <param name="printer"></param>
         /// <returns></returns>
-        public async static Task<JsonData<Printer>> SavePrinter(int id, Printer printer)
+        public async static Task<JsonData<Printer>> SavePrinterAsync(int id, Printer printer)
         {
             var url = $"{ApiUrl}/Client/SavePrinter/{id}";
             printer.CopyFoodsToIds();
@@ -182,7 +182,7 @@ namespace Jiandanmao.Code
             }
             var content = JsonConvert.SerializeObject(printer);
             var postData = new StringContent(content);
-            var result = await HttpRequest<Printer>(url, postData, "POST");
+            var result = await HttpRequestAsync<Printer>(url, postData, "POST");
             return result;
         }
 
@@ -191,10 +191,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async static Task<JsonData> DeletePrinter(int id)
+        public async static Task<JsonData> DeletePrinterAsync(int id)
         {
             var url = $"{ApiUrl}/Client/DeletePrinter/{id}";
-            var result = await HttpRequest(url);
+            var result = await HttpRequestAsync(url);
             return JsonConvert.DeserializeObject<JsonData>(result);
         }
 
@@ -203,10 +203,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async static Task<List<ProductType>> GetProducts(int id)
+        public async static Task<List<ProductType>> GetProductsAsync(int id)
         {
             var url = $"{ApiUrl}/Client/GetProducts/{id}";
-            var result = await GetData<List<ProductType>>(url);
+            var result = await GetDataAsync<List<ProductType>>(url);
             return result;
         }
 
@@ -216,10 +216,10 @@ namespace Jiandanmao.Code
         /// <param name="id"></param>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public async static Task<JsonData> PutPrinterProducts(int id, string ids)
+        public async static Task<JsonData> PutPrinterProductsAsync(int id, string ids)
         {
             var url = $"{ApiUrl}/Client/PutPrinterProducts/{id}?ids={ids}";
-            var result = await GetData<JsonData>(url);
+            var result = await GetDataAsync<JsonData>(url);
             return result;
         }
 
@@ -227,10 +227,10 @@ namespace Jiandanmao.Code
         /// 登录成功后，获取初始化数据
         /// </summary>
         /// <returns></returns>
-        public async static Task<RemoteDataObject> GetInitData(int id)
+        public async static Task<RemoteDataObject> GetInitDataAsync(int id)
         {
             var url = $"{ApiUrl}/Client/InitClient/{id}";
-            return await GetData<RemoteDataObject>(url);
+            return await GetDataAsync<RemoteDataObject>(url);
         }
 
         /// <summary>
@@ -238,11 +238,11 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async static Task<JsonData<DeskType>> SaveDeskType(DeskType type)
+        public async static Task<JsonData<DeskType>> SaveDeskTypeAsync(DeskType type)
         {
             var url = $"{ApiUrl}/Client/SaveDeskType";
             var content = JsonConvert.SerializeObject(type);
-            return await HttpRequest<DeskType>(url, new StringContent(content), "POST");
+            return await HttpRequestAsync<DeskType>(url, new StringContent(content), "POST");
         }
 
         /// <summary>
@@ -250,11 +250,11 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async static Task<JsonData<DeskType>> UpdateDeskType(DeskType type)
+        public async static Task<JsonData<DeskType>> UpdateDeskTypeAsync(DeskType type)
         {
             var url = $"{ApiUrl}/Client/UpdateDeskType";
             var content = JsonConvert.SerializeObject(type);
-            return await HttpRequest<DeskType>(url, new StringContent(content), "POST");
+            return await HttpRequestAsync<DeskType>(url, new StringContent(content), "POST");
         }
 
         /// <summary>
@@ -262,10 +262,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async static Task<JsonData> DeleteDeskType(DeskType type)
+        public async static Task<JsonData> DeleteDeskTypeAsync(DeskType type)
         {
             var url = $"{ApiUrl}/Client/DeleteDeskType/{type.Id}";
-            var result = await HttpRequest(url);
+            var result = await HttpRequestAsync(url);
             return JsonConvert.DeserializeObject<JsonData>(result);
         }
 
@@ -274,11 +274,11 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="desk"></param>
         /// <returns></returns>
-        public async static Task<JsonData<Desk>> SaveDesk(Desk desk)
+        public async static Task<JsonData<Desk>> SaveDeskAsync(Desk desk)
         {
             var url = $"{ApiUrl}/Client/SaveDesk";
             var content = JsonConvert.SerializeObject(desk);
-            return await HttpRequest<Desk>(url, new StringContent(content), "POST");
+            return await HttpRequestAsync<Desk>(url, new StringContent(content), "POST");
         }
 
         /// <summary>
@@ -286,11 +286,11 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="desk"></param>
         /// <returns></returns>
-        public async static Task<JsonData<Desk>> UpdateDesk(Desk desk)
+        public async static Task<JsonData<Desk>> UpdateDeskAsync(Desk desk)
         {
             var url = $"{ApiUrl}/Client/UpdateDesk";
             var content = JsonConvert.SerializeObject(desk);
-            return await HttpRequest<Desk>(url, new StringContent(content), "POST");
+            return await HttpRequestAsync<Desk>(url, new StringContent(content), "POST");
         }
 
         /// <summary>
@@ -298,10 +298,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="desk"></param>
         /// <returns></returns>
-        public async static Task<JsonData> DeleteDesk(Desk desk)
+        public async static Task<JsonData> DeleteDeskAsync(Desk desk)
         {
             var url = $"{ApiUrl}/Client/DeleteDesk/{desk.Id}";
-            var result = await HttpRequest(url);
+            var result = await HttpRequestAsync(url);
             return JsonConvert.DeserializeObject<JsonData>(result);
         }
 
@@ -311,7 +311,7 @@ namespace Jiandanmao.Code
         {
             var url = $"{ApiUrl}/Client/Upload{typeof(T).Name}";
             var body = new StringContent(JsonConvert.SerializeObject(list));
-            var result = await HttpRequest<List<T>>(url, body, "POST");
+            var result = await HttpRequestAsync<List<T>>(url, body, "POST");
             result.Data.ForEach(a => {
                 var entity = list.FirstOrDefault(b => a.ObjectId == b.ObjectId);
                 if (entity == null) return;

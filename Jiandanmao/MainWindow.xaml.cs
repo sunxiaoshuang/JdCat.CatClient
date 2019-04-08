@@ -70,7 +70,7 @@ namespace Jiandanmao
         {
             try
             {
-                var result = await Request.HttpRequest(orderUrl);
+                var result = await Request.HttpRequestAsync(orderUrl);
                 var json = JsonConvert.DeserializeObject<JsonData>(result);
                 if (json.Data == null) return;
                 var data = (JArray)json.Data;

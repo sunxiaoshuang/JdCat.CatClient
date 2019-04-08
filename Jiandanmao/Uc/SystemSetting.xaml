@@ -96,7 +96,7 @@
                                                     Command="{Binding DeleteFlavorCommand}"
                                                     CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel},Mode=FindAncestor}}">
                                                     <Button.Content>
-                                                        <materialDesign:PackIcon Kind="Close" Foreground="#ff5722" Width="20" Height="20"></materialDesign:PackIcon>
+                                                        <materialDesign:PackIcon Kind="Close" Foreground="#009789" Width="20" Height="20"></materialDesign:PackIcon>
                                                     </Button.Content>
                                                 </Button>
                                             </StackPanel>
@@ -147,7 +147,7 @@
                                                     Command="{Binding DeletePaymentTypeCommand}"
                                                     CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel},Mode=FindAncestor}}">
                                                     <Button.Content>
-                                                        <materialDesign:PackIcon Kind="Close" Foreground="#ff5722" Width="20" Height="20"></materialDesign:PackIcon>
+                                                        <materialDesign:PackIcon Kind="Close" Foreground="#009789" Width="20" Height="20"></materialDesign:PackIcon>
                                                     </Button.Content>
                                                 </Button>
                                             </StackPanel>

@@ -46,7 +46,7 @@
                 <Style.Triggers>
                     <Trigger Property="Tag" Value="Focus">
                         <Trigger.Setters>
-                            <Setter Property="Background" Value="#ff5722"/>
+                            <Setter Property="Background" Value="#009789"/>
                             <Setter Property="Foreground" Value="#fff"/>
                         </Trigger.Setters>
                     </Trigger>

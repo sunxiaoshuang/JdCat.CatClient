@@ -28,14 +28,14 @@ namespace Jiandanmao.Entity
             }
             if (Id > 0)
             {
-                var result = await Request.UpdateDeskType(this);
+                var result = await Request.UpdateDeskTypeAsync(this);
                 var type = ApplicationObject.App.DeskTypes.First(a => a.Id == Id);
                 type.Name = Name;
                 type.Sort = Sort;
             }
             else
             {
-                var result = await Request.SaveDeskType(this);
+                var result = await Request.SaveDeskTypeAsync(this);
                 ApplicationObject.App.DeskTypes.Add(result.Data);
             }
             ApplicationObject.App.DeskTypes.OrderBy(a => a.Sort);

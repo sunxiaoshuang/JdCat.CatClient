@@ -50,8 +50,8 @@
                         </Border>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsCheck}" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#ff5722" />
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#ff5722" />
+                                <Setter TargetName="Border" Property="Background" Value="#009789" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#009789" />
                                 <Setter TargetName="TextBlock" Property="Foreground" Value="#fff" />
                             </DataTrigger>
                         </DataTemplate.Triggers>

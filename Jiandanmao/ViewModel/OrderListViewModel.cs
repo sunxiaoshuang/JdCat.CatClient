@@ -88,7 +88,7 @@ namespace Jiandanmao.ViewModel
         private async void LoadOrders()
         {
             _items.Clear();
-            var list = await Request.GetOrders(ApplicationObject.App.Business, PagingQuery);
+            var list = await Request.GetOrdersAsync(ApplicationObject.App.Business, PagingQuery);
             if (list == null || list.Count == 0) return;
             list.ForEach(a => _items.Add(a));
             PreEnable = PagingQuery.CanPre;

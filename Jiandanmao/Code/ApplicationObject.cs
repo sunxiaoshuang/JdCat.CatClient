@@ -203,7 +203,7 @@ namespace Jiandanmao.Code
             Printers = new ObservableCollection<Printer>();
             if (Business == null) return;
 
-            var printers = await Request.GetPrinters(Business.ID);
+            var printers = await Request.GetPrintersAsync(Business.ID);
             if (printers == null || printers.Count == 0)
             {
                 // 如果远程数据库中不存在打印机列表，则加载本地保存的打印机列表
@@ -237,7 +237,7 @@ namespace Jiandanmao.Code
             if (!File.Exists(filepath)) return;
             var data = File.ReadAllText(filepath);
             var printers = JsonConvert.DeserializeObject<List<Printer>>(data);
-            var result = await Request.SavePrinters(Business.ID, printers);
+            var result = await Request.SavePrintersAsync(Business.ID, printers);
             if (!result.Success)
             {
                 await DialogHost.Show(new MessageDialog { Message = { Text = result.Msg } }, "RootDialog");
@@ -251,7 +251,7 @@ namespace Jiandanmao.Code
         /// <returns></returns>
         private async Task InitCatering()
         {
-            var initData = await Request.GetInitData(Business.ID);      // 读取远程数据库数据
+            var initData = await Request.GetInitDataAsync(Business.ID);      // 读取远程数据库数据
 
             DeskTypes = new ObservableCollection<DeskType>();           // 餐桌
             initData.Desk.ForEach(a =>

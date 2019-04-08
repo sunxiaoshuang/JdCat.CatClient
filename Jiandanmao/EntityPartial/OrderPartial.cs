@@ -27,7 +27,7 @@ namespace Jiandanmao.Entity
 
         private async void Print(object obj)
         {
-            var order = await Request.GetOrderDetail(ID);
+            var order = await Request.GetOrderDetailAsync(ID);
             ApplicationObject.Print(order, int.Parse(obj.ToString()));
         }
 
@@ -37,7 +37,7 @@ namespace Jiandanmao.Entity
             Order order = this;
             if (!this.IsDetail)
             {
-                order = await Request.GetOrderDetail(ID);
+                order = await Request.GetOrderDetailAsync(ID);
                 order.IsDetail = true;
                 ((OrderListViewModel)((OrderList)obj).DataContext).Items.Replace(this, order);
             }

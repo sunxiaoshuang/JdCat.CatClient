@@ -11,10 +11,10 @@ namespace Jiandanmao.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return "#ff5722";
+            if (value == null) return "#009789";
             var sign = (bool)value;
             if (sign) return "#bb2d00";
-            return "#ff5722";
+            return "#009789";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

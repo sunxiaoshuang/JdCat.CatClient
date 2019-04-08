@@ -36,7 +36,7 @@ namespace Jiandanmao.Code
             {
                 return;
             }
-            var result = await Request.SavePrinter(ApplicationObject.App.Business.ID, this);
+            var result = await Request.SavePrinterAsync(ApplicationObject.App.Business.ID, this);
             Printer printer;
             if (int.Parse(Id) > 0)
             {
@@ -69,7 +69,7 @@ namespace Jiandanmao.Code
         private async void Delete(object o)
         {
             if (MessageBox.Show($"确定删除打印机【{Name}】吗", "提示", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
-            var result = await Request.DeletePrinter(Convert.ToInt32(Id));
+            var result = await Request.DeletePrinterAsync(Convert.ToInt32(Id));
             if (!result.Success)
             {
                 MessageBox.Show("删除失败，请重试！");
@@ -99,7 +99,7 @@ namespace Jiandanmao.Code
                 });
             });
             FoodIds = JsonConvert.SerializeObject(Foods);
-            await Request.PutPrinterProducts(Convert.ToInt32(Id), FoodIds);
+            await Request.PutPrinterProductsAsync(Convert.ToInt32(Id), FoodIds);
         }
         private void PrintTest(object o)
         {

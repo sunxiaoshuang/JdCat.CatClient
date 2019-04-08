@@ -51,7 +51,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>
-            <Grid Background="#ff5722">
+            <Grid Background="#009789">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />

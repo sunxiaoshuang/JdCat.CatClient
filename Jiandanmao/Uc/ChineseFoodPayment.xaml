@@ -21,7 +21,7 @@
             </Style>
             <Style TargetType="{x:Type Border}" x:Key="PayMoney">
                 <Setter Property="Padding" Value="20" />
-                <Setter Property="BorderBrush" Value="#ff5722" />
+                <Setter Property="BorderBrush" Value="#009789" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="Width" Value="120" />
                 <Setter Property="Margin" Value="0 0 30 0" />
@@ -75,7 +75,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="0.1"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥0.1</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥0.1</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -83,7 +83,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="0.5"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥0.5</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥0.5</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -91,7 +91,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="1"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥1</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥1</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -99,7 +99,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="5"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥5</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥5</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -107,7 +107,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="10"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥10</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥10</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -115,7 +115,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="20"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥20</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥20</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -123,7 +123,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="50"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥50</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥50</TextBlock>
                 </Border>
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
@@ -131,7 +131,7 @@
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="100"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ff5722">￥100</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥100</TextBlock>
                 </Border>
             </WrapPanel>
 
@@ -156,8 +156,8 @@
                         </StackPanel>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#ff5722" />
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#ff5722" />
+                                <Setter TargetName="Border" Property="Background" Value="#009789" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#009789" />
                                 <Setter TargetName="TextBlock" Property="Foreground" Value="#fff" />
                             </DataTrigger>
                         </DataTemplate.Triggers>

@@ -53,7 +53,7 @@ namespace Jiandanmao.Entity
             {
                 if (Id > 0)
                 {
-                    var result = await Request.UpdateDesk(this);
+                    var result = await Request.UpdateDeskAsync(this);
                     if (type.Desks != null)
                     {
                         var desk = type.Desks.FirstOrDefault(a => a.Id == Id);
@@ -63,7 +63,7 @@ namespace Jiandanmao.Entity
                 }
                 else
                 {
-                    var result = await Request.SaveDesk(this);
+                    var result = await Request.SaveDeskAsync(this);
                     if(type.Desks == null)
                     {
                         type.Desks = new ObservableCollection<Desk>();
@@ -85,7 +85,7 @@ namespace Jiandanmao.Entity
         {
             var result = MessageBox.Show($"确定删除餐桌[{Name}]吗？", "提示", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.No) return;
-            var json = await Request.DeleteDesk(this);
+            var json = await Request.DeleteDeskAsync(this);
             if (!json.Success) return;
             var type = ApplicationObject.App.DeskTypes.FirstOrDefault(a => a.Id == DeskTypeId);
             if (type == null) return;

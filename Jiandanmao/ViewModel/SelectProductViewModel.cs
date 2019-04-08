@@ -46,7 +46,7 @@ namespace Jiandanmao.ViewModel
         public async void Loaded(object o)
         {
             //Init(o);
-            var types = await Request.GetProducts(ApplicationObject.App.Business.ID);
+            var types = await Request.GetProductsAsync(ApplicationObject.App.Business.ID);
             //res.Wait();
             //var types = res.Result;
             if (types != null && types.Count > 0)

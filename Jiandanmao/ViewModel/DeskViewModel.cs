@@ -116,7 +116,7 @@ namespace Jiandanmao.ViewModel
                 return;
             }
             await ShowLoadingDialog(Task.Run(async () => {
-                var result = await Request.DeleteDeskType(type);
+                var result = await Request.DeleteDeskTypeAsync(type);
                 if (result.Success)
                 {
                     await Mainthread.BeginInvoke((Action)delegate ()

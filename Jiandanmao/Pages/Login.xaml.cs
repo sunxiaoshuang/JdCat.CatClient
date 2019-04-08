@@ -105,13 +105,13 @@ namespace Jiandanmao.Pages
                         }
                         if (staff != null && staff.Password == UtilHelper.MD5(pw))
                         {
-                            business = (await Request.GetBusiness(staff.BusinessId)).Data;
+                            business = (await Request.GetBusinessAsync(staff.BusinessId)).Data;
                             ApplicationObject.App.Staff = staff;
                             ApplicationObject.App.IsAdmin = false;
                         }
                         else
                         {
-                            var result = await Request.Login(name, pw);
+                            var result = await Request.LoginAsync(name, pw);
                             if (result.Success)
                             {
                                 business = result.Data;

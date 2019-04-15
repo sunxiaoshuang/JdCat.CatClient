@@ -11,27 +11,27 @@ namespace JdCat.CatClient.Model
     /// 支付方式
     /// </summary>
     [Serializable]
-    public class PaymentType: BaseEntity
+    public class PaymentType: ClientBaseEntity
     {
         /// <summary>
         /// 支付名称
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// 支付编码
+        /// 排序
         /// </summary>
-        public string Code { get; set; }
+        public int Sort { get; set; }
         /// <summary>
-        /// 显示图标
+        /// 支付类别
         /// </summary>
-        public SystemIcon Icon { get; set; }
+        public PaymentCategory Category { get; set; }
         /// <summary>
         /// 所属商户
         /// </summary>
         public int BusinessId { get; set; }
         /// <summary>
-        /// 状态
+        /// 所属商户对象
         /// </summary>
-        public PaymentTypeStatus TypeStatus { get; set; }
+        public virtual Business Business { get; set; }
     }
 }

@@ -60,7 +60,7 @@
                 <Button Style="{DynamicResource MaterialDesignToolButton}">
                     <materialDesign:PackIcon Kind="Magnify" Opacity=".56" Foreground="White" />
                 </Button>
-                <TextBox Grid.Column="1" Margin="8 0 0 0" x:Name="txtProductkey" materialDesign:HintAssist.Hint="菜品搜索" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" Foreground="White" MinWidth="200" VerticalAlignment="Center" >
+                <TextBox Grid.Column="1" Margin="8 0 0 0" x:Name="txtProductkey" materialDesign:HintAssist.Hint="菜品搜索" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" Foreground="White" MinWidth="200" VerticalAlignment="Center">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="TextChanged">
                             <i:InvokeCommandAction Command="{Binding ProductSearchCommand}" CommandParameter="{Binding ElementName=txtProductkey}" />
@@ -73,29 +73,52 @@
             </Grid>
             <Border Grid.Row="1" BorderBrush="#ddd" BorderThickness="1">
                 <StackPanel>
-                    <Grid Margin="8">
+                    <Grid Margin="8 8 0 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150"/>
                             <ColumnDefinition Width="150"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock>餐桌：</TextBlock>
-                            <TextBlock Text="{Binding SelectedDesk.Name}"></TextBlock>
+                            <TextBlock FontSize="14">餐台：</TextBlock>
+                            <TextBlock FontSize="14" Text="{Binding SelectedDesk.Name}"></TextBlock>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
-                            <TextBlock>人数：</TextBlock>
-                            <TextBlock Text="{Binding SelectedDesk.Order.PeopleNumber}"></TextBlock>
+                            <TextBlock FontSize="14">人数：</TextBlock>
+                            <TextBlock FontSize="14" Foreground="#ff5722" Text="{Binding SelectedDesk.Order.PeopleNumber}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <i:InvokeCommandAction Command="{Binding EditPeopleNumberCommand}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+                            <TextBlock FontSize="14">订单总额：</TextBlock>
+                            <TextBlock FontSize="14" Foreground="Red" Text="￥"></TextBlock>
+                            <TextBlock FontSize="14" Foreground="Red" Text="{Binding SelectedDesk.Order.Amount}"></TextBlock>
                         </StackPanel>
                     </Grid>
-                    <StackPanel Margin="8" Orientation="Horizontal" Grid.Column="1">
-                        <TextBlock>开台时间：</TextBlock>
-                        <TextBlock Text="{Binding SelectedDesk.Order.CreateTime, Converter={StaticResource dtts}}"></TextBlock>
-                    </StackPanel>
+                    <Grid Margin="8 0 0 0" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontSize="14">开台时间：</TextBlock>
+                        <TextBlock FontSize="14" Text="{Binding SelectedDesk.Order.CreateTime, Converter={StaticResource dtts}}"></TextBlock>
+                        </StackPanel>
+                        <Button Grid.Column="1" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="#ff5722" FontWeight="Bold" HorizontalAlignment="Right"
+                                Command="{Binding OrderCatCommand}" CommandParameter="{Binding SelectedDesk}">查看</Button>
+                    </Grid>
                 </StackPanel>
             </Border>
 
             <smtx:XamlDisplay Grid.Row="2" BorderBrush="#ddd" BorderThickness="1 0 1 0" DataContext="{Binding SelectedDesk.Order}">
-                <Border BorderBrush="#ddd" BorderThickness="1 0 1 0">
+                <Border BorderBrush="#ddd" BorderThickness="1 1 1 0">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="productScroll">
                         <ItemsControl ItemsSource="{Binding TangOrderProducts}" Grid.IsSharedSizeScope="True">
                             <ItemsControl.ItemTemplate>
@@ -171,9 +194,9 @@
                     <TextBlock FontSize="15">餐位费：</TextBlock>
                     <TextBlock FontSize="15" Foreground="Red" Text="￥"></TextBlock>
                     <TextBlock FontSize="15" Foreground="Red" Text="{Binding MealFee}"></TextBlock>
-                    <TextBlock FontSize="15">，订单总额：</TextBlock>
-                    <TextBlock FontSize="15" Foreground="Red" Text="￥"></TextBlock>
-                    <TextBlock FontSize="15" Foreground="Red" Text="{Binding Amount}"></TextBlock>
+                    <TextBlock FontSize="15">，合计</TextBlock>
+                    <TextBlock FontSize="15" Foreground="Red" Text="{Binding ProductQuantity}"></TextBlock>
+                    <TextBlock FontSize="15" Text="项"></TextBlock>
                 </StackPanel>
             </Border>
             <Border Grid.Row="4" BorderBrush="#ddd" BorderThickness="1 0 1 1">
@@ -187,7 +210,7 @@
                         <Border>
                             <Button Height="75" Margin="-1 0" Command="{Binding BackDeskCommand}" CommandParameter="{Binding ElementName=transitioner}">
                                 <Button.Content>
-                                    <TextBlock>返回餐桌</TextBlock>
+                                    <TextBlock>返回餐台</TextBlock>
                                 </Button.Content>
                             </Button>
                         </Border>
@@ -218,7 +241,7 @@
                         </Grid.RowDefinitions>
                         <Button Height="75" Grid.RowSpan="2" Margin="-1 0" Command="{Binding BackDeskCommand}" CommandParameter="{Binding ElementName=transitioner}">
                             <Button.Content>
-                                <TextBlock>返回餐桌</TextBlock>
+                                <TextBlock>返回餐台</TextBlock>
                             </Button.Content>
                         </Button>
                         <Button Height="75" Margin="-2 0 0 0" Grid.Column="1" Grid.RowSpan="2" Command="{Binding ReAddProductCommand}">
@@ -244,7 +267,7 @@
                         </Grid.RowDefinitions>
                         <Button Height="75" Grid.RowSpan="2" Margin="-1 0" Command="{Binding BackDeskCommand}" CommandParameter="{Binding ElementName=transitioner}">
                             <Button.Content>
-                                <TextBlock>返回餐桌</TextBlock>
+                                <TextBlock>返回餐台</TextBlock>
                             </Button.Content>
                         </Button>
                         <Button Height="75" Margin="-2 0 0 0" Grid.Column="1" Grid.RowSpan="2" Command="{Binding SubmitReAddProductCommand}">

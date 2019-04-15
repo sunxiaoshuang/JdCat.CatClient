@@ -17,7 +17,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <convert:ButtonColorTypeConverter x:Key="dttc" />
+            <convert:DeskTypeCheckColorTypeConverter x:Key="dttc" />
 
             <convert:ProductTypeCheckColorTypeConverter x:Key="pctc" />
             <convert:DeskQuantityTypeConverter x:Key="dqtc" />
@@ -50,7 +50,7 @@
             <Button Margin="0 0 50 0" Command="{Binding AllProductsCommand}" Background="{Binding IsAllProduct, Converter={StaticResource dttc}}" Style="{StaticResource ButtonStyle}">
                 全部
             </Button>
-            <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Command="{Binding TypePreCommand}" CommandParameter="{Binding ElementName=scrollProductType}">
+            <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Command="{Binding TypePreCommand}" CommandParameter="{Binding ElementName=scrollProductType}" Background="#d0862a">
                 <materialDesign:PackIcon Kind="KeyboardArrowLeft" />
             </Button>
             <ScrollViewer Grid.Column="2" Margin="10 -4 10 0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" x:Name="scrollProductType">
@@ -75,7 +75,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
-            <Button Grid.Column="3" Style="{StaticResource ButtonStyle}" Command="{Binding TypeNextCommand}" CommandParameter="{Binding ElementName=scrollProductType}">
+            <Button Grid.Column="3" Style="{StaticResource ButtonStyle}" Command="{Binding TypeNextCommand}" CommandParameter="{Binding ElementName=scrollProductType}" Background="#d0862a">
                 <materialDesign:PackIcon Kind="KeyboardArrowRight" />
             </Button>
         </Grid>

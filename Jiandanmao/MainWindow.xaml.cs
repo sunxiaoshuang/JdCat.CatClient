@@ -1,7 +1,7 @@
 ﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
 using Jiandanmao.Code;
-using Jiandanmao.Entity;
-using Jiandanmao.Helper;
 using Jiandanmao.Pages;
 using Jiandanmao.Uc;
 using Jiandanmao.ViewModel;
@@ -51,6 +51,13 @@ namespace Jiandanmao
             InitTimer();
             title.Text = ApplicationObject.App.Business.Name;
             InitUploadTimer();
+
+            Task.Run(() =>
+            {
+                Thread.Sleep(500);
+                Sync();
+            });
+
         }
 
         #region 定时打印外卖订单
@@ -63,7 +70,7 @@ namespace Jiandanmao
             if (!ApplicationObject.App.ClientData.IsReceive) return;            // 如果不接收外卖订单，则直接退出
             readDataTimer.Tick += new EventHandler(HandleOrder);
             readDataTimer.Interval = new TimeSpan(0, 0, 0, 5);          // 5秒取一次
-            orderUrl = string.Format(ApplicationObject.App.Config.OrderUrl, ApplicationObject.App.Business.ID);
+            orderUrl = string.Format(ApplicationObject.App.Config.OrderUrl, ApplicationObject.App.Business.Id);
             readDataTimer.Start();
         }
         private async void HandleOrder(object sender, EventArgs e)
@@ -83,7 +90,7 @@ namespace Jiandanmao
                 this.Dispatcher.Invoke(() =>
                 {
                     var filename = string.Empty;
-                    if (firstOrder.Status == Enum.OrderStatus.Payed)
+                    if (firstOrder.Status == OrderStatus.Payed)
                     {
                         filename = "1.mp3";
                     }
@@ -128,7 +135,8 @@ namespace Jiandanmao
         {
             if (!ApplicationObject.App.ClientData.IsHost) return;       // 如果不是主收银台，则直接退出
             uploadTimer.Interval = new TimeSpan(0, 0, 10, 0);          // 10分钟上传一次
-            uploadTimer.Tick += async (sender, e) => {
+            uploadTimer.Tick += async (sender, e) =>
+            {
                 try
                 {
                     await ApplicationObject.UploadData();
@@ -161,34 +169,78 @@ namespace Jiandanmao
             MessageTips(((ButtonBase)sender).Content.ToString(), null, null);
         }
 
-        private async void Sync_Click(object obj, RoutedEventArgs e)
+
+
+        //private async void Sync_Click(object obj, RoutedEventArgs e)
+        //{
+        //    var loadingDialog = new LoadingDialog();
+
+        //    await DialogHost.Show(loadingDialog, "RootDialog", delegate (object sender, DialogOpenedEventArgs args)
+        //    {
+        //        async void start()
+        //        {
+        //            await Mainthread.BeginInvoke((Action)async delegate ()
+        //            {
+        //                try
+        //                {
+        //                    await ApplicationObject.UploadData();
+        //                    MainSnackbar.MessageQueue.Enqueue("同步成功");
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    LogHelper.AddLog($"数据同步出错：{ex.Message}");
+        //                    MainSnackbar.MessageQueue.Enqueue("同步出错");
+        //                }
+        //                args.Session.Close();
+        //            });
+        //        }
+
+        //        new Thread(start).Start();
+        //    });
+        //}
+
+        private void Sync_Click(object obj, RoutedEventArgs e)
         {
-            var loadingDialog = new LoadingDialog();
+            Sync();
+        }
+        private async void Upload_Click(object obj, RoutedEventArgs e)
+        {
+            await ApplicationObject.UploadData();
+            MainSnackbar.MessageQueue.Enqueue("上传成功");
+        }
 
-            await DialogHost.Show(loadingDialog, "RootDialog", delegate (object sender, DialogOpenedEventArgs args)
+        /// <summary>
+        /// 同步远程数据
+        /// </summary>
+        private async void Sync()
+        {
+            await Mainthread.BeginInvoke((Action)async delegate ()
             {
-                async void start()
+                var dialog = new DialogSync();
+                await DialogHost.Show(dialog, "RootDialog", delegate (object sender, DialogOpenedEventArgs args)
                 {
-                    await Mainthread.BeginInvoke((Action)async delegate ()
+                    async void start()
                     {
-                        try
+                        await Mainthread.BeginInvoke((Action)async delegate ()
                         {
-                            await ApplicationObject.UploadData();
-                            MainSnackbar.MessageQueue.Enqueue("同步成功");
-                        }
-                        catch (Exception ex)
-                        {
-                            LogHelper.AddLog($"数据同步出错：{ex.Message}");
-                            MainSnackbar.MessageQueue.Enqueue("同步出错");
-                        }
-                        args.Session.Close();
-                    });
-                }
+                            await Task.Delay(2000);
+                            var result = await ApplicationObject.App.SyncDataAsync();
+                            MainSnackbar.MessageQueue.Enqueue(result.Msg);
 
-                new Thread(start).Start();
+                            args.Session.Close();
+                        });
+                    }
+
+                    new Thread(start).Start();
+                });
             });
         }
 
+        /// <summary>
+        /// 设为开机启动
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AutoStart_Click(object sender, RoutedEventArgs e)
         {
             string starupPath = System.IO.Path.Combine(Environment.CurrentDirectory, "Jiandanmao.exe");
@@ -231,6 +283,12 @@ namespace Jiandanmao
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
+        /// <summary>
+        /// 弹出框提示
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public async void MessageTips(string message, object sender, RoutedEventArgs e)
         {
             var sampleMessageDialog = new MessageDialog

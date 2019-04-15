@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace JdCat.CatClient.Model
 {
     [Serializable]
-    public class RedisEntity : BaseEntity
+    public class RedisEntity : ClientBaseEntity
     {
     }
 }

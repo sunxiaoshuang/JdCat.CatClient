@@ -191,8 +191,6 @@
     <Compile Include="Code\FoodPrint.cs" />
     <Compile Include="Code\JsonData.cs" />
     <Compile Include="Code\OrderPrint.cs" />
-    <Compile Include="Code\PagingQuery.cs" />
-    <Compile Include="Code\PostNewOrderData.cs" />
     <Compile Include="Code\PrinterCmdUtils.cs" />
     <Compile Include="Code\PrintOption.cs" />
     <Compile Include="Code\RemoteDataObject.cs" />
@@ -200,23 +198,17 @@
     <Compile Include="Code\SelectItem.cs" />
     <Compile Include="Code\SharePrint.cs" />
     <Compile Include="Code\StateObject.cs" />
-    <Compile Include="Converter\TangOrderProductStatusNameTypeConvert.cs" />
+    <Compile Include="Converter\TangOrderProductStatusTypeConverter.cs" />
     <Compile Include="Converter\TangOrderProductOperateTypeConvert.cs" />
     <Compile Include="Converter\DateTimeToString3TypeConverter.cs" />
-    <Compile Include="Converter\VisibilityTypeConverter.cs" />
     <Compile Include="Converter\DateTimeToString2TypeConverter.cs" />
-    <Compile Include="Converter\GenderTypeConverter.cs" />
     <Compile Include="Converter\ProductFontColorTypeConverter.cs" />
     <Compile Include="Converter\ProductBackgroundTypeConverter.cs" />
     <Compile Include="Converter\BlockCheckBackgroundTypeConverter.cs" />
     <Compile Include="Converter\StoreOrderOperate2TypeConverter.cs" />
     <Compile Include="Converter\StoreOrderAmountTypeConverter.cs" />
     <Compile Include="Converter\StoreOrderOperateTypeConverter.cs" />
-    <Compile Include="Converter\DeskNameColorTypeConverter.cs" />
-    <Compile Include="Converter\DeskStatusColor2TypeConverter.cs" />
-    <Compile Include="Converter\DeskStatusColorTypeConverter.cs" />
     <Compile Include="Converter\DeskStatusNoteTypeConverter.cs" />
-    <Compile Include="Converter\DeskStatusTypeConverter.cs" />
     <Compile Include="Converter\DateTimeToStringTypeConverter.cs" />
     <Compile Include="Converter\DeliveryModeToStringTypeConverter.cs" />
     <Compile Include="Converter\MoneyToStringTypeConverter.cs" />
@@ -224,15 +216,9 @@
     <Compile Include="Converter\OrderIdentifierToStringValueConverter.cs" />
     <Compile Include="Converter\OrderProductTotalToStringTypeConverter.cs" />
     <Compile Include="Converter\OrderStatusToStringTypeConverter.cs" />
-    <Compile Include="Converter\PrintFormatTypeConverter.cs" />
-    <Compile Include="Converter\PrintIpTypeConverter.cs" />
-    <Compile Include="Converter\PrintModelToStringTypeConverter.cs" />
-    <Compile Include="Converter\PrintStateButtonTypeConverter.cs" />
-    <Compile Include="Converter\PrintStateTypeConverter.cs" />
     <Compile Include="Converter\DeskQuantityTypeConverter.cs" />
     <Compile Include="Converter\DeskTypeCheckColorTypeConverter.cs" />
     <Compile Include="Converter\ProductTypeCheckColorTypeConverter.cs" />
-    <Compile Include="Converter\PrintTypeTypeConverter.cs" />
     <Compile Include="Demo\Ctrl1.xaml.cs">
       <DependentUpon>Ctrl1.xaml</DependentUpon>
     </Compile>
@@ -243,80 +229,10 @@
     <Compile Include="Demo\TransitionDemo.xaml.cs">
       <DependentUpon>TransitionDemo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Entity\Address.cs" />
-    <Compile Include="Entity\BaseEntity.cs" />
-    <Compile Include="Entity\Business.cs" />
-    <Compile Include="Entity\ClientBaseEntity.cs" />
-    <Compile Include="Entity\CustomHistory.cs" />
-    <Compile Include="Entity\Desk.cs" />
-    <Compile Include="Entity\DeskType.cs" />
-    <Compile Include="Entity\IEntity.cs" />
-    <Compile Include="Entity\Order.cs" />
-    <Compile Include="Entity\OrderProduct.cs" />
-    <Compile Include="Entity\Product.cs" />
-    <Compile Include="Entity\ProductAttribute.cs" />
-    <Compile Include="Entity\ProductFormat.cs" />
-    <Compile Include="Entity\ProductImage.cs" />
-    <Compile Include="Entity\ProductType.cs" />
-    <Compile Include="Entity\SaleCoupon.cs" />
-    <Compile Include="Entity\SaleCouponUser.cs" />
-    <Compile Include="Entity\SaleFullReduce.cs" />
-    <Compile Include="Entity\SaleProductDiscount.cs" />
-    <Compile Include="Entity\SettingProductAttribute.cs" />
-    <Compile Include="Entity\StoreOrder.cs" />
-    <Compile Include="Entity\StoreOrderProduct.cs" />
-    <Compile Include="Entity\User.cs" />
     <Compile Include="Enum\DeskStatus.cs" />
-    <Compile Include="Enum\ActivityStatus.cs" />
-    <Compile Include="Enum\CouponStatus.cs" />
-    <Compile Include="Enum\DadaCancelSource.cs" />
-    <Compile Include="Enum\DadaStatus.cs" />
-    <Compile Include="Enum\DeliveryMode.cs" />
-    <Compile Include="Enum\ImageType.cs" />
-    <Compile Include="Enum\OrderCategory.cs" />
-    <Compile Include="Enum\OrderStatus.cs" />
-    <Compile Include="Enum\OrderType.cs" />
-    <Compile Include="Enum\PaymentType.cs" />
-    <Compile Include="Enum\PrinterMode.cs" />
     <Compile Include="Enum\PrintMode.cs" />
-    <Compile Include="Enum\ProductFeature.cs" />
-    <Compile Include="Enum\ProductStatus.cs" />
-    <Compile Include="Enum\ServiceProvider.cs" />
-    <Compile Include="Enum\StoreOrderStatus.cs" />
-    <Compile Include="Enum\UserGender.cs" />
-    <Compile Include="Enum\WeekdayState.cs" />
-    <Compile Include="EntityPartial\DeskPartial.cs" />
-    <Compile Include="EntityPartial\DeskTypePartial.cs" />
-    <Compile Include="EntityPartial\ProductTypePartial.cs" />
-    <Compile Include="EntityPartial\ProductPartial.cs" />
-    <Compile Include="EntityPartial\PrinterPartial.cs" />
-    <Compile Include="EntityPartial\OrderPartial.cs" />
     <Compile Include="Code\ApplicationObject.cs" />
     <Compile Include="Code\Printer.cs" />
-    <Compile Include="Uc\AddDesk.xaml.cs">
-      <DependentUpon>AddDesk.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\AddDeskType.xaml.cs">
-      <DependentUpon>AddDeskType.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\AddPrinter.xaml.cs">
-      <DependentUpon>AddPrinter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\Catering.xaml.cs">
-      <DependentUpon>Catering.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\CateringDesk.xaml.cs">
-      <DependentUpon>CateringDesk.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\CateringOrder.xaml.cs">
-      <DependentUpon>CateringOrder.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\CateringPayment.xaml.cs">
-      <DependentUpon>CateringPayment.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\CateringProduct.xaml.cs">
-      <DependentUpon>CateringProduct.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Uc\ChineseFood.xaml.cs">
       <DependentUpon>ChineseFood.xaml</DependentUpon>
     </Compile>
@@ -328,6 +244,9 @@
     </Compile>
     <Compile Include="Uc\ChineseFoodOrder.xaml.cs">
       <DependentUpon>ChineseFoodOrder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\ChineseFoodOrderCat.xaml.cs">
+      <DependentUpon>ChineseFoodOrderCat.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uc\ChineseFoodPayment.xaml.cs">
       <DependentUpon>ChineseFoodPayment.xaml</DependentUpon>
@@ -341,11 +260,8 @@
     <Compile Include="Uc\DeskNumber.xaml.cs">
       <DependentUpon>DeskNumber.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Uc\DeskSetting.xaml.cs">
-      <DependentUpon>DeskSetting.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\EditStaff.xaml.cs">
-      <DependentUpon>EditStaff.xaml</DependentUpon>
+    <Compile Include="Uc\DialogAsync.xaml.cs">
+      <DependentUpon>DialogAsync.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uc\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -356,23 +272,14 @@
     <Compile Include="Uc\MessageDialog.xaml.cs">
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\ModifyNumber.xaml.cs">
+      <DependentUpon>ModifyNumber.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\OrderInfo.xaml.cs">
       <DependentUpon>OrderInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uc\OrderList.xaml.cs">
       <DependentUpon>OrderList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\PeopleNumber.xaml.cs">
-      <DependentUpon>PeopleNumber.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\PrinterSetting.xaml.cs">
-      <DependentUpon>PrinterSetting.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\SelectProduct.xaml.cs">
-      <DependentUpon>SelectProduct.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Uc\StaffManager.xaml.cs">
-      <DependentUpon>StaffManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uc\SystemSetting.xaml.cs">
       <DependentUpon>SystemSetting.xaml</DependentUpon>
@@ -380,16 +287,10 @@
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodDetailViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodViewModel.cs" />
-    <Compile Include="ViewModel\EditStaffViewModel.cs" />
-    <Compile Include="ViewModel\StaffViewModel.cs" />
     <Compile Include="ViewModel\ContorllerItem.cs" />
-    <Compile Include="ViewModel\DeskViewModel.cs" />
-    <Compile Include="ViewModel\CateringViewModel.cs" />
     <Compile Include="ViewModel\OrderProductViewModel.cs" />
     <Compile Include="ViewModel\SystemSettingViewModel.cs" />
-    <Compile Include="ViewModel\SelectProductViewModel.cs" />
     <Compile Include="ViewModel\OrderListInfoViewModel.cs" />
-    <Compile Include="ViewModel\PrinterSettingViewModel.cs" />
     <Compile Include="ViewModel\OrderListViewModel.cs" />
     <Compile Include="ViewModel\HomeViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
@@ -413,48 +314,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Extension\NotifyPropertyChangedExtension.cs" />
-    <Compile Include="Helper\UtilHelper.cs" />
     <Compile Include="Helper\ShowOperation.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\Login.xaml">
+    <Page Include="Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Uc\AddDesk.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\AddDeskType.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\AddPrinter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\Catering.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\CateringDesk.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\CateringOrder.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\CateringPayment.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\CateringProduct.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\ChineseFood.xaml">
       <SubType>Designer</SubType>
@@ -469,6 +336,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\ChineseFoodOrder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodOrderCat.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -488,11 +359,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Uc\DeskSetting.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\EditStaff.xaml">
+    <Page Include="Uc\DialogAsync.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -508,27 +375,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Uc\ModifyNumber.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Uc\OrderInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\OrderList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\PeopleNumber.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\PrinterSetting.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\SelectProduct.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uc\StaffManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -538,7 +393,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pages\Login.xaml.cs">
+    <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -591,9 +446,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Video\4.mp3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="keyboard.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

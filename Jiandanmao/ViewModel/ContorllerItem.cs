@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JdCat.CatClient.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,14 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Jiandanmao.Extension;
 
 namespace Jiandanmao.ViewModel
 {
     /// <summary>
     /// 侧边栏选择
     /// </summary>
-    class ContorllerItem : INotifyPropertyChanged
+    public class ContorllerItem : INotifyPropertyChanged
     {
 
         private string _name;

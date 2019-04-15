@@ -4,16 +4,16 @@ using System.Windows.Data;
 
 namespace Jiandanmao.Converter
 {
-    public class ButtonColorTypeConverter : IValueConverter
+    public class DeskTypeCheckColorTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var isCheck = (bool)value;
             if (isCheck)
             {
-                return "#862000";
+                return "#00786a";
             }
-            return "#009789";
+            return "#81cbc5";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

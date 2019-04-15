@@ -1,5 +1,4 @@
 ﻿using JdCat.CatClient.Model;
-using Jiandanmao.Entity;
 using Jiandanmao.Enum;
 using System;
 using System.Collections.Generic;
@@ -70,7 +69,7 @@ namespace Jiandanmao.Code
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(TextToByte($"打印时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
             BufferList.Add(PrinterCmdUtils.NextLine());
-            BufferList.Add(PrinterCmdUtils.SplitLine("-", Printer.Format));
+            BufferList.Add(PrinterCmdUtils.SplitLine("-", Printer.Device.Format));
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.FontSizeSetBig(2));
         }

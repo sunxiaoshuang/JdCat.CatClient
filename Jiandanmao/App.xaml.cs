@@ -40,15 +40,13 @@ namespace Jiandanmao
             builder.Register(a => new DatabaseConfig
             {
                 Api = ApplicationObject.App.Config.ApiUrl,
-                KeyPrefix = ApplicationObject.App.Config.RedisDefaultKey,
-                StaffPrefix = ApplicationObject.App.Config.StaffPrefix
+                KeyPrefix = ApplicationObject.App.Config.RedisDefaultKey
             }).SingleInstance();
             var conn = ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["RedisConnectionString"].ConnectionString);
             builder.Register<IConnectionMultiplexer>(a => conn).SingleInstance();
-            builder.RegisterType<StaffService>().As<IStaffService>();
             builder.RegisterType<OrderService>().As<IOrderService>();
             builder.RegisterType<UtilService>().As<IUtilService>();
-            builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
+            //builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
             ApplicationObject.App.DataBase = builder.Build();
         }
 

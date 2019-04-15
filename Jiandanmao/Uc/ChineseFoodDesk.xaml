@@ -22,12 +22,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <convert:ButtonColorTypeConverter x:Key="dttc" />
-            <convert:DeskStatusTypeConverter x:Key="dstc" />
+            <convert:DeskTypeCheckColorTypeConverter x:Key="dttc" />
             <convert:DeskStatusNoteTypeConverter x:Key="dsntc" />
-            <convert:DeskStatusColorTypeConverter x:Key="dsctc" />
-            <convert:DeskStatusColor2TypeConverter x:Key="dsctc2" />
-            <convert:DeskNameColorTypeConverter x:Key="dnctc" />
             <convert:DeskQuantityTypeConverter x:Key="dqtc" />
             <convert:StoreOrderAmountTypeConverter x:Key="sotc" />
             <convert:DateTimeToString2TypeConverter x:Key="dttc2" />
@@ -53,6 +49,32 @@
                 </Style.Triggers>
             </Style>
 
+            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignButtonTextBlock}" x:Key="DeskTextBlock">
+                <Setter Property="Foreground" Value="White"/>
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="{x:Null}">
+                        <Trigger.Setters>
+                            <Setter Property="Foreground" Value="#009789"/>
+                        </Trigger.Setters>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource MaterialDesignRaisedButton}" x:Key="DeskBackground">
+                <Setter Property="Background" Value="#d63535"/>
+                <Setter Property="Width" Value="130"/>
+                <Setter Property="Height" Value="130"/>
+                <Setter Property="Padding" Value="4 0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="{x:Null}">
+                        <Trigger.Setters>
+                            <Setter Property="Background" Value="#eee"/>
+                        </Trigger.Setters>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
 
     </UserControl.Resources>
@@ -69,9 +91,9 @@
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
-            <Button Margin="0 0 50 0" Command="{Binding AllDeskCommand}" Background="{Binding IsAll, Converter={StaticResource dttc}}" Style="{StaticResource ButtonStyle}">
+            <Button Margin="0 0 50 0" Command="{Binding AllDeskCommand}" Style="{StaticResource ButtonStyle}" Background="{Binding IsAll, Converter={StaticResource dttc}}">
                 全部
             </Button>
             <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Command="{Binding TypePreCommand}" CommandParameter="{Binding ElementName=scroll}">
@@ -88,7 +110,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <materialDesign:Badged Badge="{Binding DeskQuantity}">
-                                <Button Command="{Binding ClickTypeCommand}" Height="44" Style="{StaticResource ButtonStyle}" 
+                                <Button Command="{Binding ClickTypeCommand}" Height="44" Style="{StaticResource ButtonStyle}"
                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=materialDesign:Badged}}" 
                                         DataContext="{Binding DataContext, ElementName=ChineseFoodDeskControl}" 
                                         Content="{Binding DataContext.Name, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=materialDesign:Badged}}" 
@@ -103,7 +125,7 @@
                 <materialDesign:PackIcon Kind="KeyboardArrowRight" />
             </Button>
             <StackPanel Grid.Column="4" Orientation="Horizontal">
-                <TextBox x:Name="searchContent" FontSize="20" materialDesign:HintAssist.Hint="搜索..." Width="200" Margin="20 0 0 10" >
+                <TextBox x:Name="searchContent" FontSize="20" materialDesign:HintAssist.Hint="搜索..." Width="100" Margin="20 0 0 10" >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="TextChanged">
                             <i:InvokeCommandAction Command="{Binding SearchDeskCommand}" CommandParameter="{Binding ElementName=searchContent}" />
@@ -125,8 +147,8 @@
                         <Button Command="{Binding OpenDeskCommand}" 
                                 CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}" 
                                 DataContext="{Binding DataContext, ElementName=ChineseFoodDeskControl}"
-                                Background="{Binding DataContext.Order, Converter={StaticResource dstc}, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}"
-                                Width="130" Height="130" Padding="4 0" BorderThickness="0">
+                                Tag="{Binding DataContext.Order, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}"
+                                Style="{StaticResource DeskBackground}">
                             <Button.Content>
                                 <Grid DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}">
                                     <Grid.RowDefinitions>
@@ -135,9 +157,9 @@
                                         <RowDefinition Height="30"/>
                                         <RowDefinition Height="15"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Text="{Binding Order, Converter={StaticResource dsntc}}" Foreground="{Binding Order, Converter={StaticResource dsctc}}" FontSize="12" HorizontalAlignment="Right"></TextBlock>
-                                    <TextBlock Text="{Binding Name}" FontSize="30" Grid.Row="1" HorizontalAlignment="Center" Foreground="{Binding Order, Converter={StaticResource dnctc}}"></TextBlock>
-                                    <TextBlock Text="{Binding Quantity, Converter={StaticResource dqtc}}" Grid.Row="2" HorizontalAlignment="Center" Foreground="{Binding Order, Converter={StaticResource dsctc2}}"></TextBlock>
+                                    <TextBlock Text="{Binding Order, Converter={StaticResource dsntc}}" Tag="{Binding Order}" Style="{StaticResource DeskTextBlock}" FontSize="12" HorizontalAlignment="Right"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource DeskTextBlock}" FontSize="30" Grid.Row="1" HorizontalAlignment="Center" Tag="{Binding Order}"></TextBlock>
+                                    <TextBlock Text="{Binding Quantity, Converter={StaticResource dqtc}}" Tag="{Binding Order}" Grid.Row="2" HorizontalAlignment="Center" Style="{StaticResource DeskTextBlock}"></TextBlock>
                                     <Grid Grid.Row="3">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="60" />
@@ -177,7 +199,7 @@
                         Command="{Binding DeskStatusChangedCommand}" CommandParameter="{Binding DeskStateButton[2]}" />
             </materialDesign:Badged>
 
-            <Button Content="刷新餐桌" Grid.Column="3" Style="{StaticResource DeskStateButton}" Tag="Focus" HorizontalAlignment="Right" Command="{Binding RefreshDeskCommand}" />
+            <Button Content="刷新餐台" Grid.Column="3" Style="{StaticResource DeskStateButton}" Tag="Focus" HorizontalAlignment="Right" Command="{Binding RefreshDeskCommand}" />
         </Grid>
     </Grid>
 </UserControl>

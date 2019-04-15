@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
 using Jiandanmao.Enum;
 using System.Net.Sockets;
 
@@ -22,7 +23,7 @@ namespace Jiandanmao.Code
                         if (product.Tag1 == null) continue;
                         product.Tag1.ForEach(item =>
                         {
-                            if (Printer.Foods.Contains(item.ID))
+                            if (Printer.Device.Foods.Contains(item.Id))
                             {
                                 Format(item.Name + $"[{product.Name}]", product.Description);
                             }

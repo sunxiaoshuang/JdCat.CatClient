@@ -66,31 +66,24 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <Button Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding CatCommand}" CommandParameter="{Binding ElementName=OrderListControl}" Width="100" Height="30" ToolTip="查看订单详情" Content="查看"></Button>
-                                            <!--<materialDesign:PopupBox Style="{StaticResource   MaterialDesignMultiFloatingActionPopupBox}" PlacementMode="RightAndAlignMiddles" ToolTipService.Placement="Left" ToolTip="订单打印">
-                                                <materialDesign:PopupBox.ToggleCheckedContent>
-                                                    <materialDesign:PackIcon Kind="Printer" Width="24" Height="24" />
-                                                </materialDesign:PopupBox.ToggleCheckedContent>
-                                                <StackPanel>
-                                                    <Button Content="整单" Command="{Binding PrintCommand}" CommandParameter="0"></Button>
-                                                    <Button Content="前台" Command="{Binding PrintCommand}" CommandParameter="1"></Button>
-                                                    <Button Content="后厨" Command="{Binding PrintCommand}" CommandParameter="2"></Button>
-                                                </StackPanel>
-                                            </materialDesign:PopupBox>-->
-
+                                            <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                                    Command="{Binding CatCommand}" 
+                                                    CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}" 
+                                                    DataContext="{Binding DataContext, ElementName=OrderListControl}"
+                                                    Width="100" Height="30" ToolTip="查看订单详情" Content="查看"></Button>
                                             <Menu>
                                                 <MenuItem Header="打印">
-                                                    <MenuItem Header="整单" Command="{Binding PrintCommand}" CommandParameter="0">
+                                                    <MenuItem Header="整单" DataContext="{Binding DataContext, ElementName=OrderListControl}" Command="{Binding PrintAllCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}">
                                                         <MenuItem.Icon>
                                                             <materialDesign:PackIcon Kind="Printer" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
-                                                    <MenuItem Header="前台单" Command="{Binding PrintCommand}" CommandParameter="1">
+                                                    <MenuItem Header="前台单" DataContext="{Binding DataContext, ElementName=OrderListControl}" Command="{Binding PrintFrontCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}" >
                                                         <MenuItem.Icon>
                                                             <materialDesign:PackIcon Kind="Printer" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
-                                                    <MenuItem Header="后台单" Command="{Binding PrintCommand}" CommandParameter="2">
+                                                    <MenuItem Header="后台单" DataContext="{Binding DataContext, ElementName=OrderListControl}" Command="{Binding PrintBackgroundCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}" >
                                                         <MenuItem.Icon>
                                                             <materialDesign:PackIcon Kind="Printer" />
                                                         </MenuItem.Icon>

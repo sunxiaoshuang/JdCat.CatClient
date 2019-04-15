@@ -71,14 +71,18 @@
                 <Label Content="{Binding Category, Converter={StaticResource octs}}" Grid.Row="1" Grid.Column="1"/>
                 <Label Content="微信支付流水号：" Grid.Row="1" Grid.Column="2"/>
                 <Label Content="{Binding WxPayCode}" Grid.Row="1" Grid.Column="3"/>
-                <Label Content="满减活动：" Grid.Row="2"/>
-                <Label Content="-￥0" x:Name="fullReduce" Grid.Row="2" Grid.Column="1"/>
-                <Label Content="优惠券：" Grid.Row="2" Grid.Column="2"/>
-                <Label Content="-￥0" x:Name="coupon" Grid.Row="2" Grid.Column="3"/>
-                <Label Content="应付款：" Grid.Row="3"/>
-                <Label Content="{Binding Price, Converter={StaticResource mtsv}}" Grid.Row="3" Grid.Column="1"/>
-                <Label Content="实付款：" Grid.Row="3" Grid.Column="2"/>
-                <Label Content="{Binding OldPrice, Converter={StaticResource mtsv}}" Grid.Row="3" Grid.Column="3"/>
+                <Label Content="开票公司：" Grid.Row="2" Grid.Column="2"/>
+                <Label Content="{Binding InvoiceName}" Grid.Row="2" Grid.Column="3"/>
+                <Label Content="纳税识别码：" Grid.Row="2" Grid.Column="2"/>
+                <Label Content="{Binding InvoiceTax}" Grid.Row="2" Grid.Column="3"/>
+                <Label Content="满减活动：" Grid.Row="3"/>
+                <Label Content="-￥0" x:Name="fullReduce" Grid.Row="3" Grid.Column="1"/>
+                <Label Content="优惠券：" Grid.Row="3" Grid.Column="2"/>
+                <Label Content="-￥0" x:Name="coupon" Grid.Row="3" Grid.Column="3"/>
+                <Label Content="应付款：" Grid.Row="4"/>
+                <Label Content="{Binding Price, Converter={StaticResource mtsv}}" Grid.Row="4" Grid.Column="1"/>
+                <Label Content="实付款：" Grid.Row="4" Grid.Column="2"/>
+                <Label Content="{Binding OldPrice, Converter={StaticResource mtsv}}" Grid.Row="4" Grid.Column="3"/>
             </Grid>
         </StackPanel>
         <ScrollViewer Grid.Row="4">

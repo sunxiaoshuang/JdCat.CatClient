@@ -1,5 +1,6 @@
-﻿using JdCat.CatClient.Model;
-using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -111,7 +112,7 @@ namespace Jiandanmao.Code
         /// <returns></returns>
         public async static Task<List<Order>> GetOrdersAsync(Business business, PagingQuery paging)
         {
-            var url = $"{ApiUrl}/Client/GetOrders/{business.ID}?PageIndex={paging.PageIndex}&PageSize={paging.PageSize}&CreateTime={DateTime.Now:yyyy-MM-dd}";
+            var url = $"{ApiUrl}/Client/GetOrders/{business.Id}?PageIndex={paging.PageIndex}&PageSize={paging.PageSize}&CreateTime={DateTime.Now:yyyy-MM-dd}";
             var result = await HttpRequestAsync(url);
             var jObj = JObject.Parse(result);
             var list = JsonConvert.DeserializeObject<List<Order>>(jObj["data"]["list"].ToString());
@@ -142,62 +143,7 @@ namespace Jiandanmao.Code
             var result = await HttpRequestAsync<List<Printer>>(url);
             return result.Data;
         }
-
-        /// <summary>
-        /// 保存客户端打印机设置
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="printers"></param>
-        /// <returns></returns>
-        public async static Task<JsonData<List<Printer>>> SavePrintersAsync(int id, IEnumerable<Printer> printers)
-        {
-            var url = $"{ApiUrl}/Client/SavePrinters/{id}";
-            foreach (var item in printers)
-            {
-                item.CopyFoodsToIds();
-                if (!int.TryParse(item.Id, out int num))
-                {
-                    item.Id = "0";
-                }
-            }
-            var content = JsonConvert.SerializeObject(printers);
-            var postData = new StringContent(content);
-            var result = await HttpRequestAsync<List<Printer>>(url, postData, "POST");
-            return result;
-        }
-
-        /// <summary>
-        /// 保存客户端打印机设置
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="printer"></param>
-        /// <returns></returns>
-        public async static Task<JsonData<Printer>> SavePrinterAsync(int id, Printer printer)
-        {
-            var url = $"{ApiUrl}/Client/SavePrinter/{id}";
-            printer.CopyFoodsToIds();
-            if (!int.TryParse(printer.Id, out int num))
-            {
-                printer.Id = "0";
-            }
-            var content = JsonConvert.SerializeObject(printer);
-            var postData = new StringContent(content);
-            var result = await HttpRequestAsync<Printer>(url, postData, "POST");
-            return result;
-        }
-
-        /// <summary>
-        /// 删除客户端打印机
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async static Task<JsonData> DeletePrinterAsync(int id)
-        {
-            var url = $"{ApiUrl}/Client/DeletePrinter/{id}";
-            var result = await HttpRequestAsync(url);
-            return JsonConvert.DeserializeObject<JsonData>(result);
-        }
-
+        
         /// <summary>
         /// 获取商户菜单
         /// </summary>
@@ -209,105 +155,14 @@ namespace Jiandanmao.Code
             var result = await GetDataAsync<List<ProductType>>(url);
             return result;
         }
-
+                
         /// <summary>
-        /// 更新打印机关联的菜品
+        /// 上传客户端数据
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="ids"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
         /// <returns></returns>
-        public async static Task<JsonData> PutPrinterProductsAsync(int id, string ids)
-        {
-            var url = $"{ApiUrl}/Client/PutPrinterProducts/{id}?ids={ids}";
-            var result = await GetDataAsync<JsonData>(url);
-            return result;
-        }
-
-        /// <summary>
-        /// 登录成功后，获取初始化数据
-        /// </summary>
-        /// <returns></returns>
-        public async static Task<RemoteDataObject> GetInitDataAsync(int id)
-        {
-            var url = $"{ApiUrl}/Client/InitClient/{id}";
-            return await GetDataAsync<RemoteDataObject>(url);
-        }
-
-        /// <summary>
-        /// 保存餐桌区域
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public async static Task<JsonData<DeskType>> SaveDeskTypeAsync(DeskType type)
-        {
-            var url = $"{ApiUrl}/Client/SaveDeskType";
-            var content = JsonConvert.SerializeObject(type);
-            return await HttpRequestAsync<DeskType>(url, new StringContent(content), "POST");
-        }
-
-        /// <summary>
-        /// 保存餐桌区域
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public async static Task<JsonData<DeskType>> UpdateDeskTypeAsync(DeskType type)
-        {
-            var url = $"{ApiUrl}/Client/UpdateDeskType";
-            var content = JsonConvert.SerializeObject(type);
-            return await HttpRequestAsync<DeskType>(url, new StringContent(content), "POST");
-        }
-
-        /// <summary>
-        /// 删除餐桌区域
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public async static Task<JsonData> DeleteDeskTypeAsync(DeskType type)
-        {
-            var url = $"{ApiUrl}/Client/DeleteDeskType/{type.Id}";
-            var result = await HttpRequestAsync(url);
-            return JsonConvert.DeserializeObject<JsonData>(result);
-        }
-
-        /// <summary>
-        /// 保存餐桌
-        /// </summary>
-        /// <param name="desk"></param>
-        /// <returns></returns>
-        public async static Task<JsonData<Desk>> SaveDeskAsync(Desk desk)
-        {
-            var url = $"{ApiUrl}/Client/SaveDesk";
-            var content = JsonConvert.SerializeObject(desk);
-            return await HttpRequestAsync<Desk>(url, new StringContent(content), "POST");
-        }
-
-        /// <summary>
-        /// 修改餐桌
-        /// </summary>
-        /// <param name="desk"></param>
-        /// <returns></returns>
-        public async static Task<JsonData<Desk>> UpdateDeskAsync(Desk desk)
-        {
-            var url = $"{ApiUrl}/Client/UpdateDesk";
-            var content = JsonConvert.SerializeObject(desk);
-            return await HttpRequestAsync<Desk>(url, new StringContent(content), "POST");
-        }
-
-        /// <summary>
-        /// 删除餐桌
-        /// </summary>
-        /// <param name="desk"></param>
-        /// <returns></returns>
-        public async static Task<JsonData> DeleteDeskAsync(Desk desk)
-        {
-            var url = $"{ApiUrl}/Client/DeleteDesk/{desk.Id}";
-            var result = await HttpRequestAsync(url);
-            return JsonConvert.DeserializeObject<JsonData>(result);
-        }
-
-
-        #region 上传接口
-        public async static Task<JsonData<List<T>>> UploadData<T>(IEnumerable<T> list) where T : JdCat.CatClient.Model.BaseEntity, new()
+        public async static Task<JsonData<List<T>>> UploadData<T>(IEnumerable<T> list) where T : JdCat.CatClient.Model.ClientBaseEntity, new()
         {
             var url = $"{ApiUrl}/Client/Upload{typeof(T).Name}";
             var body = new StringContent(JsonConvert.SerializeObject(list));
@@ -319,7 +174,30 @@ namespace Jiandanmao.Code
             });
             return result;
         }
-        #endregion
+        
+        /// <summary>
+        /// 使用员工登录
+        /// </summary>
+        /// <param name="id">员工id</param>
+        /// <param name="pwd">员工密码</param>
+        /// <returns></returns>
+        public async static Task<JsonData<Staff>> LoginStaffAsync(int id, string pwd)
+        {
+            var url = $"{ApiUrl}/Client/LoginStaff/{id}?pwd={pwd}";
+            return await HttpRequestAsync<Staff>(url);
+        }
+
+        /// <summary>
+        /// 读取远程数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async static Task<RemoteDataObject> SynchronousAsync(int id)
+        {
+            var url = $"{ApiUrl}/Client/Synchronous/{id}";
+            var result = await HttpRequestAsync(url);
+            return JsonConvert.DeserializeObject<RemoteDataObject>(result);
+        }
 
         #region 备注
         ///// <summary>

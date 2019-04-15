@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace JdCat.CatClient.Model
 {
     [Serializable]
-    public class TangOrder : BaseEntity, INotifyPropertyChanged
+    public class TangOrder : ClientBaseEntity, INotifyPropertyChanged
     {
         /// <summary>
         /// 订单当日编号（为0表示还没有下单）
@@ -110,7 +110,7 @@ namespace JdCat.CatClient.Model
         /// <summary>
         /// 订单类别
         /// </summary>
-        public OrderMode OrderMode { get; set; }
+        public OrderCategory OrderMode { get; set; }
         /// <summary>
         /// 支付方式id（远程）
         /// </summary>
@@ -136,6 +136,10 @@ namespace JdCat.CatClient.Model
         /// 退款原因
         /// </summary>
         public string CancelReason { get; set; }
+        /// <summary>
+        /// 餐品数量
+        /// </summary>
+        public int ProductQuantity { get; set; }
         /// <summary>
         /// 所属员工id（远程）
         /// </summary>

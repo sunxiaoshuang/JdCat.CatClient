@@ -11,7 +11,7 @@ namespace JdCat.CatClient.Model
     /// 员工
     /// </summary>
     [Serializable]
-    public class Staff: BaseEntity
+    public class Staff: ClientBaseEntity
     {
         /// <summary>
         /// 员工姓名
@@ -38,13 +38,29 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public DateTime? Birthday { get; set; }
         /// <summary>
+        /// 入职日期
+        /// </summary>
+        public DateTime? EnterTime { get; set; }
+        /// <summary>
         /// 身份证
         /// </summary>
         public string CardId { get; set; }
         /// <summary>
-        /// 所属商户
+        /// 员工岗位id
+        /// </summary>
+        public int StaffPostId { get; set; }
+        /// <summary>
+        /// 员工岗位对象
+        /// </summary>
+        public virtual StaffPost StaffPost { get; set; }
+        /// <summary>
+        /// 所属商户id
         /// </summary>
         public int BusinessId { get; set; }
+        /// <summary>
+        /// 所属商户
+        /// </summary>
+        public virtual Business Business { get; set; }
 
     }
 }

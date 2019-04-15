@@ -19,9 +19,5 @@ namespace JdCat.CatClient.Service
         /// 远程服务器api
         /// </summary>
         public string Api { get; set; }
-        /// <summary>
-        /// 员工编号前缀
-        /// </summary>
-        public string StaffPrefix { get; set; }
     }
 }

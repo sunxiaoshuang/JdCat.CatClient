@@ -7,8 +7,10 @@ using System.Windows.Threading;
 using MaterialDesignThemes.Wpf;
 using Jiandanmao.Uc;
 using Jiandanmao.Code;
-using Jiandanmao.Extension;
-using Jiandanmao.Entity;
+
+using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
+using System.Threading.Tasks;
 
 namespace Jiandanmao.ViewModel
 {
@@ -24,11 +26,15 @@ namespace Jiandanmao.ViewModel
         public ICommand PrePageCommand => new AnotherCommandImplementation(PrePage);
         public ICommand NextPageCommand => new AnotherCommandImplementation(NextPage);
         public ICommand RefreshCommand => new AnotherCommandImplementation(Refresh);
+        public ICommand CatCommand => new AnotherCommandImplementation(Cat);
+        public ICommand PrintAllCommand => new AnotherCommandImplementation(a => Print(a, 0));
+        public ICommand PrintFrontCommand => new AnotherCommandImplementation(a => Print(a, 1));
+        public ICommand PrintBackgroundCommand => new AnotherCommandImplementation(a => Print(a, 2));
 
         private ObservableCollection<Order> _items = new ObservableCollection<Order>();
-        public ObservableCollection<Order> Items => _items;
-        private PagingQuery _pagingQuery;
-        private PagingQuery PagingQuery => _pagingQuery;
+        public ObservableCollection<Order> Items { get => _items; }
+        private PagingQuery _paging = new PagingQuery { PageSize = 20, PageIndex = 1 };
+        private PagingQuery PagingQuery { get => _paging; }
         private bool _preEnable;
         public bool PreEnable
         {
@@ -54,14 +60,11 @@ namespace Jiandanmao.ViewModel
 
         #region 界面绑定方法
 
-        Dispatcher Mainthread = Dispatcher.CurrentDispatcher;
-
         public void Loaded(object o)
         {
-            _pagingQuery = new PagingQuery { PageSize = 20, PageIndex = 1 };
             Init(o);
         }
-        
+
         private void Init(object o)
         {
             var loadingDialog = new LoadingDialog();
@@ -87,10 +90,10 @@ namespace Jiandanmao.ViewModel
 
         private async void LoadOrders()
         {
-            _items.Clear();
+            Items.Clear();
             var list = await Request.GetOrdersAsync(ApplicationObject.App.Business, PagingQuery);
             if (list == null || list.Count == 0) return;
-            list.ForEach(a => _items.Add(a));
+            list.ForEach(a => Items.Add(a));
             PreEnable = PagingQuery.CanPre;
             NextEnable = PagingQuery.CanNext;
         }
@@ -113,6 +116,31 @@ namespace Jiandanmao.ViewModel
             LoadOrders();
         }
 
+        private async void Cat(object obj)
+        {
+            var order = await GetOrderDetailAsync(obj as Order);
+            var orderInfo = new OrderInfo(order);
+            await DialogHost.Show(orderInfo, "RootDialog");
+        }
+
+        private async void Print(object obj, int type)
+        {
+            var order = await GetOrderDetailAsync(obj as Order);
+            ApplicationObject.Print(order, type);
+        }
+
         #endregion
+
+        private async Task<Order> GetOrderDetailAsync(Order order)
+        {
+            if (!order.IsDetail)
+            {
+                var newOrder = await Request.GetOrderDetailAsync(order.Id);
+                newOrder.IsDetail = true;
+                Items.Replace(order, newOrder);
+                return newOrder;
+            }
+            return order;
+        }
     }
 }

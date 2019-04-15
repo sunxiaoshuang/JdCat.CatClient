@@ -1,7 +1,7 @@
 ﻿using JdCat.CatClient.Common;
 using JdCat.CatClient.Model;
 using JdCat.CatClient.Model.Enum;
-using Jiandanmao.Entity;
+
 using Jiandanmao.Enum;
 using Jiandanmao.Helper;
 using Newtonsoft.Json;
@@ -19,16 +19,16 @@ using System.Threading.Tasks;
 
 namespace Jiandanmao.Code
 {
-    public partial class Printer : INotifyPropertyChanged, ICloneable, IDisposable
+    public class Printer : IDisposable
     {
-        private System.Windows.Controls.ListBox ctl = new System.Windows.Controls.ListBox();            // 确保打印时线程安全
-        private object printLock = new object();                                                        // 确保每台打印机运行时的只有一个线程连接
-        private bool[] isStop = new bool[] { false };                                                                    // 是否停止打印任务
+        private System.Windows.Controls.ListBox ctl = new System.Windows.Controls.ListBox();            // 确保打印时线程安全程连接
+        private bool[] isStop = new bool[] { false };                                                   // 是否停止打印任务
         private List<Order> _printQueue = new List<Order>();
 
-        private static Dictionary<string, object> dicLock = new Dictionary<string, object>();  // 打印锁，同一个ip同一时间只能接受一个打印任务
+        private static Dictionary<string, object> dicLock = new Dictionary<string, object>();// 打印锁，同一个ip同一时间只能接受一个打印任务
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public ClientPrinter Device { get; set; }
+
         /// <summary>
         /// 打印商品中数量占用的纸张长度
         /// </summary>
@@ -37,153 +37,6 @@ namespace Jiandanmao.Code
         /// 打印商品中价格占用的商品长度
         /// </summary>
         private const int PriceLen = 8;
-        private string _id;
-        /// <summary>
-        /// 打印机ID
-        /// </summary>
-        public string Id
-        {
-            get { return _id; }
-            set
-            {
-                _id = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Id"));
-            }
-        }
-
-        private string _name;
-        /// <summary>
-        /// 打印机名称
-        /// </summary>
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                _name = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Name"));
-            }
-        }
-
-        private string _ip;
-        /// <summary>
-        /// 打印机IP地址
-        /// </summary>
-        public string IP
-        {
-            get { return _ip; }
-            set
-            {
-                _ip = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IP"));
-            }
-        }
-
-        private int _port;
-        /// <summary>
-        /// 打印机端口号
-        /// </summary>
-        public int Port
-        {
-            get { return _port; }
-            set
-            {
-                _port = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Port"));
-            }
-        }
-
-        private int _type;
-        /// <summary>
-        /// 打印机类型，[1:前台，2：后厨]
-        /// </summary>
-        public int Type
-        {
-            get { return _type; }
-            set
-            {
-                _type = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Type"));
-            }
-        }
-
-        private int _state;
-        /// <summary>
-        /// 打印机当前状态，[1:正常，2:停用]
-        /// </summary>
-        public int State
-        {
-            get { return _state; }
-            set
-            {
-                _state = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("State"));
-            }
-        }
-
-        private int _quantity;
-        /// <summary>
-        /// 每次打印数量
-        /// </summary>
-        public int Quantity
-        {
-            get { return _quantity; }
-            set
-            {
-                _quantity = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Quantity"));
-            }
-        }
-
-        private PrinterMode _mode;
-        /// <summary>
-        /// 打印模式
-        /// </summary>
-        public PrinterMode Mode
-        {
-            get { return _mode; }
-            set
-            {
-                _mode = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Mode"));
-            }
-        }
-
-        private string _foodIds;
-        /// <summary>
-        /// 菜品id
-        /// </summary>
-        public string FoodIds
-        {
-            get { return _foodIds; }
-            set
-            {
-                _foodIds = value;
-                if (!string.IsNullOrEmpty(value))
-                {
-                    Foods = new ObservableCollection<int>();
-                    foreach (var item in JsonConvert.DeserializeObject<List<int>>(FoodIds))
-                    {
-                        Foods.Add(item);
-                    }
-                }
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FoodIds"));
-            }
-        }
-
-        private int _format;
-        /// <summary>
-        /// 打印规格，58mm(32字符), 80mm(48字符)
-        /// </summary>
-        public int Format
-        {
-            get { return _format; }
-            set
-            {
-                _format = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Format"));
-            }
-        }
 
         /// <summary>
         /// 规格对应的字符长度
@@ -192,7 +45,7 @@ namespace Jiandanmao.Code
         {
             get
             {
-                return Format == 80 ? 48 : 32;
+                return Device.Format == 80 ? 48 : 32;
             }
         }
 
@@ -206,39 +59,7 @@ namespace Jiandanmao.Code
                 return FormatLen - QuantityLen - PriceLen;
             }
         }
-
-        private ObservableCollection<int> _foods;
-        /// <summary>
-        /// 关联的菜单
-        /// </summary>
-        public ObservableCollection<int> Foods
-        {
-            get { return _foods; }
-            set
-            {
-                _foods = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Foods"));
-            }
-        }
-
-        /// <summary>
-        /// 将菜单列表写入属性菜单id中
-        /// </summary>
-        public void CopyFoodsToIds()
-        {
-            if (Foods == null || Foods.Count == 0)
-            {
-                _foodIds = null;
-                return;
-            }
-            _foodIds = JsonConvert.SerializeObject(Foods);
-        }
-
-        public object Clone()
-        {
-            return this.MemberwiseClone();
-        }
-
+        
         /// <summary>
         /// 打印订单
         /// </summary>
@@ -248,31 +69,33 @@ namespace Jiandanmao.Code
         {
             _printQueue.Add(order);
         }
+
         /// <summary>
         /// 打印堂食订单
         /// </summary>
         /// <param name="order"></param>
         public void Print(TangOrder order, PrintOption option)
         {
-            lock (GetLock(IP))
+            lock (GetLock(Device.IP))
             {
                 try
                 {
                     var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    socket.Connect(new IPEndPoint(IPAddress.Parse(IP), Port));
+                    socket.Connect(new IPEndPoint(IPAddress.Parse(Device.IP), Device.Port));
                     PrintOrder(order, socket, option);
                     socket.Close();
                 }
                 catch (SocketException ex)
                 {
                     LogHelper.AddLog($"堂食订单打印异常：{ex.Message}");
-                    throw new Exception($"打印机[{Name}]连接异常");
+                    throw new Exception($"打印机[{Device.Name}]连接异常");
                 }
                 Thread.Sleep(10);
             }
         }
 
         private Task PrintTask { get; set; }
+
         /// <summary>
         /// 开始打印任务
         /// </summary>
@@ -289,15 +112,15 @@ namespace Jiandanmao.Code
                     {
                         try
                         {
-                            lock (GetLock(IP))
+                            lock (GetLock(Device.IP))
                             {
                                 var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                                socket.Connect(new IPEndPoint(IPAddress.Parse(IP), Port));
+                                socket.Connect(new IPEndPoint(IPAddress.Parse(Device.IP), Device.Port));
                                 while (true)
                                 {
                                     var order = _printQueue.FirstOrDefault();
                                     if (order == null) break;
-                                    if (order.Products == null || order.Products.Count == 0 || Foods.Count == 0) break;
+                                    if (order.Products == null || order.Products.Count == 0) break;
                                     ctl.Dispatcher.Invoke(() =>
                                     {
                                         PrintOrder(order, socket);
@@ -316,7 +139,7 @@ namespace Jiandanmao.Code
                                 Directory.CreateDirectory(dirPath);
                             }
                             var filepath = Path.Combine(dirPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
-                            var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 打印出错，打印机[{Name}]连接错误，原因：{ex}";
+                            var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 打印出错，打印机[{Device.Name}]连接错误，原因：{ex}";
                             ctl.Dispatcher.Invoke(() =>
                             {
                                 var stream = File.AppendText(filepath);
@@ -337,6 +160,7 @@ namespace Jiandanmao.Code
                 }
             });
         }
+
         /// <summary>
         /// 获取锁
         /// </summary>
@@ -350,6 +174,7 @@ namespace Jiandanmao.Code
             }
             return dicLock[ip];
         }
+
         /// <summary>
         /// 打印订单
         /// </summary>
@@ -357,15 +182,16 @@ namespace Jiandanmao.Code
         /// <param name="socket"></param>
         private void PrintOrder(Order order, Socket socket)
         {
-            if (Type == 1)
+            if (Device.Type == 1)
             {
                 ReceptionPrint(order, socket);
             }
-            else if (Type == 2)
+            else if (Device.Type == 2)
             {
                 Backstage(order, socket);
             }
         }
+
         /// <summary>
         /// 打印订单（堂食）
         /// </summary>
@@ -373,15 +199,16 @@ namespace Jiandanmao.Code
         /// <param name="socket"></param>
         private void PrintOrder(TangOrder order, Socket socket, PrintOption option)
         {
-            if (Type == 1)
+            if (Device.Type == 1)
             {
                 ReceptionPrint(order, socket, option);
             }
-            else if (Type == 2)
+            else if (Device.Type == 2)
             {
                 Backstage(order, socket, option);
             }
         }
+
         /// <summary>
         /// 前台打印
         /// </summary>
@@ -403,7 +230,7 @@ namespace Jiandanmao.Code
             bufferArr.Add(TextToByte("前台小票"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 分隔
-            bufferArr.Add(PrinterCmdUtils.SplitLine("-", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitLine("-", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 备注
             if (!string.IsNullOrEmpty(order.Remark))
@@ -428,8 +255,14 @@ namespace Jiandanmao.Code
             // 订单编号
             bufferArr.Add(TextToByte($"订单编号：{order.OrderCode}"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 开票信息
+            if (!string.IsNullOrEmpty(order.InvoiceTax) && !string.IsNullOrEmpty(order.InvoiceName))
+            {
+                bufferArr.Add(TextToByte($"开票信息：{order.InvoiceName}，{order.InvoiceTax}"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
             // 商品分隔
-            bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 打印商品
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
@@ -444,7 +277,7 @@ namespace Jiandanmao.Code
             }
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
             // 分隔
-            bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 包装费
             if (order.PackagePrice.HasValue)
@@ -476,7 +309,7 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(PrinterCmdUtils.AlignLeft());
             // 分隔
-            bufferArr.Add(PrinterCmdUtils.SplitLine("*", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitLine("*", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 地址
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
@@ -493,6 +326,7 @@ namespace Jiandanmao.Code
             // 打印
             bufferArr.ForEach(a => socket.Send(a));
         }
+
         /// <summary>
         /// 前台打印（堂食订单）
         /// </summary>
@@ -535,7 +369,7 @@ namespace Jiandanmao.Code
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
             // 商品分隔
-            bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 打印商品
             foreach (var product in option.Products)
@@ -548,7 +382,7 @@ namespace Jiandanmao.Code
                 });
             }
             // 分隔
-            bufferArr.Add(PrinterCmdUtils.SplitLine("-", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitLine("-", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 金额
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("餐位费：", order.MealFee.ToString()));
@@ -560,7 +394,7 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", order.Amount.ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 分隔
-            bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Format));
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 打印时间
             bufferArr.Add(TextToByte($"打印时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
@@ -596,7 +430,7 @@ namespace Jiandanmao.Code
             {
                 printSign = "Tang";
             }
-            var enumName = System.Enum.GetName(typeof(PrinterMode), Mode);
+            var enumName = System.Enum.GetName(typeof(PrinterMode), Device.Mode);
             var type = System.Type.GetType($"Jiandanmao.Code.{printSign}{enumName}Print");
             if (order is Order)
             {

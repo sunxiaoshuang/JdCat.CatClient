@@ -1,5 +1,6 @@
 ﻿using JdCat.CatClient.Model;
-using Jiandanmao.Entity;
+using JdCat.CatClient.Model.Enum;
+
 using Jiandanmao.Enum;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Jiandanmao.Code
             Order = order;
             Printer = printer;
             _socket = socket;
-            Products = Order?.Products.Where(a => a.Feature == ProductFeature.SetMeal || Printer.Foods.Contains(a.ProductId.Value)).ToList();
+            Products = Order?.Products.Where(a => a.Feature == ProductFeature.SetMeal || Printer.Device.Foods.Contains(a.ProductId.Value)).ToList();
         }
         public virtual void Print()
         {
@@ -68,7 +69,7 @@ namespace Jiandanmao.Code
             BufferList.Add(Encoding.GetEncoding("gbk").GetBytes("下单时间：" + Order.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:ss")));
 
             BufferList.Add(PrinterCmdUtils.NextLine());
-            BufferList.Add(PrinterCmdUtils.SplitLine("-", Printer.Format));
+            BufferList.Add(PrinterCmdUtils.SplitLine("-", Printer.Device.Format));
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.FontSizeSetBig(2));
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace JdCat.CatClient.Model
 {
     [Serializable]
-    public class TangOrderProduct: BaseEntity, INotifyPropertyChanged, ICloneable
+    public class TangOrderProduct: ClientBaseEntity, INotifyPropertyChanged, ICloneable
     {
         /// <summary>
         /// 商品名称

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace JdCat.CatClient.Service
 {
 
-    public class OrderService : BaseRedisService<TangOrder>, IOrderService
+    public class OrderService : BaseRedisService, IOrderService
     {
         public OrderService(IConnectionMultiplexer connectionMultiplexer, DatabaseConfig config) : base(connectionMultiplexer, config)
         {
@@ -25,20 +25,22 @@ namespace JdCat.CatClient.Service
             order.Code = GenerateOrderCode();
             Save(order);
             // 保存到未完成订单列表
-            var key = AddKeyPrefix("UnFinish");
+            var key = AddKeyPrefix<TangOrder>("UnFinish");
             Database.ListLeftPush(key, order.ObjectId);
         }
+
         public List<TangOrder> GetUnfinishOrder()
         {
-            var key = AddKeyPrefix("UnFinish");
+            var key = AddKeyPrefix<TangOrder>("UnFinish");
             var unfinish = Database.ListRange(key);
             if (unfinish == null || unfinish.Length == 0) return null;
-            var list = Get(unfinish.Select(a => a.ToString()).ToArray());
+            var list = Get<TangOrder>(unfinish.Select(a => a.ToString()).ToArray());
             list.ForEach(order => {
                 order.TangOrderProducts = GetOrderProduct(order.ObjectId).ToObservable();
             });
             return list;
         }
+
         public void SaveOrderProduct(TangOrderProduct product)
         {
             if (string.IsNullOrEmpty(product.ObjectId))
@@ -57,6 +59,7 @@ namespace JdCat.CatClient.Service
                 Database.ListRightPush(orderProductKey, product.ObjectId);
             }
         }
+
         public List<TangOrderProduct> GetOrderProduct(string objectId)
         {
             var orderProductKey = AddKeyPrefix($"Order:{objectId}", typeof(TangOrderProduct).Name);
@@ -66,6 +69,7 @@ namespace JdCat.CatClient.Service
             var entitys = vals.Select(a => JsonConvert.DeserializeObject<TangOrderProduct>(a)).ToList();
             return entitys;
         }
+
         public void SubmitOrder(TangOrder order)
         {
             order.OrderStatus = TangOrderStatus.Eating;
@@ -77,6 +81,7 @@ namespace JdCat.CatClient.Service
                 Update(product);
             }
         }
+
         public void ReSubmitOrder(TangOrder order)
         {
             foreach (var product in order.TangOrderProducts.Where(a => a.ProductStatus == TangOrderProductStatus.Add))
@@ -85,6 +90,7 @@ namespace JdCat.CatClient.Service
                 Update(product);
             }
         }
+
         public void DeleteOrder(TangOrder order)
         {
             /** 操作步骤
@@ -94,13 +100,13 @@ namespace JdCat.CatClient.Service
              *  4. 删除已点菜品实体
              *  5. 删除订单已点菜品列表
              */
-            var orderKey = AddKeyPrefix(order.ObjectId);
+            var orderKey = AddKeyPrefix<TangOrder>(order.ObjectId);
             Database.KeyDelete(orderKey);
 
-            var orderListKey = AddKeyPrefix("List");
+            var orderListKey = AddKeyPrefix<TangOrder>("List");
             Database.ListRemove(orderListKey, order.ObjectId);
 
-            var unFinishKey = AddKeyPrefix("UnFinish");
+            var unFinishKey = AddKeyPrefix<TangOrder>("UnFinish");
             Database.ListRemove(unFinishKey, order.ObjectId);
 
             var orderProductListKey = AddKeyPrefix($"Order:{order.ObjectId}", typeof(TangOrderProduct).Name);
@@ -127,6 +133,7 @@ namespace JdCat.CatClient.Service
 
             Database.KeyDelete(orderProductListKey);
         }
+
         public void UpdateOrderProduct(TangOrderProduct product)
         {
             if (product.Quantity <= 0)
@@ -142,13 +149,15 @@ namespace JdCat.CatClient.Service
                 Update(product);
             }
         }
+
         public void Payment(TangOrder order)
         {
             order.OrderStatus = TangOrderStatus.Settled;
             Update(order);
-            var key = AddKeyPrefix("UnFinish");
+            var key = AddKeyPrefix<TangOrder>("UnFinish");
             Database.ListRemove(key, order.ObjectId);
         }
+
         public TangOrderProduct Unsubscribe(TangOrder order, TangOrderProduct product, double quantity)
         {
             if (product.Quantity <= quantity)
@@ -186,15 +195,6 @@ namespace JdCat.CatClient.Service
             return retProduct;
         }
 
-
-        //public void ModifyOrderAmount(TangOrder order)
-        //{
-        //    var key = AddKeyPrefix(order.ObjectId);
-        //    var entity = Get(key); ;
-        //    entity.Amount = order.Amount;
-        //    Update(entity);
-        //}
-
         /// <summary>
         /// 生成订单编号
         /// </summary>
@@ -214,6 +214,7 @@ namespace JdCat.CatClient.Service
             code = $"{DateTime.Now:yyyyMMddHHmmss}{codeflow}{code}";
             return code;
         }
+
         /// <summary>
         /// 获取当日订单流水
         /// </summary>
@@ -222,7 +223,6 @@ namespace JdCat.CatClient.Service
         {
             var key = $"{DatabaseConfig.KeyPrefix}:OrderIdentity:{DateTime.Now:yyyyMMdd}";
             return Database.StringIncrement(key);
-            //Database.StringIncrement(key);
         }
     }
 }

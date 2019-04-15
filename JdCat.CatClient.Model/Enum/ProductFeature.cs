@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JdCat.CatClient.Model.Enum
 {
-    public enum ProductFeature
+    /// <summary>
+    /// 产品特色
+    /// </summary>
+    [Flags]
+    public enum ProductFeature : int
     {
         /// <summary>
-        /// 单品
+        /// 默认值
         /// </summary>
+        [Description("默认值")]
         None = 0,
         /// <summary>
         /// 招牌
         /// </summary>
+        [Description("招牌")]
         Signature = 1,
         /// <summary>
         /// 套餐
         /// </summary>
+        [Description("套餐")]
         SetMeal = 2
     }
 }

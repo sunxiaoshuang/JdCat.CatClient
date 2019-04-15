@@ -48,8 +48,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientPrinter.cs" />
+    <Compile Include="Address.cs" />
     <Compile Include="BaseEntity.cs" />
+    <Compile Include="Business.cs" />
+    <Compile Include="ClientBaseEntity.cs" />
+    <Compile Include="Desk.cs" />
+    <Compile Include="DeskType.cs" />
+    <Compile Include="Enum\PaymentCategory.cs" />
+    <Compile Include="Enum\ActivityStatus.cs" />
+    <Compile Include="Enum\CouponStatus.cs" />
+    <Compile Include="Enum\DadaCancelSource.cs" />
+    <Compile Include="Enum\DadaStatus.cs" />
+    <Compile Include="Enum\DeliveryMode.cs" />
+    <Compile Include="Enum\ImageType.cs" />
+    <Compile Include="Enum\MarkCategory.cs" />
     <Compile Include="Enum\OrderCategory.cs" />
+    <Compile Include="Enum\OrderStatus.cs" />
+    <Compile Include="Enum\OrderType.cs" />
+    <Compile Include="Enum\PrinterMode.cs" />
+    <Compile Include="Enum\ProductStatus.cs" />
+    <Compile Include="Enum\ServiceProvider.cs" />
+    <Compile Include="Enum\StaffPostAuth.cs" />
     <Compile Include="Enum\TangOrderProductStatus.cs" />
     <Compile Include="Enum\EntityStatus.cs" />
     <Compile Include="Enum\Gender.cs" />
@@ -57,13 +77,30 @@
     <Compile Include="Enum\SystemIcon.cs" />
     <Compile Include="Enum\PaymentTypeStatus.cs" />
     <Compile Include="Enum\ProductFeature.cs" />
+    <Compile Include="Enum\UserGender.cs" />
+    <Compile Include="Enum\WeekdayState.cs" />
+    <Compile Include="Order.cs" />
+    <Compile Include="OrderProduct.cs" />
     <Compile Include="PaymentType.cs" />
+    <Compile Include="Product.cs" />
+    <Compile Include="ProductAttribute.cs" />
+    <Compile Include="ProductFormat.cs" />
+    <Compile Include="ProductImage.cs" />
+    <Compile Include="ProductType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SaleCoupon.cs" />
+    <Compile Include="SaleCouponUser.cs" />
+    <Compile Include="SaleFullReduce.cs" />
+    <Compile Include="SaleProductDiscount.cs" />
+    <Compile Include="SettingProductAttribute.cs" />
+    <Compile Include="SystemMark.cs" />
     <Compile Include="Staff.cs" />
     <Compile Include="RedisEntity.cs" />
+    <Compile Include="StaffPost.cs" />
     <Compile Include="TangOrder.cs" />
     <Compile Include="TangOrderProduct.cs" />
     <Compile Include="Enum\TangOrderStatus.cs" />
+    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

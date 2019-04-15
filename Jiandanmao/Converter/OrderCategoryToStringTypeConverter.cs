@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
-using Jiandanmao.Extension;
 using Jiandanmao.Enum;
 using JdCat.CatClient.Common;
+using JdCat.CatClient.Model.Enum;
 
 namespace Jiandanmao.Converter
 {

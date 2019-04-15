@@ -1,4 +1,5 @@
-﻿using JdCat.CatClient.IService;
+﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.IService;
 using JdCat.CatClient.Model;
 using JdCat.CatClient.Model.Enum;
 using Newtonsoft.Json;
@@ -14,7 +15,7 @@ namespace JdCat.CatClient.Service
     /// <summary>
     /// 
     /// </summary>
-    public class UtilService : BaseRedisService<RedisEntity>, IUtilService
+    public class UtilService : BaseRedisService, IUtilService
     {
         public UtilService(IConnectionMultiplexer connectionMultiplexer, DatabaseConfig config) : base(connectionMultiplexer, config)
         {
@@ -25,72 +26,86 @@ namespace JdCat.CatClient.Service
             DatabaseConfig.KeyPrefix += $":{id}";
 
             // 餐位费
-            var key = AddKeyPrefix("MealFee");
+            var key = AddKeyPrefix<RedisEntity>("MealFee");
             if (!Database.KeyExists(key))
             {
-                Database.StringSet(key, 3);
-            }
-            // 口味
-            key = AddKeyPrefix("Flavors");
-            if (!Database.KeyExists(key))
-            {
-                Database.ListRightPush(key, new RedisValue[] { "不辣", "微辣", "中辣", "很辣" });
-            }
-            // 员工编号
-            key = AddKeyPrefix("StaffCode");
-            if (!Database.KeyExists(key))
-            {
-                Database.StringSet(key, 0);
-            }
-            // 支付类型编号
-            key = AddKeyPrefix("PaymentTypeCode");
-            if (!Database.KeyExists(key))
-            {
-                Database.StringSet(key, 0);
-                // 初始化三种支付类型
-                var payments = new List<PaymentType> {
-                    new PaymentType{ BusinessId = id, Code = $"M{Database.StringIncrement(key).ToString().PadLeft(4, '0')}", CreateTime = DateTime.Now, Icon = SystemIcon.Money, Name = "现金", ObjectId = Guid.NewGuid().ToString().ToLower(), ModifyTime = DateTime.Now, Status = EntityStatus.Normal, TypeStatus = PaymentTypeStatus.Normal },
-                    new PaymentType{ BusinessId = id, Code = $"M{Database.StringIncrement(key).ToString().PadLeft(4, '0')}", CreateTime = DateTime.Now, Icon = SystemIcon.Alipay, Name = "支付宝", ObjectId = Guid.NewGuid().ToString().ToLower(), ModifyTime = DateTime.Now, Status = EntityStatus.Normal, TypeStatus = PaymentTypeStatus.Normal },
-                    new PaymentType{ BusinessId = id, Code = $"M{Database.StringIncrement(key).ToString().PadLeft(4, '0')}", CreateTime = DateTime.Now, Icon = SystemIcon.Wechat, Name = "微信", ObjectId = Guid.NewGuid().ToString().ToLower(), ModifyTime = DateTime.Now, Status = EntityStatus.Normal, TypeStatus = PaymentTypeStatus.Normal }
-                };
-                foreach (var item in payments)
-                {
-                    var paymentKey = AddKeyPrefix(item.ObjectId, typeof(PaymentType).Name);
-                    Database.StringSet(paymentKey, JsonConvert.SerializeObject(item));
-                }
-                var listKey = AddKeyPrefix("List", typeof(PaymentType).Name);
-                Database.ListRightPush(listKey, payments.Select(a => (RedisValue)a.ObjectId).ToArray());
+                Database.StringSet(key, 1);
             }
         }
 
         public double GetMealFee()
         {
-            var key = AddKeyPrefix("MealFee");
+            var key = AddKeyPrefix<RedisEntity>("MealFee");
             var result = Database.StringGet(key);
             return (double)result;
         }
+
         public void SetMealFee(double mealFee)
         {
-            var key = AddKeyPrefix("MealFee");
+            var key = AddKeyPrefix<RedisEntity>("MealFee");
             Database.StringSet(key, mealFee);
         }
-        public List<string> GetFlavors()
+
+        public async Task<Staff> GetStaffByAliseAsync(string alise)
         {
-            var key = AddKeyPrefix("Flavors");
-            var list = Database.ListRange(key);
-            if (list == null || list.Count() == 0) return null;
-            return list.Select(a => a.ToString()).ToList();
+            var businessIds = Database.ListRange(AddKeyPrefix<Business>("List"));
+            if (businessIds.Length == 0) return null;
+            var typeName = typeof(Staff).Name;
+            foreach (var item in businessIds)
+            {
+                var key = $"{DatabaseConfig.KeyPrefix}:{item}:{typeName}:{alise}";
+                var id = await Database.StringGetAsync(key);
+                if (id.IsNullOrEmpty) continue;
+                var staff = await Database.StringGetAsync($"{DatabaseConfig.KeyPrefix}:{item}:{typeName}:{id}");
+                if (staff.IsNullOrEmpty) continue;
+                var entity = JsonConvert.DeserializeObject<Staff>(staff);
+                var post = await Database.StringGetAsync($"{DatabaseConfig.KeyPrefix}:{item}:{typeof(StaffPost).Name}:{entity.StaffPostId}");
+                entity.StaffPost = JsonConvert.DeserializeObject<StaffPost>(post);
+                return entity;
+            }
+            return null;
         }
-        public void SetFlavors(IEnumerable<string> flavors)
+
+        public async Task SaveStaffAsync(IEnumerable<Staff> staffs)
         {
-            var key = AddKeyPrefix("Flavors");
-            Database.KeyDelete(key);
-            Database.ListRightPush(key, flavors.Select(a => (RedisValue)a).ToArray());
+            await SaveRemoteDataAsync(staffs);
+            if (staffs == null || staffs.Count() == 0) return;
+            var pairs = new List<KeyValuePair<RedisKey, RedisValue>>();
+            var typeName = typeof(Staff).Name;
+            foreach (var item in staffs)
+            {
+                pairs.Add(new KeyValuePair<RedisKey, RedisValue>(AddKeyPrefix(item.Alise, typeName), item.ObjectId));
+            }
+            await Database.StringSetAsync(pairs.ToArray());
         }
-        public void SetLoginBusiness(int id)
+
+        public async Task SetLoginBusinessAsync(Business business)
         {
-            var key = $"{DatabaseConfig.KeyPrefix}:Business";
-            Database.SetAdd(key, id);
+            await SaveRemoteDataAsync(new List<Business> { business });
+            await Database.StringSetAsync(AddKeyPrefix<Business>(business.Code), business.ObjectId);
+
         }
+
+        public async Task<List<ProductType>> GetProductTypeAsync()
+        {
+            var types = await GetAllAsync<ProductType>();
+            if (types == null) return null;
+            var products = await GetAllAsync<Product>();
+            if (products == null) return types;
+            types.ForEach(a => a.Products = products.Where(b => b.ProductTypeId == a.Id).ToObservable());
+            return types;
+        }
+
+        public async Task<List<DeskType>> GetDeskTypesAsync()
+        {
+            var types = await GetAllAsync<DeskType>();
+            if (types == null) return null;
+            var desks = await GetAllAsync<Desk>();
+            if (desks == null) return types;
+            types.ForEach(a => a.Desks = desks.Where(b => b.DeskTypeId == a.Id).ToObservable());
+            return types;
+        }
+
+
     }
 }

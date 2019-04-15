@@ -7,9 +7,8 @@ using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using Jiandanmao.Uc;
 using Jiandanmao.Code;
-using Jiandanmao.Extension;
 using MaterialDesignThemes.Wpf.Transitions;
-using Jiandanmao.Entity;
+
 using Autofac;
 using Jiandanmao.Enum;
 using Jiandanmao.Helper;
@@ -138,10 +137,10 @@ namespace Jiandanmao.ViewModel
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IUtilService>();
-                Flavors = service.GetFlavors()?.Select(a => new SelectItem(false, a)).ToList();
+                Flavors = service.GetAll<SystemMark>()?.Where(a => a.Category == MarkCategory.Flavor).Select(a => new SelectItem(false, a.Name)).ToList();
                 Formats = product.Formats.Select(a => new SelectItem<ProductFormat>(false, a.Name, a)).ToList();
 
-                var format = Formats.FirstOrDefault(a => a.Target.ID == Good.FormatId);
+                var format = Formats.FirstOrDefault(a => a.Target.Id == Good.FormatId);
                 if (format != null) format.IsSelected = true;
 
                 var descritions = good.Description?.Split('|');
@@ -251,7 +250,7 @@ namespace Jiandanmao.ViewModel
                 description = description.Substring(0, description.Length - 1);
             }
             Good.Description = description;
-            Good.FormatId = format?.ID ?? 0;
+            Good.FormatId = format?.Id ?? 0;
             Good.OriginalPrice = OriginalPrice;
             Good.Price = Price;
             Good.Quantity = Quantity;
@@ -298,9 +297,9 @@ namespace Jiandanmao.ViewModel
         {
             products.ForEach(item =>
             {
-                if (item.Tag != null || item.Feature != JdCat.CatClient.Model.Enum.ProductFeature.SetMeal) return;
+                if (item.Tag != null || item.Feature != ProductFeature.SetMeal) return;
                 var ids = item.ProductIdSet.Split(',').Select(a => int.Parse(a));
-                item.Tag = ApplicationObject.App.Products.Where(a => ids.Contains(a.ID)).ToList();
+                item.Tag = ApplicationObject.App.Products.Where(a => ids.Contains(a.Id)).ToList();
             });
             ApplicationObject.Print(Order, 2, option: new PrintOption
             {

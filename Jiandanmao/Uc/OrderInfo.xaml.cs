@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+
 using System.Windows.Controls;
 
 namespace Jiandanmao.Uc

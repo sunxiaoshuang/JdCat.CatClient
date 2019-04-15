@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JdCat.CatClient.IService
 {
-    public interface IOrderService : IBaseService<TangOrder>
+    public interface IOrderService : IBaseService
     {
         /// <summary>
         /// 保存订单

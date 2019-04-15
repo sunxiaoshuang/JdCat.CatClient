@@ -136,6 +136,7 @@
                             <StackPanel>
                                 <!--<Button Content="帐号信息" Click="MenuPopupButton_OnClick"/>-->
                                 <Button Content="数据同步" Click="Sync_Click"/>
+                                <Button Content="数据上传" Click="Upload_Click"/>
                                 <!--<Button Content="备注" IsEnabled="False" />-->
                                 <Separator/>
                                 <Button Content="设置自动启动" Click="AutoStart_Click"/>

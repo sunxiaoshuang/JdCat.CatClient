@@ -1,5 +1,4 @@
 ﻿using JdCat.CatClient.Model;
-using Jiandanmao.Entity;
 using Jiandanmao.Enum;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -28,7 +27,7 @@ namespace Jiandanmao.Code
                         {
                             products.ForEach(item =>
                             {
-                                if (Printer.Foods.Contains(item.ID))
+                                if (Printer.Device.Foods.Contains(item.Id))
                                 {
                                     Format(item.Name + $"[{product.Name}]", product.Description, product.Remark);
                                 }

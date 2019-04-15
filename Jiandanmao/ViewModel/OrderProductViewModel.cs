@@ -9,10 +9,9 @@ using System.Windows.Threading;
 using MaterialDesignThemes.Wpf;
 using Jiandanmao.Uc;
 using Jiandanmao.Code;
-using Jiandanmao.Extension;
-using Jiandanmao.Entity;
 using System.ComponentModel;
 using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
 
 namespace Jiandanmao.ViewModel
 {

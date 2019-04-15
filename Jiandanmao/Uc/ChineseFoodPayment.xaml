@@ -29,6 +29,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Border BorderBrush="#ccc" BorderThickness="1" Margin="10 0 0 0" Padding="10 10 0 0">
+        
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
@@ -72,30 +73,6 @@
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
-                            <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="0.1"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥0.1</TextBlock>
-                </Border>
-                <Border Style="{StaticResource PayMoney}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseUp">
-                            <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="0.5"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥0.5</TextBlock>
-                </Border>
-                <Border Style="{StaticResource PayMoney}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseUp">
-                            <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="1"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#009789">￥1</TextBlock>
-                </Border>
-                <Border Style="{StaticResource PayMoney}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseUp">
                             <i:InvokeCommandAction Command="{Binding ClickMoneyCommand}" CommandParameter="5"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
@@ -135,7 +112,7 @@
                 </Border>
             </WrapPanel>
 
-            <ItemsControl Grid.Row="4" Grid.ColumnSpan="2" ItemsSource="{Binding PaymentTypes}" Grid.IsSharedSizeScope="True">
+            <ItemsControl Grid.Row="4" Grid.ColumnSpan="2" BorderBrush="#ccc" BorderThickness="0 1 0 0" Padding="0 40 0 0" Margin="0 20 0 0" ItemsSource="{Binding PaymentTypes}" Grid.IsSharedSizeScope="True">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel/>
@@ -165,7 +142,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <StackPanel Grid.Row="5" Grid.ColumnSpan="2">
+            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center">
                 <Button Content="确定收款" Height="60" Margin="0 40 0 0" Width="200" HorizontalAlignment="Left" FontSize="30" Command="{Binding SubmitPaymentCommand}"></Button>
             </StackPanel>
 

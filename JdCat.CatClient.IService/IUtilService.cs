@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JdCat.CatClient.IService
 {
-    public interface IUtilService : IBaseService<RedisEntity>
+    public interface IUtilService : IBaseService
     {
         /// <summary>
         /// 数据库初始化
@@ -26,20 +26,32 @@ namespace JdCat.CatClient.IService
         /// <returns></returns>
         void SetMealFee(double mealFee);
         /// <summary>
-        /// 获取口味列表
+        /// 根据用户名获取员工信息
+        /// </summary>
+        /// <param name="alise"></param>
+        /// <returns></returns>
+        Task<Staff> GetStaffByAliseAsync(string alise);
+        /// <summary>
+        /// 保存员工信息
+        /// </summary>
+        /// <param name="staffs"></param>
+        /// <returns></returns>
+        Task SaveStaffAsync(IEnumerable<Staff> staffs);
+        /// <summary>
+        /// 保存登陆过的商户
+        /// </summary>
+        /// <param name="business"></param>
+        Task SetLoginBusinessAsync(Business business);
+        /// <summary>
+        /// 读取所有的商品类别以及类别下的商品
         /// </summary>
         /// <returns></returns>
-        List<string> GetFlavors();
+        Task<List<ProductType>> GetProductTypeAsync();
         /// <summary>
-        /// 设置口味列表
+        /// 读取所有的区域以及区域以下的餐台
         /// </summary>
-        /// <param name="flavors"></param>
-        void SetFlavors(IEnumerable<string> flavors);
-        /// <summary>
-        /// 保存登陆过的商户id
-        /// </summary>
-        /// <param name="id"></param>
-        void SetLoginBusiness(int id);
+        /// <returns></returns>
+        Task<List<DeskType>> GetDeskTypesAsync();
 
     }
 }

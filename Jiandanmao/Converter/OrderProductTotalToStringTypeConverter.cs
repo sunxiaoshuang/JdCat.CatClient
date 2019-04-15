@@ -1,4 +1,5 @@
-﻿using Jiandanmao.Entity;
+﻿using JdCat.CatClient.Model;
+
 using System;
 using System.Globalization;
 using System.Windows.Data;

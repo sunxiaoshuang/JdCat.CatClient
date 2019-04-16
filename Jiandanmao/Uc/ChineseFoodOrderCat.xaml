@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.ChineseFoodOrderCat"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             mc:Ignorable="d"
+             Width="600" Height="700">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+
+            <convert:TangOrderProductStatusTypeConverter x:Key="topstc" />
+
+            <Style TargetType="{x:Type TextBlock}" x:Key="Tblock">
+                <Style.Triggers>
+                    <Trigger Property="Text"  Value="已退菜">
+                        <Trigger.Setters>
+                            <Setter Property="Foreground" Value="Red"/>
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </Trigger.Setters>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock FontSize="22" Margin="20 0 0 0">餐台：</TextBlock>
+                <TextBlock FontSize="22" Text="{Binding Name}"></TextBlock>
+            </StackPanel>
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" HorizontalAlignment="Right" Margin="0 0 20 0" >
+                <Button.Content>
+                    <materialDesign:PackIcon Kind="Close" />
+                </Button.Content>
+            </Button>
+        </Grid>
+        <ListView ItemsSource="{Binding Products}" FontSize="14" Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Sort}" Header="序号">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock>序号</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="200" Header="名称" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Quantity}">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock>数量</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate></GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Amount}" Header="总价">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock>总价</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="Red" Text="{Binding ProductStatus, Converter={StaticResource topstc}}" Style="{StaticResource Tblock}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Margin="0 0 20 0" Content="确定"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

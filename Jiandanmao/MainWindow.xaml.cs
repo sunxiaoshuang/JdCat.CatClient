@@ -51,7 +51,14 @@ namespace Jiandanmao
             InitTimer();
             title.Text = ApplicationObject.App.Business.Name;
             InitUploadTimer();
-
+            if (!ApplicationObject.App.IsAdmin && (ApplicationObject.App.Staff.StaffPost.Authority & StaffPostAuth.Manager) == 0)
+            {
+                btnSettle.Visibility = Visibility.Collapsed;
+            }
+            if (ApplicationObject.App.Staff == null)
+            {
+                btnChange.Visibility = Visibility.Collapsed;
+            }
             Task.Run(() =>
             {
                 Thread.Sleep(500);
@@ -171,33 +178,15 @@ namespace Jiandanmao
 
 
 
-        //private async void Sync_Click(object obj, RoutedEventArgs e)
-        //{
-        //    var loadingDialog = new LoadingDialog();
+        private void ChangeWork_Click(object obj, RoutedEventArgs e)
+        {
+            DialogHost.Show(new ChangeWork { DataContext = new ChangeWorkViewModel(false) }, "RootDialog");
+        }
 
-        //    await DialogHost.Show(loadingDialog, "RootDialog", delegate (object sender, DialogOpenedEventArgs args)
-        //    {
-        //        async void start()
-        //        {
-        //            await Mainthread.BeginInvoke((Action)async delegate ()
-        //            {
-        //                try
-        //                {
-        //                    await ApplicationObject.UploadData();
-        //                    MainSnackbar.MessageQueue.Enqueue("同步成功");
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    LogHelper.AddLog($"数据同步出错：{ex.Message}");
-        //                    MainSnackbar.MessageQueue.Enqueue("同步出错");
-        //                }
-        //                args.Session.Close();
-        //            });
-        //        }
-
-        //        new Thread(start).Start();
-        //    });
-        //}
+        private void Settle_Click(object obj, RoutedEventArgs e)
+        {
+            DialogHost.Show(new ChangeWork { DataContext = new ChangeWorkViewModel(true) }, "RootDialog");
+        }
 
         private void Sync_Click(object obj, RoutedEventArgs e)
         {
@@ -223,7 +212,7 @@ namespace Jiandanmao
                     {
                         await Mainthread.BeginInvoke((Action)async delegate ()
                         {
-                            await Task.Delay(2000);
+                            await Task.Delay(1000);
                             var result = await ApplicationObject.App.SyncDataAsync();
                             MainSnackbar.MessageQueue.Enqueue(result.Msg);
 

@@ -384,6 +384,8 @@ namespace Jiandanmao.Code
         /// <returns></returns>
         public static byte[] PrintLineLeftRight(string left, string right, int formatLen = 48, int fontSize = 1)
         {
+            formatLen = formatLen == 80 ? 48 : formatLen;
+            formatLen = formatLen == 58 ? 32 : formatLen;
             var zhLeft = CalcZhQuantity(left);          // 左边文本的中文字符长度
             var enLeft = left.Length - zhLeft;          // 左边文本的其他字符长度
             var zhRight = CalcZhQuantity(right);        // 右边文本的中文字符长度
@@ -555,6 +557,27 @@ namespace Jiandanmao.Code
                 }
             }
             return Encoding.GetEncoding("gbk").GetBytes(left + right);
+        }
+        /// <summary>
+        /// 打印一行左中右对齐，中间与右边最多占用15个字符位
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="middle"></param>
+        /// <param name="right"></param>
+        /// <param name="formatLen"></param>
+        /// <param name="fontSize"></param>
+        /// <returns></returns>
+        public static byte[] PrintLineLeftMidRight(string left, string middle, string right, int formatLen = 48, int fontSize = 1)
+        {
+            var place = string.Empty;
+            for (int i = 0; i < 15 - middle.Length - right.Length; i++)
+            {
+                place += " ";
+            }
+            right = middle + place + right;
+
+            var buffer = PrintLineLeftRight(left, right, formatLen, fontSize: fontSize);
+            return buffer;
         }
 
     }

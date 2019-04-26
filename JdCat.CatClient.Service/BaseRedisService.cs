@@ -127,6 +127,10 @@ namespace JdCat.CatClient.Service
             if (result.IsNullOrEmpty) return null;
             return JsonConvert.DeserializeObject<TEntity>(result);
         }
+        public async Task<long> GetLengthAsync<TEntity>() where TEntity : ClientBaseEntity
+        {
+            return await Database.ListLengthAsync(AddKeyPrefix<TEntity>("List"));
+        }
         public async Task<TEntity> GetAsync<TEntity>(string objectId) where TEntity : ClientBaseEntity
         {
             var result = await Database.StringGetAsync(AddKeyPrefix<TEntity>(objectId));
@@ -155,6 +159,28 @@ namespace JdCat.CatClient.Service
             var objectId = await Database.StringGetAsync(AddKeyPrefix<TEntity>(code));
             if (objectId.IsNullOrEmpty) return null;
             return await GetAsync<TEntity>(objectId);
+        }
+
+        public async Task<List<TEntity>> GetAsync<TEntity>(PagingQuery paging, bool reversal = true, EntityStatus status = EntityStatus.Normal) where TEntity : ClientBaseEntity
+        {
+            long start, end;
+            if (reversal)
+            {
+                var len = paging.RecordCount == 0 ? await GetLengthAsync<TEntity>() : paging.RecordCount;
+                paging.RecordCount = (int)len;
+                start = len - paging.PageIndex * paging.PageSize;
+            }
+            else
+            {
+                start = (paging.PageIndex - 1) * paging.PageSize;
+            }
+            end = start + paging.PageSize - 1;
+            var objectIds = await Database.ListRangeAsync(AddKeyPrefix<TEntity>("List"), start, end);
+            if (objectIds == null || objectIds.Count() == 0) return null;
+            var entitys = (await GetAsync<TEntity>(objectIds.Select(a => a.ToString()).ToArray()))
+                .Where(a => (a.Status & status) > 0)
+                .ToList();
+            return entitys;
         }
 
         public List<TEntity> GetAll<TEntity>(EntityStatus status = EntityStatus.Normal) where TEntity : ClientBaseEntity

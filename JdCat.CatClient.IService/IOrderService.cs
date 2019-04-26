@@ -64,5 +64,6 @@ namespace JdCat.CatClient.IService
         /// <param name="quantity"></param>
         TangOrderProduct Unsubscribe(TangOrder order, TangOrderProduct product, double quantity);
 
+
     }
 }

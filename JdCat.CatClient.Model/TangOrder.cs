@@ -47,6 +47,18 @@ namespace JdCat.CatClient.Model
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Amount"));
             }
         }
+        /// <summary>
+        /// 优惠金额
+        /// </summary>
+        public double PreferentialAmount { get; set; }
+        /// <summary>
+        /// 收到的金额
+        /// </summary>
+        public double ReceivedAmount { get; set; }
+        /// <summary>
+        /// 找赎
+        /// </summary>
+        public double GiveAmount { get; set; }
         private int _peopleNumber;
         /// <summary>
         /// 用餐人数
@@ -88,6 +100,19 @@ namespace JdCat.CatClient.Model
             {
                 _remark = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Remark"));
+            }
+        }
+        private string _paymentRemark;
+        /// <summary>
+        /// 支付备注
+        /// </summary>
+        public string PaymentRemark
+        {
+            get { return _paymentRemark; }
+            set
+            {
+                _paymentRemark = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PaymentRemark"));
             }
         }
         private TangOrderStatus _orderStatus;

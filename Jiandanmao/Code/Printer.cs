@@ -59,7 +59,7 @@ namespace Jiandanmao.Code
                 return FormatLen - QuantityLen - PriceLen;
             }
         }
-        
+
         /// <summary>
         /// 打印订单
         /// </summary>
@@ -68,6 +68,24 @@ namespace Jiandanmao.Code
         public void Print(Order order)
         {
             _printQueue.Add(order);
+        }
+
+        /// <summary>
+        /// 打印二进制文本
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void Print(List<byte[]> buffers)
+        {
+            lock (GetLock(Device.IP))
+            {
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                socket.Connect(new IPEndPoint(IPAddress.Parse(Device.IP), Device.Port));
+                foreach (var buffer in buffers)
+                {
+                    socket.Send(buffer);
+                }
+                socket.Close();
+            }
         }
 
         /// <summary>

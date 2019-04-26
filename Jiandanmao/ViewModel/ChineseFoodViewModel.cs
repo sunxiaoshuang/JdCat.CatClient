@@ -38,6 +38,8 @@ namespace Jiandanmao.ViewModel
         private ChineseFood ThisController;
         private ChineseFoodOrder OrderController;
         private TextBox txtActual;          // 实际金额输入框
+        private TextBox txtPreferential;    // 优惠金额输入框
+        private TextBox txtPaymentRemark;   // 支付备注
         private double mealFee;             // 餐位费
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
         public ICommand DeskLoadedCommand => new AnotherCommandImplementation(DeskLoaded);
@@ -157,6 +159,11 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public ObservableCollection<SelectItem<PaymentType>> PaymentTypes { get => _paymentTypes; set => this.MutateVerbose(ref _paymentTypes, value, RaisePropertyChanged()); }
 
+        public ObservableCollection<string> _orderRemarks;
+        /// <summary>
+        /// 订单备注
+        /// </summary>
+        public ObservableCollection<string> OrderRemarks { get => _orderRemarks; set => this.MutateVerbose(ref _orderRemarks, value, RaisePropertyChanged()); }
         #endregion
 
 
@@ -182,8 +189,10 @@ namespace Jiandanmao.ViewModel
         {
             var control = (ChineseFoodPayment)o;
             txtActual = control.txtActual;
+            txtPreferential = control.txtPreferential;
+            txtPaymentRemark = control.txtPaymentRemark;
         }
-        private void Init(object o)
+        private async void Init(object o)
         {
             // 订阅系统消息
             SubscribeSystemMessage();
@@ -204,12 +213,18 @@ namespace Jiandanmao.ViewModel
             {
                 Products = ApplicationObject.App.Products;
             }
-            // 餐位费
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IUtilService>();
+                // 餐位费
                 mealFee = service.GetMealFee();
                 PaymentTypes = service.GetAll<PaymentType>()?.Select(a => new SelectItem<PaymentType>(false, a.Name, a)).ToObservable();
+                // 订单备注
+                var marks = await service.GetAllAsync<SystemMark>();
+                if (marks != null)
+                {
+                    OrderRemarks = marks.Where(a => a.Category == MarkCategory.OrderMark).Select(a => a.Name).ToObservable();
+                }
             }
             // 未完成订单
             ReloadDeskOrder();
@@ -394,6 +409,7 @@ namespace Jiandanmao.ViewModel
             if (viewModel.IsSubmit)
             {
                 CalcOrderAmount();
+                CalcBalance();
                 using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
                 {
                     var service = scope.Resolve<IOrderService>();
@@ -405,6 +421,8 @@ namespace Jiandanmao.ViewModel
         private void BackDesk(object o = null)
         {
             ThisController.transitioner.SelectedIndex = 0;
+            txtPreferential.Text = "0";
+            txtPaymentRemark.Text = string.Empty;
             //ReloadDeskOrder();
         }
         private void ProductSearch(object o)
@@ -511,6 +529,7 @@ namespace Jiandanmao.ViewModel
         {
             var txt = (TextBox)o;
             var text = txt.Text.Trim();
+            if (string.IsNullOrEmpty(text)) txt.Text = text = "0";
             if (!double.TryParse(text, out double distance))
             {
                 var reg = Regex.Match(text, @"\d+");
@@ -518,22 +537,29 @@ namespace Jiandanmao.ViewModel
                 txt.SelectionStart = int.MaxValue;
                 return;
             }
+            txt.Text = distance.ToString();
+            if (txt == txtPreferential)
+            {
+                txtActual.Text = (SelectedDesk.Order.Amount - double.Parse(text)).ToString();
+            }
+            txt.SelectionStart = int.MaxValue;
             CalcBalance();
         }
         private async void SubmitPayment(object o)
         {
             var total = double.Parse(txtActual.Text);
             var amount = Math.Round(SelectedDesk.Order.Amount, 2);
-            var payment = PaymentTypes.FirstOrDefault(a => a.IsSelected)?.Target;
+            var paymentItem = PaymentTypes.FirstOrDefault(a => a.IsSelected);
+            var payment = paymentItem?.Target;
             var order = SelectedDesk.Order;
             if (payment == null)
             {
                 MessageTips("请选择收款方式！");
                 return;
             }
-            if (total < amount)
+            if (Balance < 0)
             {
-                MessageTips("实收金额不能小于应收金额！");
+                MessageTips("找赎金额不能小于零！");
                 return;
             }
             await Confirm("确定收款吗？");
@@ -542,6 +568,11 @@ namespace Jiandanmao.ViewModel
             order.PaymentTypeId = payment.Id;
             order.PaymentTypeName = payment.Name;
             order.PayTime = DateTime.Now;
+            order.ReceivedAmount = double.Parse(txtActual.Text);
+            order.GiveAmount = Balance;
+            order.PaymentRemark = txtPaymentRemark.Text;
+            order.PreferentialAmount = double.Parse(txtPreferential.Text);
+            order.StaffId = ApplicationObject.App.Staff.Id;
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
@@ -556,6 +587,7 @@ namespace Jiandanmao.ViewModel
                 Products = order.TangOrderProducts.Where(a => a.ProductStatus != TangOrderProductStatus.Return)
             });
             SelectedDesk.Order = null;
+            paymentItem.IsSelected = false;
             PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Finish });
             BackDesk();
             SnackbarTips("结算成功");
@@ -596,6 +628,7 @@ namespace Jiandanmao.ViewModel
         {
             var num = 1;
             var desk = (Desk)o;
+            if (desk.Order.TangOrderProducts == null) return;
             var products = desk.Order.TangOrderProducts.Select(a => new { Sort = num++, a.Name, a.Quantity, a.Amount, a.ProductStatus });
 
             DialogHost.Show(new ChineseFoodOrderCat { DataContext = new { desk.Name, Products = products } }, "RootDialog");
@@ -737,7 +770,8 @@ namespace Jiandanmao.ViewModel
         private void CalcBalance()
         {
             var total = double.Parse(txtActual.Text);
-            Balance = Math.Round(total - SelectedDesk.Order.Amount, 2);
+            var preferential = double.Parse(txtPreferential.Text);
+            Balance = Math.Round(total + preferential - SelectedDesk.Order.Amount, 2);
         }
         /// <summary>
         /// 筛选餐桌

@@ -233,6 +233,9 @@
     <Compile Include="Enum\PrintMode.cs" />
     <Compile Include="Code\ApplicationObject.cs" />
     <Compile Include="Code\Printer.cs" />
+    <Compile Include="Uc\ChangeWork.xaml.cs">
+      <DependentUpon>ChangeWork.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\ChineseFood.xaml.cs">
       <DependentUpon>ChineseFood.xaml</DependentUpon>
     </Compile>
@@ -288,6 +291,7 @@
     <Compile Include="ViewModel\ChineseFoodDetailViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodViewModel.cs" />
     <Compile Include="ViewModel\ContorllerItem.cs" />
+    <Compile Include="ViewModel\ChangeWorkViewModel.cs" />
     <Compile Include="ViewModel\OrderProductViewModel.cs" />
     <Compile Include="ViewModel\SystemSettingViewModel.cs" />
     <Compile Include="ViewModel\OrderListInfoViewModel.cs" />
@@ -322,6 +326,10 @@
     <Page Include="Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Uc\ChangeWork.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\ChineseFood.xaml">
       <SubType>Designer</SubType>

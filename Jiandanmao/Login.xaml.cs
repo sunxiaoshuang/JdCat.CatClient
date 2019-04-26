@@ -13,6 +13,7 @@ using JdCat.CatClient.IService;
 using JdCat.CatClient.Model;
 using JdCat.CatClient.Common;
 using System.Threading.Tasks;
+using JdCat.CatClient.Model.Enum;
 
 namespace Jiandanmao.Pages
 {
@@ -151,7 +152,7 @@ namespace Jiandanmao.Pages
                         {
                             var service = scope.Resolve<IUtilService>();
                             var staff = await service.GetStaffByAliseAsync(name.Trim().ToLower());
-                            if(staff != null)
+                            if (staff != null)
                             {
                                 try
                                 {
@@ -164,7 +165,7 @@ namespace Jiandanmao.Pages
                                 }
                                 catch (Exception ex)
                                 {
-                                    if(staff.Password == UtilHelper.MD5(pw))
+                                    if (staff.Password == UtilHelper.MD5(pw))
                                     {
                                         EnterSystem(staff);
                                         return;
@@ -183,7 +184,7 @@ namespace Jiandanmao.Pages
                             catch (Exception ex)
                             {
                                 var business = await service.GetEntityByCodeAsync<Business>(name.Trim().ToLower());
-                                if(business != null && business.Password == UtilHelper.MD5(pw))
+                                if (business != null && business.Password == UtilHelper.MD5(pw))
                                 {
                                     EnterSystem(null, business);
                                     return;
@@ -202,15 +203,13 @@ namespace Jiandanmao.Pages
 
         private async void EnterSystem(Staff staff, Business business = null)
         {
-            if(business == null)
+            if (business == null)
             {
                 using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
                 {
                     var service = scope.Resolve<IUtilService>();
                     business = await service.GetAsync<Business>(staff.BusinessId.ToString());
                 }
-                //var json = await Request.GetBusinessAsync(staff.BusinessId);
-                //business = json.Data;
             }
             else
             {

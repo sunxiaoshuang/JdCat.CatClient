@@ -11,10 +11,11 @@ namespace Jiandanmao.Code
         public List<PaymentType> Payments { get; set; }
         public List<DeskType> DeskTypes { get; set; }
         public List<Desk> Desks { get; set; }
-        public List<SystemMark> SystemMarks { get; set; }
+        public List<SystemMark> Marks { get; set; }
         public List<ClientPrinter> Printers { get; set; }
         public List<ProductType> ProductTypes { get; set; }
         public List<Product> Products { get; set; }
+        public List<CookProductRelative> CookProductRelatives { get; set; }
 
     }
 }

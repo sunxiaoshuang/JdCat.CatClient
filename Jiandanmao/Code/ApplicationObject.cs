@@ -191,10 +191,11 @@ namespace Jiandanmao.Code
                     await service.SaveRemoteDataAsync(data.Payments);
                     await service.SaveRemoteDataAsync(data.DeskTypes);
                     await service.SaveRemoteDataAsync(data.Desks);
-                    await service.SaveRemoteDataAsync(data.SystemMarks);
+                    await service.SaveRemoteDataAsync(data.Marks);
                     await service.SaveRemoteDataAsync(data.Printers);
                     await service.SaveRemoteDataAsync(data.ProductTypes);
                     await service.SaveRemoteDataAsync(data.Products);
+                    await service.SaveRemoteDataAsync(data.CookProductRelatives);
                 }
                 result.Success = true;
                 result.Msg = "同步成功";

@@ -17,13 +17,13 @@
 
         <ResourceDictionary>
             <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="FontSize" Value="30"/>
+                <Setter Property="FontSize" Value="20"/>
             </Style>
             <Style TargetType="{x:Type Border}" x:Key="PayMoney">
-                <Setter Property="Padding" Value="20" />
+                <Setter Property="Padding" Value="10" />
                 <Setter Property="BorderBrush" Value="#009789" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Width" Value="120" />
+                <Setter Property="Width" Value="100" />
                 <Setter Property="Margin" Value="0 0 30 0" />
             </Style>
         </ResourceDictionary>
@@ -32,15 +32,17 @@
         
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
-                <RowDefinition Height="80" />
-                <RowDefinition Height="80" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="160" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock>应收：</TextBlock>
@@ -48,28 +50,44 @@
                 <TextBlock Foreground="Red">￥</TextBlock>
                 <TextBlock Foreground="Red" Text="{Binding SelectedDesk.Order.Amount}" />
             </StackPanel>
-
-            <TextBlock Grid.Row="1">实收：</TextBlock>
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                <TextBlock Foreground="Red" FontSize="30">￥</TextBlock>
-                <TextBox Foreground="Red" FontSize="30" x:Name="txtActual" Height="40" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top">
+            <TextBlock Grid.Row="1">优惠金额：</TextBlock>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1">
+                <TextBlock Foreground="Red">￥</TextBlock>
+                <TextBox Foreground="Red" FontSize="20" x:Name="txtPreferential" Text="0" Height="30" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="KeyUp">
+                            <i:InvokeCommandAction Command="{Binding ActualChangedCommand}" CommandParameter="{Binding ElementName=txtPreferential}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+            </StackPanel>
+            <TextBlock Grid.Row="2">实收：</TextBlock>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                <TextBlock Foreground="Red">￥</TextBlock>
+                <TextBox Foreground="Red" FontSize="20" x:Name="txtActual" Height="30" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="KeyUp">
                             <i:InvokeCommandAction Command="{Binding ActualChangedCommand}" CommandParameter="{Binding ElementName=txtActual}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </TextBox>
-                <Button Command="{Binding AmountResetCommand}" VerticalAlignment="Top" FontSize="30" Height="40" Margin="20 0 0 0"
+                <Button Command="{Binding AmountResetCommand}" VerticalAlignment="Top" FontSize="20" Height="35" Margin="20 -10 0 0"
                         CommandParameter="{Binding ElementName=txtActual}">归零</Button>
             </StackPanel>
 
-            <TextBlock Grid.Row="2">找零：</TextBlock>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+            <TextBlock Grid.Row="3">找零：</TextBlock>
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
                 <TextBlock Foreground="Red">￥</TextBlock>
                 <TextBlock Foreground="Red" Text="{Binding Balance}"></TextBlock>
             </StackPanel>
 
-            <WrapPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <TextBlock Grid.Row="4">备注：</TextBlock>
+            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
+                <TextBlock Foreground="Red"></TextBlock>
+                <TextBox FontSize="20" x:Name="txtPaymentRemark" Height="30" Width="400" Margin="0 -5 0 0" VerticalAlignment="Top" />
+            </StackPanel>
+
+            <WrapPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal">
                 <Border Style="{StaticResource PayMoney}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
@@ -112,7 +130,7 @@
                 </Border>
             </WrapPanel>
 
-            <ItemsControl Grid.Row="4" Grid.ColumnSpan="2" BorderBrush="#ccc" BorderThickness="0 1 0 0" Padding="0 40 0 0" Margin="0 20 0 0" ItemsSource="{Binding PaymentTypes}" Grid.IsSharedSizeScope="True">
+            <ItemsControl Grid.Row="6" Grid.ColumnSpan="2" BorderBrush="#ccc" BorderThickness="0 1 0 0" Padding="0 10 0 0" Margin="0 20 0 0" ItemsSource="{Binding PaymentTypes}" Grid.IsSharedSizeScope="True">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel/>
@@ -121,7 +139,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <Border x:Name="Border" Padding="20" BorderBrush="#ccc" BorderThickness="1" Margin="0 20 20 0" DataContext="{Binding DataContext, ElementName=ChineseFoodPaymentControl}">
+                            <Border x:Name="Border" Padding="10" BorderBrush="#ccc" BorderThickness="1" Margin="0 10 20 0" DataContext="{Binding DataContext, ElementName=ChineseFoodPaymentControl}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseUp">
                                         <i:InvokeCommandAction Command="{Binding CheckPaymentCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel},Mode=FindAncestor}}" />
@@ -142,7 +160,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="7" Grid.ColumnSpan="2" HorizontalAlignment="Center">
                 <Button Content="确定收款" Height="60" Margin="0 40 0 0" Width="200" HorizontalAlignment="Left" FontSize="30" Command="{Binding SubmitPaymentCommand}"></Button>
             </StackPanel>
 

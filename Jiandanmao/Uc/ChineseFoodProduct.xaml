@@ -123,13 +123,21 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">整单备注：</TextBlock>
-            <TextBox Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}" Text="{Binding SelectedDesk.Order.Remark}" Margin="0 0 10 0" materialDesign:HintAssist.IsFloating="False"  VerticalAlignment="Top" Height="70" AcceptsReturn="True" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto">
+            <ComboBox Grid.Column="1" materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" Text="{Binding SelectedDesk.Order.Remark}" ItemsSource="{Binding OrderRemarks}" >
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="LostFocus">
                         <i:InvokeCommandAction Command="{Binding RemarkChangeCommand}" CommandParameter="{Binding SelectedDesk.Order}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </TextBox>
+            </ComboBox>
+            <!--<Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBox Grid.Column="1" Text="{Binding SelectedDesk.Order.Remark}" Margin="0 0 10 0">
+                </TextBox>
+            </Grid>-->
         </Grid>
     </Grid>
 </UserControl>

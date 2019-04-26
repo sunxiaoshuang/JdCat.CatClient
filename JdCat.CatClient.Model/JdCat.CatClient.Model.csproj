@@ -53,6 +53,7 @@
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Business.cs" />
     <Compile Include="ClientBaseEntity.cs" />
+    <Compile Include="CookProductRelative.cs" />
     <Compile Include="Desk.cs" />
     <Compile Include="DeskType.cs" />
     <Compile Include="Enum\PaymentCategory.cs" />

@@ -23,6 +23,7 @@ namespace Jiandanmao.ViewModel
             //new ContorllerItem("餐桌", new Catering(new CateringViewModel())),
             //new ContorllerItem("主页", new Home(){ DataContext = new HomeViewModel() })
             var list = new List<ContorllerItem>();
+
             if (ApplicationObject.App.IsAdmin)
             {
                 list.Add(new ContorllerItem("外卖订单", new OrderList() { DataContext = new OrderListViewModel() }));

@@ -75,5 +75,15 @@ namespace JdCat.CatClient.Common
             list[index] = item2;
             return list;
         }
+
+        /// <summary>
+        /// 字符串转化为二进制数组
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] ToByte(this string str)
+        {
+            return Encoding.GetEncoding("gbk").GetBytes(str);
+        }
     }
 }

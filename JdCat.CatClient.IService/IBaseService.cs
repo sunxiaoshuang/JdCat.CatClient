@@ -42,6 +42,12 @@ namespace JdCat.CatClient.IService
         /// <returns></returns>
         TEntity Get<TEntity>(string objectId) where TEntity : ClientBaseEntity;
         /// <summary>
+        /// 获取实体对象的记录数
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
+        Task<long> GetLengthAsync<TEntity>() where TEntity : ClientBaseEntity;
+        /// <summary>
         /// 根据id获取实体对象
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
@@ -66,6 +72,15 @@ namespace JdCat.CatClient.IService
         /// <param name="code"></param>
         /// <returns></returns>
         Task<TEntity> GetEntityByCodeAsync<TEntity>(string code) where TEntity : ClientBaseEntity;
+        /// <summary>
+        /// 获取指定页数的实体对象，
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="paging">分页对象</param>
+        /// <param name="reversal">是否反向获取</param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<List<TEntity>> GetAsync<TEntity>(PagingQuery paging, bool reversal = true, EntityStatus status = EntityStatus.Normal) where TEntity : ClientBaseEntity;
         /// <summary>
         /// 获取类型所有的对象
         /// </summary>

@@ -1,0 +1,212 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.ChangeWork"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+             mc:Ignorable="d"
+             x:Name="ChangeWorkControl">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=ChangeWorkControl}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontFamily" Value="微软雅黑" />
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Key="ListTitle">
+            <Setter Property="FontFamily" Value="微软雅黑" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#333" />
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Key="ListContent">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="微软雅黑" />
+            <Setter Property="Foreground" Value="#333" />
+        </Style>
+        <Style TargetType="{x:Type StackPanel}" x:Key="ListItem">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Orientation" Value="Horizontal" />
+        </Style>
+    </UserControl.Resources>
+    <materialDesign:DialogHost Identifier="WorkDialog" HorizontalAlignment="Center" VerticalAlignment="Center" Width="500" Height="700">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <ScrollViewer Padding="20 0">
+                <StackPanel>
+                    <TextBlock FontSize="30" Padding="20" HorizontalAlignment="Center" FontWeight="Bold" Text="{Binding Title}"></TextBlock>
+                    <Border BorderThickness="1" BorderBrush="#000" Margin="0 0 0 10"></Border>
+                    <StackPanel Style="{StaticResource ListItem}">
+                        <TextBlock>门  店：</TextBlock>
+                        <TextBlock Text="{Binding StoreName}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource ListItem}">
+                        <TextBlock>开始时间：</TextBlock>
+                        <TextBlock Text="{Binding StartTime}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource ListItem}">
+                        <TextBlock>结束时间：</TextBlock>
+                        <TextBlock Text="{Binding EndTime}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource ListItem}">
+                        <TextBlock>收银员：</TextBlock>
+                        <TextBlock Text="{Binding StaffName}"></TextBlock>
+                    </StackPanel>
+                    <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray"></Border>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">营业额：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding OrderAmount}"></TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">订单数：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding OrderCount}"></TextBlock>
+                    </Grid>
+                    <!--<Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontWeight="Bold">销售净额：</TextBlock>
+                    <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right">160.00</TextBlock>
+                </Grid>-->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock>消费人数：</TextBlock>
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{Binding PeopleCount}"></TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">收取现金：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding CashAmount}"></TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">找赎：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding GiveAmount}"></TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">优惠金额：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding PreferentialAmount}"></TextBlock>
+                    </Grid>
+                    <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray"></Border>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource ListTitle}">收款统计</TextBlock>
+                        <TextBlock Style="{StaticResource ListTitle}" Grid.Column="1" HorizontalAlignment="Center">笔数</TextBlock>
+                        <TextBlock Style="{StaticResource ListTitle}" Grid.Column="2" HorizontalAlignment="Right">金额</TextBlock>
+                    </Grid>
+                    <Border BorderThickness="0 1 0 0" Margin="0 10">
+                        <Border.BorderBrush>
+                            <LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,5" EndPoint="5,0" MappingMode="Absolute">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStop Color="#000" Offset="0"/>
+                                    <GradientStop Color="#000" Offset="0.2"/>
+                                    <GradientStop Color="Transparent" Offset="0.4"/>
+                                    <GradientStop Color="Transparent" Offset="0.6"/>
+                                    <GradientStop Color="#000" Offset="0.8"/>
+                                    <GradientStop Color="#000" Offset="1"/>
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Border.BorderBrush>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding Payments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="90" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource ListContent}" Text="{Binding Item1}"></TextBlock>
+                                    <TextBlock Style="{StaticResource ListContent}" Text="{Binding Item2}" Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
+                                    <TextBlock Style="{StaticResource ListContent}" Text="{Binding Item3}" Grid.Column="2" HorizontalAlignment="Right"></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray" Visibility="{Binding ShowCook}"></Border>
+                    <Grid Visibility="{Binding ShowCook}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource ListTitle}">厨师</TextBlock>
+                        <TextBlock Style="{StaticResource ListTitle}" Grid.Column="1" HorizontalAlignment="Center">产出数量</TextBlock>
+                        <TextBlock Style="{StaticResource ListTitle}" Grid.Column="2" HorizontalAlignment="Right">产出金额</TextBlock>
+                    </Grid>
+                    <Border BorderThickness="0 1 0 0" Margin="0 10" Visibility="{Binding ShowCook}">
+                        <Border.BorderBrush>
+                            <LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,5" EndPoint="5,0" MappingMode="Absolute">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStop Color="#000" Offset="0"/>
+                                    <GradientStop Color="#000" Offset="0.2"/>
+                                    <GradientStop Color="Transparent" Offset="0.4"/>
+                                    <GradientStop Color="Transparent" Offset="0.6"/>
+                                    <GradientStop Color="#000" Offset="0.8"/>
+                                    <GradientStop Color="#000" Offset="1"/>
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Border.BorderBrush>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding Cooks}" Visibility="{Binding ShowCook}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="90" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource ListContent}" Text="{Binding Item1}"></TextBlock>
+                                    <TextBlock Style="{StaticResource ListContent}" Text="{Binding Item2}" Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
+                                    <TextBlock Style="{StaticResource ListContent}" Text="{Binding Item3}" Grid.Column="2" HorizontalAlignment="Right"></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+
+            </ScrollViewer>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Margin="0 10 20 0" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Style="{DynamicResource MaterialDesignFlatButton}">取消</Button>
+                <Button Margin="0 10 10 0" Command="{Binding ConfirmChangeWorkCommand}">确定</Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

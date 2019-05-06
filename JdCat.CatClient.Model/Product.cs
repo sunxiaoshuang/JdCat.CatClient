@@ -45,10 +45,10 @@ namespace JdCat.CatClient.Model
         /// 套餐商品的id集
         /// </summary>
         public string ProductIdSet { get; set; }
-        /// <summary>
-        /// 商品属性
-        /// </summary>
-        public virtual ICollection<ProductAttribute> Attributes { get; set; }
+        ///// <summary>
+        ///// 商品属性
+        ///// </summary>
+        //public virtual ICollection<ProductAttribute> Attributes { get; set; }
         /// <summary>
         /// 产品单位
         /// </summary>
@@ -57,14 +57,14 @@ namespace JdCat.CatClient.Model
         /// 最小购买量
         /// </summary>
         public decimal? MinBuyQuantity { get; set; }
-        /// <summary>
-        /// 上架时间
-        /// </summary>
-        public DateTime? PublishTime { get; set; }
-        /// <summary>
-        /// 下架时间
-        /// </summary>
-        public DateTime? NotSaleTime { get; set; }
+        ///// <summary>
+        ///// 上架时间
+        ///// </summary>
+        //public DateTime? PublishTime { get; set; }
+        ///// <summary>
+        ///// 下架时间
+        ///// </summary>
+        //public DateTime? NotSaleTime { get; set; }
         /// <summary>
         /// 商家id
         /// </summary>
@@ -77,10 +77,10 @@ namespace JdCat.CatClient.Model
         /// 商品图片
         /// </summary>
         public virtual ICollection<ProductImage> Images { get; set; }
-        /// <summary>
-        /// 订单商品集合
-        /// </summary>
-        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
+        ///// <summary>
+        ///// 订单商品集合
+        ///// </summary>
+        //public virtual ICollection<OrderProduct> OrderProducts { get; set; }
         /// <summary>
         /// 产品分类id
         /// </summary>

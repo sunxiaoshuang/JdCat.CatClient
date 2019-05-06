@@ -271,7 +271,11 @@ namespace Jiandanmao.ViewModel
                     Mainthread.BeginInvoke((Action)delegate ()
                     {
                         var printer = ApplicationObject.App.Printers.FirstOrDefault(a => a.Device.Type == 1);
-                        if (printer == null) return;
+                        if (printer == null)
+                        {
+                            args.Session.Close();
+                            return;
+                        }
 
                         var bufferArr = new List<byte[]>
                         {

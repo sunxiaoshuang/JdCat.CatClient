@@ -23,6 +23,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using JdCat.CatClient.Common;
+using System.ComponentModel;
 
 namespace Jiandanmao.ViewModel
 {
@@ -151,6 +152,9 @@ namespace Jiandanmao.ViewModel
         public ObservableCollection<ProductType> ProductTypes { get => _productTypes; set => this.MutateVerbose(ref _productTypes, value, RaisePropertyChanged()); }
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> Products { get => _products; set => this.MutateVerbose(ref _products, value, RaisePropertyChanged()); }
+
+        private ListObject<Product> _productObject = new ListObject<Product>(35);
+        public ListObject<Product> ProductObject { get => _productObject; set => this.MutateVerbose(ref _productObject, value, RaisePropertyChanged()); }
         #endregion
 
         public ObservableCollection<SelectItem<PaymentType>> _paymentTypes;
@@ -209,9 +213,10 @@ namespace Jiandanmao.ViewModel
                 Desks = ApplicationObject.App.Desks;
             }
             // 商品
-            if (Products == null)
+            if (ProductObject.OriginalList == null)
             {
-                Products = ApplicationObject.App.Products;
+                //Products = ApplicationObject.App.Products;
+                ProductObject.OriginalList = ApplicationObject.App.Products;
             }
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
@@ -301,7 +306,8 @@ namespace Jiandanmao.ViewModel
             if (IsAllProduct) return;
             ProductTypes?.ForEach(a => a.IsCheck = false);
             IsAllProduct = true;
-            Products = ApplicationObject.App.Products;
+            //Products = ApplicationObject.App.Products;
+            ProductObject.OriginalList = ApplicationObject.App.Products;
         }
         private void ClickProductType(object o)
         {
@@ -309,7 +315,8 @@ namespace Jiandanmao.ViewModel
             ProductTypes?.ForEach(a => a.IsCheck = false);
             IsAllProduct = false;
             type.IsCheck = true;
-            Products = type.Products;
+            //Products = type.Products;
+            ProductObject.OriginalList = type.Products;
         }
         private void AddProduct(object o)
         {
@@ -431,7 +438,8 @@ namespace Jiandanmao.ViewModel
             var key = textbox.Text.Trim().ToLower();
             IsAllProduct = true;
             ProductTypes.ForEach(a => a.IsCheck = false);
-            Products = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
+            //Products = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
+            ProductObject.OriginalList = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
         }
         private async void SubmitOrder(object o)
         {
@@ -488,7 +496,8 @@ namespace Jiandanmao.ViewModel
         {
             var txt = (TextBox)o;
             txt.Text = "";
-            Products = ApplicationObject.App.Products;
+            //Products = ApplicationObject.App.Products;
+            ProductObject.OriginalList = ApplicationObject.App.Products;
         }
         private void Pay(object o)
         {
@@ -824,11 +833,12 @@ namespace Jiandanmao.ViewModel
             var order = SelectedDesk.Order;
             ThisController.transitioner.SelectedIndex = 1;              // 订单页
             Balance = 0;                                                // 找零设置为零
-            Products = ApplicationObject.App.Products;                  // 重新设置已选择的商品数量
-            Products?.ForEach(a => a.SelectedQuantity = 0);
+            //Products = ApplicationObject.App.Products;                  // 重新设置已选择的商品数量
+            ProductObject.OriginalList = ApplicationObject.App.Products;
+            ProductObject.OriginalList?.ForEach(a => a.SelectedQuantity = 0);
             order.TangOrderProducts?.ForEach(a =>
             {
-                var product = Products?.FirstOrDefault(b => b.Id == a.ProductId);
+                var product = ProductObject.OriginalList?.FirstOrDefault(b => b.Id == a.ProductId);
                 if (product == null) return;
                 product.SelectedQuantity += a.Quantity;
             });
@@ -976,5 +986,6 @@ namespace Jiandanmao.ViewModel
             Finish = 2,
             Delete = 3
         }
+
     }
 }

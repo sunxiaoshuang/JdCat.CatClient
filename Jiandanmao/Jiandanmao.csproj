@@ -182,6 +182,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Code\AnotherCommandImplementation.cs" />
+    <Compile Include="Code\ListObject.cs" />
     <Compile Include="Code\TangBackstagePrint.cs" />
     <Compile Include="Code\BackstagePrint.cs" />
     <Compile Include="Code\ClientData.cs" />

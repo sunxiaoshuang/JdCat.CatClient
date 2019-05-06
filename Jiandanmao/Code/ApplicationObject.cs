@@ -247,13 +247,13 @@ namespace Jiandanmao.Code
                 var delPrinter = new List<Printer>();
                 Printers.ForEach(a =>
                 {
-                    var printer = clientPrinters.FirstOrDefault(b => a.Device.Id == b.Id);
+                    var printer = clientPrinters?.FirstOrDefault(b => a.Device.Id == b.Id);
                     if (printer != null) return;
                     a.Close();
                     delPrinter.Add(a);
                 });
                 delPrinter.ForEach(a => Printers.Remove(a));
-                clientPrinters.ForEach(item => {
+                clientPrinters?.ForEach(item => {
                     var printer = Printers.FirstOrDefault(a => a.Device.Id == item.Id);
                     if(printer == null)
                     {

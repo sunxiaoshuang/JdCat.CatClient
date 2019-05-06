@@ -431,7 +431,7 @@ namespace Jiandanmao.ViewModel
             var key = textbox.Text.Trim().ToLower();
             IsAllProduct = true;
             ProductTypes.ForEach(a => a.IsCheck = false);
-            Products = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key)).ToObservable();
+            Products = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
         }
         private async void SubmitOrder(object o)
         {

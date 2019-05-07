@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoothProductRelative.cs" />
     <Compile Include="ClientPrinter.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="BaseEntity.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="SaleFullReduce.cs" />
     <Compile Include="SaleProductDiscount.cs" />
     <Compile Include="SettingProductAttribute.cs" />
+    <Compile Include="StoreBooth.cs" />
     <Compile Include="SystemMark.cs" />
     <Compile Include="Staff.cs" />
     <Compile Include="RedisEntity.cs" />

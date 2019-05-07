@@ -196,6 +196,8 @@ namespace Jiandanmao.Code
                     await service.SaveRemoteDataAsync(data.ProductTypes);
                     await service.SaveRemoteDataAsync(data.Products);
                     await service.SaveRemoteDataAsync(data.CookProductRelatives);
+                    await service.SaveRemoteDataAsync(data.Booths);
+                    await service.SaveRemoteDataAsync(data.BoothProductRelatives);
                 }
                 result.Success = true;
                 result.Msg = "同步成功";

@@ -46,6 +46,10 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public Visibility ShowCook { get; set; }
         /// <summary>
+        /// 显示档口数据
+        /// </summary>
+        public Visibility ShowBooth { get; set; }
+        /// <summary>
         /// 商户名称
         /// </summary>
         public string StoreName { get; set; }
@@ -144,6 +148,12 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public ObservableCollection<Tuple<string, double, double>> Cooks { get => _cooks; set => this.MutateVerbose(ref _cooks, value, RaisePropertyChanged()); }
 
+        private ObservableCollection<Tuple<string, double, double>> _booths;
+        /// <summary>
+        /// 档口
+        /// </summary>
+        public ObservableCollection<Tuple<string, double, double>> Booths { get => _booths; set => this.MutateVerbose(ref _booths, value, RaisePropertyChanged()); }
+
         #endregion
 
 
@@ -162,11 +172,13 @@ namespace Jiandanmao.ViewModel
                 Title = "结算报表";
                 IsManager = true;
                 ShowCook = Visibility.Visible;
+                ShowBooth = Visibility.Visible;
             }
             else
             {
                 Title = "交班报表";
                 ShowCook = Visibility.Hidden;
+                ShowBooth = Visibility.Hidden;
             }
         }
 
@@ -231,9 +243,10 @@ namespace Jiandanmao.ViewModel
                                         return new Tuple<string, int, double>(payment.Name, items.Count(), Math.Round(items.Sum(a => a.Amount - a.PreferentialAmount), 2));
                                     }).Where(a => a != null).ToObservable();
                                     Payments.Add(new Tuple<string, int, double>("收款汇总", Payments.Sum(a => a.Item2), Math.Round(Payments.Sum(a => a.Item3), 2)));
-                                    // 厨师（管理员才打印厨师报表）
+                                    // （管理员才打印厨师、档口报表）
                                     if (IsManager)
                                     {
+                                        // 厨师
                                         var staffs = await service.GetAllAsync<Staff>() ?? new List<Staff>();
                                         var posts = await service.GetAllAsync<StaffPost>() ?? new List<StaffPost>();
                                         staffs.ForEach(a => a.StaffPost = posts.FirstOrDefault(b => a.StaffPostId == b.Id));
@@ -248,6 +261,16 @@ namespace Jiandanmao.ViewModel
                                             return new Tuple<string, double, double>(cook.Item2, quantity, amount);
                                         }).ToObservable();
                                         Cooks.Add(new Tuple<string, double, double>("厨师合计", Cooks.Sum(a => a.Item2), Math.Round(Cooks.Sum(a => a.Item3), 2)));
+                                        // 档口
+                                        var booths = await service.GetAllAsync<StoreBooth>() ?? new List<StoreBooth>();
+                                        var boothRelatives = await service.GetAllAsync<BoothProductRelative>() ?? new List<BoothProductRelative>();
+                                        Booths = booths.Select(booth => {
+                                            var productIds = boothRelatives.Where(a => a.StoreBoothId == booth.Id).Select(a => a.ProductId).ToList();
+                                            var quantity = Math.Round(products.Where(a => productIds.Contains(a.ProductId)).Sum(a => a.Quantity), 2);
+                                            var amount = Math.Round(products.Where(a => productIds.Contains(a.ProductId)).Sum(a => a.Amount), 2);
+                                            return new Tuple<string, double, double>(booth.Name, quantity, amount);
+                                        }).ToObservable();
+                                        Booths.Add(new Tuple<string, double, double>("档口合计", Booths.Sum(a => a.Item2), Math.Round(Booths.Sum(a => a.Item3), 2)));
                                     }
 
                                 }
@@ -301,34 +324,44 @@ namespace Jiandanmao.ViewModel
                         bufferArr.Add($"打印时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}".ToByte());
                         bufferArr.Add(PrinterCmdUtils.NextLine());
                         bufferArr.Add(PrinterCmdUtils.SplitLine("-", printer.Device.Format));
-                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("营业额", OrderAmount.ToString(), printer.Device.Format));
+                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("营业额", OrderAmount.ToString("f2"), printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
-                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("订单数", OrderCount.ToString(), printer.Device.Format));
+                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("订单数", OrderCount.ToString("f2"), printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
                         bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("消费人数", PeopleCount.ToString(), printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
-                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("收取现金", CashAmount.ToString(), printer.Device.Format));
+                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("收取现金", CashAmount.ToString("f2"), printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
-                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("找赎", GiveAmount.ToString(), printer.Device.Format));
+                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("找赎", GiveAmount.ToString("f2"), printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
-                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠金额", PreferentialAmount.ToString(), printer.Device.Format));
+                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠金额", PreferentialAmount.ToString("f2"), printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
                         bufferArr.Add(PrinterCmdUtils.SplitText("-", "收款", printer.Device.Format));
                         bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight("收款统计", "笔数", "金额"));
                         bufferArr.Add(PrinterCmdUtils.NextLine());
                         foreach (var payment in Payments)
                         {
-                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight(payment.Item1, payment.Item2.ToString(), payment.Item3.ToString()));
+                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight(payment.Item1, payment.Item2.ToString(), payment.Item3.ToString("f2")));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                         }
                         if (IsManager)
                         {
-                            bufferArr.Add(PrinterCmdUtils.SplitText("-", "厨师", printer.Device.Format));
-                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight("厨师", "产出数量", "产出金额"));
+                            // 打印厨师报表
+                            //bufferArr.Add(PrinterCmdUtils.SplitText("-", "厨师", printer.Device.Format));
+                            //bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight("厨师", "产出数量", "产出金额"));
+                            //bufferArr.Add(PrinterCmdUtils.NextLine());
+                            //foreach (var cook in Cooks)
+                            //{
+                            //    bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight(cook.Item1, cook.Item2.ToString(), cook.Item3.ToString()));
+                            //    bufferArr.Add(PrinterCmdUtils.NextLine());
+                            //}
+                            // 打印档口报表
+                            bufferArr.Add(PrinterCmdUtils.SplitText("-", "档口", printer.Device.Format));
+                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight("档口名称", "数量", "金额"));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
-                            foreach (var cook in Cooks)
+                            foreach (var booth in Booths)
                             {
-                                bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight(cook.Item1, cook.Item2.ToString(), cook.Item3.ToString()));
+                                bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight(booth.Item1, booth.Item2.ToString(), booth.Item3.ToString("f2")));
                                 bufferArr.Add(PrinterCmdUtils.NextLine());
                             }
                         }
@@ -337,6 +370,7 @@ namespace Jiandanmao.ViewModel
 
                         printer.Print(bufferArr);
                         args.Session.Close();
+                        DialogHost.CloseDialogCommand.Execute(null, null);
                     });
                 }
                 new Thread(start).Start();

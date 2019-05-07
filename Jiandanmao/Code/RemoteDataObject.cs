@@ -16,6 +16,8 @@ namespace Jiandanmao.Code
         public List<ProductType> ProductTypes { get; set; }
         public List<Product> Products { get; set; }
         public List<CookProductRelative> CookProductRelatives { get; set; }
+        public List<StoreBooth> Booths { get; set; }
+        public List<BoothProductRelative> BoothProductRelatives { get; set; }
 
     }
 }

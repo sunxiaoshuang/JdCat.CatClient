@@ -158,18 +158,18 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray" Visibility="{Binding ShowCook}"></Border>
-                    <Grid Visibility="{Binding ShowCook}">
+                    <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray" Visibility="{Binding ShowBooth}"></Border>
+                    <Grid Visibility="{Binding ShowBooth}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="90" />
                             <ColumnDefinition Width="90" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Style="{StaticResource ListTitle}">厨师</TextBlock>
+                        <TextBlock Style="{StaticResource ListTitle}">档口</TextBlock>
                         <TextBlock Style="{StaticResource ListTitle}" Grid.Column="1" HorizontalAlignment="Center">产出数量</TextBlock>
                         <TextBlock Style="{StaticResource ListTitle}" Grid.Column="2" HorizontalAlignment="Right">产出金额</TextBlock>
                     </Grid>
-                    <Border BorderThickness="0 1 0 0" Margin="0 10" Visibility="{Binding ShowCook}">
+                    <Border BorderThickness="0 1 0 0" Margin="0 10" Visibility="{Binding ShowBooth}">
                         <Border.BorderBrush>
                             <LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,5" EndPoint="5,0" MappingMode="Absolute">
                                 <LinearGradientBrush.GradientStops>
@@ -183,7 +183,7 @@
                             </LinearGradientBrush>
                         </Border.BorderBrush>
                     </Border>
-                    <ItemsControl ItemsSource="{Binding Cooks}" Visibility="{Binding ShowCook}">
+                    <ItemsControl ItemsSource="{Binding Booths}" Visibility="{Binding ShowBooth}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

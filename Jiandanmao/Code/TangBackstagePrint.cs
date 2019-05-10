@@ -1,4 +1,5 @@
 ﻿using JdCat.CatClient.Model;
+using JdCat.CatClient.Model.Enum;
 using Jiandanmao.Enum;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Jiandanmao.Code
         public Printer Printer { get; set; }
         private Socket _socket;
         public List<byte[]> BufferList { get; set; }
+        public List<TangOrderProduct> Products { get; set; }
         public PrintOption Option { get; set; }
         public string Title { get; set; }
 
@@ -27,6 +29,7 @@ namespace Jiandanmao.Code
             _socket = socket;
             Option = option;
             Title = option.Title;
+            Products = Option.Products?.Where(a => a.Feature == ProductFeature.SetMeal || Printer.Device.Foods.Contains(a.ProductId)).ToList();
             if (option.Mode == PrintMode.PreOrder) Title = "点菜单";
         }
         public virtual void Print()

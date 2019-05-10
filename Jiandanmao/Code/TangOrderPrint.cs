@@ -22,7 +22,7 @@ namespace Jiandanmao.Code
 
         protected override void Printing()
         {
-            foreach (var product in Option.Products)
+            foreach (var product in Products)
             {
                 var name = product.Name;
                 if (!string.IsNullOrEmpty(product.Description))

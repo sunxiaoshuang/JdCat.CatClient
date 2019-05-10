@@ -153,7 +153,7 @@ namespace Jiandanmao.ViewModel
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> Products { get => _products; set => this.MutateVerbose(ref _products, value, RaisePropertyChanged()); }
 
-        private ListObject<Product> _productObject = new ListObject<Product>(35);
+        private ListObject<Product> _productObject = new ListObject<Product>(20);
         public ListObject<Product> ProductObject { get => _productObject; set => this.MutateVerbose(ref _productObject, value, RaisePropertyChanged()); }
         #endregion
 

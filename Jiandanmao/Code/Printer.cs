@@ -407,9 +407,9 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("原价：", order.OriginalAmount.ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount).ToString()));
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount + order.PreferentialAmount).ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", order.Amount.ToString()));
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", (order.ReceivedAmount - order.GiveAmount).ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 分隔
             bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Device.Format));

@@ -16,7 +16,7 @@ namespace Jiandanmao.Code
 
         public override void Print()
         {
-            foreach (var product in Option.Products)
+            foreach (var product in Products)
             {
                 for (int i = 0; i < product.Quantity; i++)
                 {

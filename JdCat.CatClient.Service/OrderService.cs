@@ -184,6 +184,7 @@ namespace JdCat.CatClient.Service
                 ProductIdSet = product.ProductIdSet,
                 ProductStatus = TangOrderProductStatus.Return,
                 Quantity = quantity,
+                RefundReason = product.RefundReason,
                 Remark = product.Remark,
                 Amount = quantity * product.Price,
                 Src = product.Src

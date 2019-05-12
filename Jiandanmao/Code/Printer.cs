@@ -409,6 +409,11 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount + order.PreferentialAmount).ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
+            if (!string.IsNullOrEmpty(order.PaymentTypeName))
+            {
+                bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", order.PaymentTypeName));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", (order.ReceivedAmount - order.GiveAmount).ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 分隔

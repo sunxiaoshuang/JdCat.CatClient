@@ -69,6 +69,7 @@
     <Compile Include="Enum\OrderStatus.cs" />
     <Compile Include="Enum\OrderType.cs" />
     <Compile Include="Enum\PrinterMode.cs" />
+    <Compile Include="Enum\ActionScope.cs" />
     <Compile Include="Enum\ProductStatus.cs" />
     <Compile Include="Enum\ServiceProvider.cs" />
     <Compile Include="Enum\StaffPostAuth.cs" />

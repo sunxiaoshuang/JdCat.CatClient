@@ -55,17 +55,17 @@
                 <materialDesign:PackIcon Kind="KeyboardArrowLeft" />
             </Button>
             <ScrollViewer Grid.Column="2" Margin="10 -4 10 0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" x:Name="scrollProductType">
-                <ListBox Grid.Column="2" ItemsSource="{Binding ProductTypes}">
-                    <ListBox.ItemsPanel>
+                <ItemsControl Grid.Column="2" ItemsSource="{Binding ProductTypes}">
+                    <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal">
                             </StackPanel>
                         </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <Button BorderThickness="0" Margin="0" Style="{StaticResource ButtonStyle}"
+                                <Button BorderThickness="0" Margin="8" Style="{StaticResource ButtonStyle}"
                                         Background="{Binding DataContext.IsCheck, Converter={StaticResource dttc}, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}"
                                         Command="{Binding ClickProductTypeCommand}"
                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}"
@@ -73,8 +73,8 @@
                                         Content="{Binding DataContext.Name, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=StackPanel}}" ></Button>
                             </StackPanel>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ScrollViewer>
             <Button Grid.Column="3" Style="{StaticResource ButtonStyle}" Command="{Binding TypeNextCommand}" CommandParameter="{Binding ElementName=scrollProductType}" Background="#d0862a">
                 <materialDesign:PackIcon Kind="KeyboardArrowRight" />

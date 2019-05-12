@@ -100,26 +100,26 @@
                 <materialDesign:PackIcon Kind="KeyboardArrowLeft" />
             </Button>
             <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" x:Name="scroll">
-                <ListBox ItemsSource="{Binding DeskTypes}" Width="Auto" Foreground="White">
-                    <ListBox.ItemsPanel>
+                <ItemsControl ItemsSource="{Binding DeskTypes}" Width="Auto" Foreground="White" Margin="0 15 0 0">
+                    <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal">
                             </StackPanel>
                         </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <materialDesign:Badged Badge="{Binding DeskQuantity}">
-                                <Button Command="{Binding ClickTypeCommand}" Height="44" Style="{StaticResource ButtonStyle}"
+                                <Button Command="{Binding ClickTypeCommand}" Height="44" Margin="15 3 0 0" Style="{StaticResource ButtonStyle}"
                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=materialDesign:Badged}}" 
                                         DataContext="{Binding DataContext, ElementName=ChineseFoodDeskControl}" 
                                         Content="{Binding DataContext.Name, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=materialDesign:Badged}}" 
                                         Background="{Binding DataContext.IsCheck, Converter={StaticResource dttc}, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=materialDesign:Badged}}"
-                                        Margin="0" Padding="0" Width="100" />
+                                        Padding="0" Width="100" />
                             </materialDesign:Badged>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ScrollViewer>
             <Button Grid.Column="3" Style="{StaticResource ButtonStyle}" Command="{Binding TypeNextCommand}" CommandParameter="{Binding ElementName=scroll}">
                 <materialDesign:PackIcon Kind="KeyboardArrowRight" />

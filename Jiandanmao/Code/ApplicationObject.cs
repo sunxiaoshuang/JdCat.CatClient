@@ -167,11 +167,13 @@ namespace Jiandanmao.Code
                 {
                     if (order is Order entity)
                     {
-                        printer.Print(entity);
+                        if((printer.Device.Scope & ActionScope.Takeout) > 0)
+                            printer.Print(entity);
                     }
                     else if (order is TangOrder tang)
                     {
-                        printer.Print(tang, option);
+                        if ((printer.Device.Scope & ActionScope.Store) > 0)
+                            printer.Print(tang, option);
                     }
                 }
             }

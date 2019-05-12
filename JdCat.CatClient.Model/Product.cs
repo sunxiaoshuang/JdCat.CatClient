@@ -54,6 +54,10 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public string UnitName { get; set; }
         /// <summary>
+        /// 使用范围
+        /// </summary>
+        public ActionScope Scope { get; set; }
+        /// <summary>
         /// 最小购买量
         /// </summary>
         public decimal? MinBuyQuantity { get; set; }

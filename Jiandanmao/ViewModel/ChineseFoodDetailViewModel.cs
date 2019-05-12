@@ -73,6 +73,10 @@ namespace Jiandanmao.ViewModel
         /// 口味列表
         /// </summary>
         public List<SelectItem> Flavors { get; set; }
+        /// <summary>
+        /// 退菜原因
+        /// </summary>
+        public List<string> ReturnReasons { get; set; }
 
 
         #region 界面属性
@@ -118,6 +122,12 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public double ReturnQuantity { get => _ReturnQuantity; set => this.MutateVerbose(ref _ReturnQuantity, value, RaisePropertyChanged()); }
 
+        private string _returnReason;
+        /// <summary>
+        /// 退菜原因
+        /// </summary>
+        public string ReturnReason { get => _returnReason; set => this.MutateVerbose(ref _returnReason, value, RaisePropertyChanged()); }
+
         #endregion
         public ChineseFoodDetailViewModel(TangOrder order, TangOrderProduct good, Product product)
         {
@@ -137,8 +147,10 @@ namespace Jiandanmao.ViewModel
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IUtilService>();
-                Flavors = service.GetAll<SystemMark>()?.Where(a => a.Category == MarkCategory.Flavor).Select(a => new SelectItem(false, a.Name)).ToList();
+                var marks = service.GetAll<SystemMark>();
+                Flavors = marks?.Where(a => a.Category == MarkCategory.Flavor).Select(a => new SelectItem(false, a.Name)).ToList();
                 Formats = product.Formats.Select(a => new SelectItem<ProductFormat>(false, a.Name, a)).ToList();
+                ReturnReasons = marks?.Where(a => a.Category == MarkCategory.RefundFoodReason).Select(a => a.Name).ToList();
 
                 var format = Formats.FirstOrDefault(a => a.Target.Id == Good.FormatId);
                 if (format != null) format.IsSelected = true;
@@ -278,6 +290,7 @@ namespace Jiandanmao.ViewModel
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
+                Good.RefundReason = ReturnReason;
                 var good = service.Unsubscribe(Order, Good, ReturnQuantity);
                 Print(good);
             }

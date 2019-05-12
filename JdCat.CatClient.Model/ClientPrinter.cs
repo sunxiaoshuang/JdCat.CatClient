@@ -45,6 +45,10 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public int Format { get; set; }
         /// <summary>
+        /// 使用范围
+        /// </summary>
+        public ActionScope Scope { get; set; }
+        /// <summary>
         /// 打印机关联的菜品id
         /// </summary>
         public string FoodIds { get; set; }

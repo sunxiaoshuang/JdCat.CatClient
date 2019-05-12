@@ -101,6 +101,19 @@ namespace JdCat.CatClient.Model
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Description"));
             }
         }
+        private string _refundReason;
+        /// <summary>
+        /// 退菜原因
+        /// </summary>
+        public string RefundReason
+        {
+            get { return _refundReason; }
+            set
+            {
+                _refundReason = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RefundReason"));
+            }
+        }
         private string _remark;
         /// <summary>
         /// 备注

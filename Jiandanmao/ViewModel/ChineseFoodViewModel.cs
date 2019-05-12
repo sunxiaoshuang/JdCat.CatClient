@@ -148,8 +148,21 @@ namespace Jiandanmao.ViewModel
 
         private bool _isAllProduct = true;
         public bool IsAllProduct { get => _isAllProduct; set => this.MutateVerbose(ref _isAllProduct, value, RaisePropertyChanged()); }
-        private ObservableCollection<ProductType> _productTypes = ApplicationObject.App.Types;
-        public ObservableCollection<ProductType> ProductTypes { get => _productTypes; set => this.MutateVerbose(ref _productTypes, value, RaisePropertyChanged()); }
+        private ObservableCollection<ProductType> _productTypes;
+        public ObservableCollection<ProductType> ProductTypes
+        {
+            get => _productTypes;
+            set
+            {
+                var types = new ObservableCollection<ProductType>();
+                value.ForEach(type =>
+                {
+                    if (type.Products.Count(a => (a.Scope & ActionScope.Store) > 0) == 0) return;
+                    types.Add(type);
+                });
+                this.MutateVerbose(ref _productTypes, types, RaisePropertyChanged());
+            }
+        }
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> Products { get => _products; set => this.MutateVerbose(ref _products, value, RaisePropertyChanged()); }
 
@@ -208,16 +221,8 @@ namespace Jiandanmao.ViewModel
                 SubscribePrint();
             }
             // 餐桌
-            if (Desks == null)
-            {
-                Desks = ApplicationObject.App.Desks;
-            }
-            // 商品
-            if (ProductObject.OriginalList == null)
-            {
-                //Products = ApplicationObject.App.Products;
-                ProductObject.OriginalList = ApplicationObject.App.Products;
-            }
+            Desks = ApplicationObject.App.Desks;
+
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IUtilService>();
@@ -307,7 +312,7 @@ namespace Jiandanmao.ViewModel
             ProductTypes?.ForEach(a => a.IsCheck = false);
             IsAllProduct = true;
             //Products = ApplicationObject.App.Products;
-            ProductObject.OriginalList = ApplicationObject.App.Products;
+            ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
         }
         private void ClickProductType(object o)
         {
@@ -316,7 +321,7 @@ namespace Jiandanmao.ViewModel
             IsAllProduct = false;
             type.IsCheck = true;
             //Products = type.Products;
-            ProductObject.OriginalList = type.Products;
+            ProductObject.OriginalList = type.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
         }
         private void AddProduct(object o)
         {
@@ -439,7 +444,10 @@ namespace Jiandanmao.ViewModel
             IsAllProduct = true;
             ProductTypes.ForEach(a => a.IsCheck = false);
             //Products = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
-            ProductObject.OriginalList = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
+            ProductObject.OriginalList = ApplicationObject.App.Products?
+                .Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key))
+                .Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable()
+                .ToObservable();
         }
         private async void SubmitOrder(object o)
         {
@@ -497,7 +505,7 @@ namespace Jiandanmao.ViewModel
             var txt = (TextBox)o;
             txt.Text = "";
             //Products = ApplicationObject.App.Products;
-            ProductObject.OriginalList = ApplicationObject.App.Products;
+            ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
         }
         private void Pay(object o)
         {
@@ -821,6 +829,7 @@ namespace Jiandanmao.ViewModel
         private void ResetDeskStatus()
         {
             var desks = ApplicationObject.App.Desks;
+            if (ProductTypes == null || ProductTypes.Count == 0) ProductTypes = ApplicationObject.App.Types;
             UsingDeskCount = desks.Count(a => a.Order != null);
             FreeDeskCount = desks.Count(a => a.Order == null);
             DeskCount = desks.Count();
@@ -834,7 +843,7 @@ namespace Jiandanmao.ViewModel
             ThisController.transitioner.SelectedIndex = 1;              // 订单页
             Balance = 0;                                                // 找零设置为零
             //Products = ApplicationObject.App.Products;                  // 重新设置已选择的商品数量
-            ProductObject.OriginalList = ApplicationObject.App.Products;
+            ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
             ProductObject.OriginalList?.ForEach(a => a.SelectedQuantity = 0);
             order.TangOrderProducts?.ForEach(a =>
             {

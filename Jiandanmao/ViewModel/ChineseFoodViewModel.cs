@@ -78,6 +78,7 @@ namespace Jiandanmao.ViewModel
         public ICommand RefreshDeskCommand => new AnotherCommandImplementation(RefreshDesk);
         public ICommand OrderCatCommand => new AnotherCommandImplementation(OrderCat);
         public ICommand EditPeopleNumberCommand => new AnotherCommandImplementation(EditPeopleNumber);
+        public ICommand EnterToAddCommand => new AnotherCommandImplementation(EnterToAdd);
 
 
 
@@ -166,7 +167,7 @@ namespace Jiandanmao.ViewModel
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> Products { get => _products; set => this.MutateVerbose(ref _products, value, RaisePropertyChanged()); }
 
-        private ListObject<Product> _productObject = new ListObject<Product>(20);
+        private ListObject<Product> _productObject = new ListObject<Product>(15);
         public ListObject<Product> ProductObject { get => _productObject; set => this.MutateVerbose(ref _productObject, value, RaisePropertyChanged()); }
         #endregion
 
@@ -506,6 +507,7 @@ namespace Jiandanmao.ViewModel
             txt.Text = "";
             //Products = ApplicationObject.App.Products;
             ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
+            txt.Focus();
         }
         private void Pay(object o)
         {
@@ -662,6 +664,14 @@ namespace Jiandanmao.ViewModel
                 var service = scope.Resolve<IOrderService>();
                 service.Update(SelectedDesk.Order);
             }
+        }
+
+        private void EnterToAdd(object o)
+        {
+            if (ProductObject.OriginalList.Count != 1) return;
+            AddProduct(ProductObject.OriginalList[0]);
+            var tb = (TextBox)o;
+            tb.Text = "";
         }
 
         #endregion

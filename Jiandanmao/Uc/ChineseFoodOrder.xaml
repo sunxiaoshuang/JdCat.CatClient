@@ -7,7 +7,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
              xmlns:local="clr-namespace:Jiandanmao.Uc"
-             xmlns:enum="clr-namespace:JdCat.CatClient.Model.Enum"
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
              mc:Ignorable="d" 
              x:Name="ChineseFoodOrderControl">
@@ -32,6 +31,7 @@
 
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif"/>
             </Style>
 
         </ResourceDictionary>
@@ -60,12 +60,15 @@
                 <Button Style="{DynamicResource MaterialDesignToolButton}">
                     <materialDesign:PackIcon Kind="Magnify" Opacity=".56" Foreground="White" />
                 </Button>
-                <TextBox Grid.Column="1" Margin="8 0 0 0" x:Name="txtProductkey" materialDesign:HintAssist.Hint="菜品搜索" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" Foreground="White" MinWidth="200" VerticalAlignment="Center">
+                <TextBox Grid.Column="1" Margin="8 0 0 0" x:Name="txtProductkey" materialDesign:HintAssist.Hint="菜品搜索" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" Foreground="White" MinWidth="200" VerticalAlignment="Center" CaretBrush="White">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="TextChanged">
                             <i:InvokeCommandAction Command="{Binding ProductSearchCommand}" CommandParameter="{Binding ElementName=txtProductkey}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding EnterToAddCommand}" CommandParameter="{Binding ElementName=txtProductkey}"></KeyBinding>
+                    </TextBox.InputBindings>
                 </TextBox>
                 <Button Style="{DynamicResource MaterialDesignToolButton}" Grid.Column="2" Command="{Binding ClearProductKeyCommand}" CommandParameter="{Binding ElementName=txtProductkey}">
                     <materialDesign:PackIcon Kind="CloseCircle" Opacity=".56" Margin="8 0 0 0" Foreground="White" />

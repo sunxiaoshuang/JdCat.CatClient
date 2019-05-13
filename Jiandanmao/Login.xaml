@@ -11,8 +11,8 @@
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"        
-        FontFamily="{DynamicResource MaterialDesignFont}"
+        TextOptions.TextRenderingMode="Auto"         
+        FontFamily="Arial,SimSun,宋体,Sans-serif,Serif"
         Background="{DynamicResource MaterialDesignPaper}"
         GlowBrush="{DynamicResource AccentColorBrush}"	
         WindowStartupLocation="CenterScreen"
@@ -34,7 +34,7 @@
                     <!--<RowDefinition Height="10*"/>-->
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <TextBlock FontFamily="MSYH" Opacity="0.6" Margin="25 0 0 20" Style="{StaticResource MaterialDesignDisplay1TextBlock}" ToolTip="跳转到网页后台"><Hyperlink NavigateUri="{Binding Path=BackStageWebSite}" Click="Hyperlink_OnClick">简单猫</Hyperlink></TextBlock>
+                    <TextBlock FontFamily="MSYH" Opacity="0.6" Margin="25 0 0 20" Style="{StaticResource MaterialDesignDisplay1TextBlock}" ToolTip="跳转到网页后台"><Hyperlink NavigateUri="{Binding Path=BackStageWebSite}" FontFamily="Arial,SimSun,宋体,Sans-serif,Serif" Click="Hyperlink_OnClick">简单猫</Hyperlink></TextBlock>
                 </Grid>
                 <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="30,6" ToolTip="输入用户名" >
                     <materialDesign:PackIcon  Margin="10 10 10 0" Kind="Account" Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
@@ -43,7 +43,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="30,6,30,7" ToolTip="输入密码">
                     <materialDesign:PackIcon Margin="10 10 10 0" Kind="Key" Foreground="{Binding ElementName=PasswordBox, Path=BorderBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                    <PasswordBox x:Name="PasswordBox" materialDesign:HintAssist.Hint="密码" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" PreviewKeyDown="LoginWindow_OnPreviewKeyDown" Width="170"/>
+                    <PasswordBox x:Name="PasswordBox" materialDesign:HintAssist.Hint="密码" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" FontFamily="Arial,SimSun,宋体,Sans-serif,Serif" PreviewKeyDown="LoginWindow_OnPreviewKeyDown" Width="170"/>
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
                     <Button Padding="1"  Style="{StaticResource MaterialDesignFlatButton}" Margin="10 0 17 0" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="82" Click="Login_click" ToolTip="登录">

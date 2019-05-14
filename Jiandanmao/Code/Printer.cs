@@ -359,6 +359,8 @@ namespace Jiandanmao.Code
                 PrinterCmdUtils.FontSizeSetBig(2),
                 TextToByte(ApplicationObject.App.Business.Name),
                 PrinterCmdUtils.NextLine(),
+                TextToByte($"当日流水：{order.Identifier}"),
+                PrinterCmdUtils.NextLine(),
                 TextToByte(option.Title??"结账单"),
                 PrinterCmdUtils.NextLine()
             };
@@ -374,7 +376,7 @@ namespace Jiandanmao.Code
             // 订单编号
             bufferArr.Add(TextToByte($"订单编号：{order.Code}"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            // 订单编号
+            // 下单
             bufferArr.Add(TextToByte($"下单时间：{order.CreateTime:yyyy-MM-dd HH:mm:ss}"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 服务员
@@ -409,13 +411,13 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount + order.PreferentialAmount).ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", (order.ReceivedAmount - order.GiveAmount).ToString()));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
             if (!string.IsNullOrEmpty(order.PaymentTypeName))
             {
                 bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", order.PaymentTypeName));
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
-            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", (order.ReceivedAmount - order.GiveAmount).ToString()));
-            bufferArr.Add(PrinterCmdUtils.NextLine());
             // 分隔
             bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());

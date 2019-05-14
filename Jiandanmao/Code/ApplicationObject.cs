@@ -167,7 +167,7 @@ namespace Jiandanmao.Code
                 {
                     if (order is Order entity)
                     {
-                        if((printer.Device.Scope & ActionScope.Takeout) > 0)
+                        if ((printer.Device.Scope & ActionScope.Takeout) > 0)
                             printer.Print(entity);
                     }
                     else if (order is TangOrder tang)
@@ -209,7 +209,7 @@ namespace Jiandanmao.Code
                 result.Msg = "同步失败，加载已缓存的数据";
             }
             await ReloadAsync();
-            
+
             return result;
         }
 
@@ -240,7 +240,8 @@ namespace Jiandanmao.Code
                     a.Desks?.ForEach(b => Desks.Add(b));
                 });
                 // 未完成订单
-                orderService.GetUnfinishOrder()?.ForEach(order => {
+                orderService.GetUnfinishOrder()?.ForEach(order =>
+                {
                     var desk = Desks.FirstOrDefault(a => a.Id == order.DeskId);
                     if (desk == null) return;
                     desk.Order = order;
@@ -257,9 +258,10 @@ namespace Jiandanmao.Code
                     delPrinter.Add(a);
                 });
                 delPrinter.ForEach(a => Printers.Remove(a));
-                clientPrinters?.ForEach(item => {
+                clientPrinters?.ForEach(item =>
+                {
                     var printer = Printers.FirstOrDefault(a => a.Device.Id == item.Id);
-                    if(printer == null)
+                    if (printer == null)
                     {
                         printer = new Printer { Device = item };
                         Printers.Add(printer);
@@ -268,7 +270,7 @@ namespace Jiandanmao.Code
                     {
                         printer.Device = item;
                     }
-                    if(printer.Device.State == 1)
+                    if (printer.Device.State == 1)
                     {
                         printer.Open();
                     }
@@ -281,17 +283,17 @@ namespace Jiandanmao.Code
             }
         }
 
-
+        private static object uploadLock = new object();
         /// <summary>
         /// 上传本地数据到服务器
         /// </summary>
-        public async static Task UploadData()
+        public static async Task UploadDataAsync()
         {
-            await UploadOrder();
+            await UploadOrderAsync();
             DeleteExpireOrder();
         }
 
-        private async static Task UploadOrder()
+        private async static Task UploadOrderAsync()
         {
             using (var scope = App.DataBase.BeginLifetimeScope())
             {
@@ -300,7 +302,7 @@ namespace Jiandanmao.Code
                     ?.Where(a => !a.Sync && (a.OrderStatus & TangOrderStatus.Finish) > 0)
                     .ToList();
                 if (list == null || list.Count == 0) return;
-                await Request.UploadData(list);
+                await Request.UploadDataAsync(list);
                 var products = new List<TangOrderProduct>();
                 foreach (var item in list)
                 {
@@ -308,7 +310,7 @@ namespace Jiandanmao.Code
                     if (goods == null) continue;
                     products.AddRange(goods);
                 }
-                await Request.UploadData(products);
+                await Request.UploadDataAsync(products);
                 service.SyncFinish(list);
                 service.SyncFinish(products);
             }

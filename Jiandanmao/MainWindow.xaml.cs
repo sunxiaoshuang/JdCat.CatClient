@@ -146,7 +146,7 @@ namespace Jiandanmao
             {
                 try
                 {
-                    await ApplicationObject.UploadData();
+                    await ApplicationObject.UploadDataAsync();
                 }
                 catch (Exception ex)
                 {
@@ -192,9 +192,15 @@ namespace Jiandanmao
         {
             Sync();
         }
+
         private async void Upload_Click(object obj, RoutedEventArgs e)
         {
-            await ApplicationObject.UploadData();
+            if (!ApplicationObject.App.ClientData.IsHost)
+            {
+                MessageBox.Show("只有主收银机才能上传数据");
+                return;
+            }
+            await ApplicationObject.UploadDataAsync();
             MainSnackbar.MessageQueue.Enqueue("上传成功");
         }
 

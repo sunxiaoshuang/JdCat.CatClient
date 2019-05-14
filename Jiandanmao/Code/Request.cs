@@ -162,7 +162,7 @@ namespace Jiandanmao.Code
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
-        public async static Task<JsonData<List<T>>> UploadData<T>(IEnumerable<T> list) where T : JdCat.CatClient.Model.ClientBaseEntity, new()
+        public async static Task<JsonData<List<T>>> UploadDataAsync<T>(IEnumerable<T> list) where T : ClientBaseEntity, new()
         {
             var url = $"{ApiUrl}/Client/Upload{typeof(T).Name}";
             var body = new StringContent(JsonConvert.SerializeObject(list));

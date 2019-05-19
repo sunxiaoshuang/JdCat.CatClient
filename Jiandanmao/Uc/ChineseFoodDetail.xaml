@@ -69,7 +69,14 @@
                         <RowDefinition Height="250"/>
                     </Grid.RowDefinitions>
                     <TextBlock>原价：</TextBlock>
-                    <TextBlock Grid.Column="1">￥<TextBlock Text="{Binding OriginalPrice}"></TextBlock></TextBlock>
+                    <TextBox Grid.Column="1" Text="{Binding OriginalPrice, Mode=OneWay}" FontSize="20" Height="40" Foreground="Red" x:Name="txtOriginalPrice" Padding="0 0 0 5">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="KeyUp">
+                                <i:InvokeCommandAction Command="{Binding OriginalPriceChangedCommand}" CommandParameter="{Binding ElementName=txtOriginalPrice}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                    <!--<TextBlock Grid.Column="1">￥<TextBlock Text="{Binding OriginalPrice}"></TextBlock></TextBlock>-->
                     <Button Grid.Column="1" Content="退菜" HorizontalAlignment="Right" IsEnabled="{Binding CanReturn}" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"/>
 
                     <TextBlock Grid.Row="1">单价：</TextBlock>
@@ -82,7 +89,7 @@
                     </TextBox>
 
                     <TextBlock Grid.Row="2">折扣：</TextBlock>
-                    <TextBox Grid.Row="2" FontSize="20" Text="{Binding Distance, Mode=OneWay}" Grid.Column="1" Foreground="Red" x:Name="txtDistance" Padding="0 0 0 5">
+                    <TextBox Grid.Row="2" FontSize="20" Text="{Binding Discount, Mode=OneWay}" Grid.Column="1" Foreground="Red" x:Name="txtDistance" Padding="0 0 0 5">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="KeyUp">
                                 <i:InvokeCommandAction Command="{Binding DistanceChangedCommand}" CommandParameter="{Binding ElementName=txtDistance}" />

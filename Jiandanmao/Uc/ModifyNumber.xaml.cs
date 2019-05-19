@@ -41,9 +41,7 @@ namespace Jiandanmao.Uc
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Number = int.Parse(txtNumber.Text);
-            IsSubmit = true;
-            DialogHost.CloseDialogCommand.Execute(null, null);
+            Submit();
         }
 
         private void TxtNumber_TextChanged(object sender, TextChangedEventArgs e)
@@ -57,6 +55,19 @@ namespace Jiandanmao.Uc
                 txt.SelectionStart = int.MaxValue;
                 return;
             }
+        }
+
+        private void TxtNumber_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+            Submit();
+        }
+
+        private void Submit()
+        {
+            Number = int.Parse(txtNumber.Text);
+            IsSubmit = true;
+            DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
 }

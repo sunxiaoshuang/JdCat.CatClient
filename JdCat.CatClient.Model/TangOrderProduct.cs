@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -171,6 +172,11 @@ namespace JdCat.CatClient.Model
 
         [JsonIgnore]
         public object Tag { get; set; }
+
+        /// <summary>
+        /// 套餐商品
+        /// </summary>
+        public ObservableCollection<Product> SetProducts { get; set; } = new ObservableCollection<Product>();
 
         private bool _isSelected;
         /// <summary>

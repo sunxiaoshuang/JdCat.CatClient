@@ -18,6 +18,10 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// 商品编码
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
         /// 名称拼音
         /// </summary>
         public string Pinyin { get; set; }
@@ -122,5 +126,10 @@ namespace JdCat.CatClient.Model
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// 商品列表显示名称
+        /// </summary>
+        public string DisplayName { get { return $"{Code}|{Name}"; } }
+
     }
 }

@@ -38,9 +38,10 @@ namespace Jiandanmao.ViewModel
         }
         private ChineseFood ThisController;
         private ChineseFoodOrder OrderController;
-        private TextBox txtActual;          // 实际金额输入框
         private TextBox txtPreferential;    // 优惠金额输入框
-        private TextBox txtPaymentRemark;   // 支付备注
+        private TextBox txtDiscount;        // 折扣金额输入框
+        private TextBox txtProductKey;      // 商品搜索输入框
+
         private double mealFee;             // 餐位费
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
         public ICommand DeskLoadedCommand => new AnotherCommandImplementation(DeskLoaded);
@@ -67,10 +68,10 @@ namespace Jiandanmao.ViewModel
         public ICommand ClearProductKeyCommand => new AnotherCommandImplementation(ClearProductKey);
         public ICommand PaymentLoadedCommand => new AnotherCommandImplementation(PaymentLoaded);
         public ICommand PayCommand => new AnotherCommandImplementation(Pay);
-        public ICommand AmountResetCommand => new AnotherCommandImplementation(AmountReset);
+        //public ICommand AmountResetCommand => new AnotherCommandImplementation(AmountReset);
         public ICommand CheckPaymentCommand => new AnotherCommandImplementation(CheckPayment);
-        public ICommand ClickMoneyCommand => new AnotherCommandImplementation(ClickMoney);
-        public ICommand ActualChangedCommand => new AnotherCommandImplementation(ActualChanged);
+        //public ICommand ClickMoneyCommand => new AnotherCommandImplementation(ClickMoney);
+        //public ICommand ActualChangedCommand => new AnotherCommandImplementation(ActualChanged);
         public ICommand SubmitPaymentCommand => new AnotherCommandImplementation(SubmitPayment);
         public ICommand RemarkChangeCommand => new AnotherCommandImplementation(RemarkChange);
         public ICommand PrePrintCommand => new AnotherCommandImplementation(PrePrint);
@@ -79,6 +80,9 @@ namespace Jiandanmao.ViewModel
         public ICommand OrderCatCommand => new AnotherCommandImplementation(OrderCat);
         public ICommand EditPeopleNumberCommand => new AnotherCommandImplementation(EditPeopleNumber);
         public ICommand EnterToAddCommand => new AnotherCommandImplementation(EnterToAdd);
+        public ICommand PreferentialChangedCommand => new AnotherCommandImplementation(PreferentialChanged);
+        public ICommand DiscountChangedCommand => new AnotherCommandImplementation(DiscountChanged);
+        public ICommand ReceivedChangedCommand => new AnotherCommandImplementation(ReceivedChanged);
 
 
 
@@ -89,11 +93,6 @@ namespace Jiandanmao.ViewModel
         /// 是否选中全部餐桌
         /// </summary>
         public bool IsAll { get => _isAll; set => this.MutateVerbose(ref _isAll, value, RaisePropertyChanged()); }
-        private double _balance;
-        /// <summary>
-        /// 找零
-        /// </summary>
-        public double Balance { get => _balance; set => this.MutateVerbose(ref _balance, value, RaisePropertyChanged()); }
         private int _menuButton;
         /// <summary>
         /// 菜单按钮类别
@@ -171,17 +170,72 @@ namespace Jiandanmao.ViewModel
         public ListObject<Product> ProductObject { get => _productObject; set => this.MutateVerbose(ref _productObject, value, RaisePropertyChanged()); }
         #endregion
 
+        public ObservableCollection<string> _orderRemarks;
+        /// <summary>
+        /// 订单备注
+        /// </summary>
+        public ObservableCollection<string> OrderRemarks { get => _orderRemarks; set => this.MutateVerbose(ref _orderRemarks, value, RaisePropertyChanged()); }
+
         public ObservableCollection<SelectItem<PaymentType>> _paymentTypes;
         /// <summary>
         /// 支付方式列表
         /// </summary>
         public ObservableCollection<SelectItem<PaymentType>> PaymentTypes { get => _paymentTypes; set => this.MutateVerbose(ref _paymentTypes, value, RaisePropertyChanged()); }
 
-        public ObservableCollection<string> _orderRemarks;
+        #region 结算页对象
+
+        private double _orderAmount;
         /// <summary>
-        /// 订单备注
+        /// 订单金额
         /// </summary>
-        public ObservableCollection<string> OrderRemarks { get => _orderRemarks; set => this.MutateVerbose(ref _orderRemarks, value, RaisePropertyChanged()); }
+        public double OrderAmount { get => _orderAmount; set => this.MutateVerbose(ref _orderAmount, value, RaisePropertyChanged()); }
+
+        private double _preferentialAmount;
+        /// <summary>
+        /// 优惠金额
+        /// </summary>
+        public double PreferentialAmount
+        {
+            get => _preferentialAmount; set
+            {
+
+                this.MutateVerbose(ref _preferentialAmount, value, RaisePropertyChanged());
+            }
+        }
+
+
+        private double _orderDiscount;
+        /// <summary>
+        /// 优惠金额
+        /// </summary>
+        public double OrderDiscount { get => _orderDiscount; set => this.MutateVerbose(ref _orderDiscount, value, RaisePropertyChanged()); }
+
+        private double _actualAmount;
+        /// <summary>
+        /// 应收金额
+        /// </summary>
+        public double ActualAmount { get => _actualAmount; set => this.MutateVerbose(ref _actualAmount, value, RaisePropertyChanged()); }
+
+        private double _receivedAmount;
+        /// <summary>
+        /// 实收金额
+        /// </summary>
+        public double ReceivedAmount { get => _receivedAmount; set => this.MutateVerbose(ref _receivedAmount, value, RaisePropertyChanged()); }
+
+        private double _giveAmount;
+        /// <summary>
+        /// 找零
+        /// </summary>
+        public double GiveAmount { get => _giveAmount; set => this.MutateVerbose(ref _giveAmount, value, RaisePropertyChanged()); }
+
+        private string _raymentRemark;
+        /// <summary>
+        /// 支付备注
+        /// </summary>
+        public string PaymentRemark { get => _raymentRemark; set => this.MutateVerbose(ref _raymentRemark, value, RaisePropertyChanged()); }
+
+        #endregion
+
         #endregion
 
 
@@ -202,13 +256,13 @@ namespace Jiandanmao.ViewModel
         private void OrderLoaded(object o)
         {
             OrderController = (ChineseFoodOrder)o;
+            txtProductKey = OrderController.txtProductkey;
         }
         private void PaymentLoaded(object o)
         {
             var control = (ChineseFoodPayment)o;
-            txtActual = control.txtActual;
             txtPreferential = control.txtPreferential;
-            txtPaymentRemark = control.txtPaymentRemark;
+            txtDiscount = control.txtDiscount;
         }
         private async void Init(object o)
         {
@@ -312,8 +366,7 @@ namespace Jiandanmao.ViewModel
             if (IsAllProduct) return;
             ProductTypes?.ForEach(a => a.IsCheck = false);
             IsAllProduct = true;
-            //Products = ApplicationObject.App.Products;
-            ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
+            FilterProducts();
         }
         private void ClickProductType(object o)
         {
@@ -321,8 +374,7 @@ namespace Jiandanmao.ViewModel
             ProductTypes?.ForEach(a => a.IsCheck = false);
             IsAllProduct = false;
             type.IsCheck = true;
-            //Products = type.Products;
-            ProductObject.OriginalList = type.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
+            FilterProducts();
         }
         private void AddProduct(object o)
         {
@@ -349,6 +401,7 @@ namespace Jiandanmao.ViewModel
                     Status = EntityStatus.Normal
                 };
                 order.TangOrderProducts.Add(orderProduct);
+                //LoadProductsForSetmeal(orderProduct);
             }
             orderProduct.Quantity++;
             orderProduct.Amount = orderProduct.Quantity * orderProduct.Price;
@@ -422,33 +475,24 @@ namespace Jiandanmao.ViewModel
             if (viewModel.IsSubmit)
             {
                 CalcOrderAmount();
-                CalcBalance();
                 using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
                 {
                     var service = scope.Resolve<IOrderService>();
                     service.Update(order);
                 }
+                PrePay();
                 PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
             }
         }
         private void BackDesk(object o = null)
         {
             ThisController.transitioner.SelectedIndex = 0;
-            txtPreferential.Text = "0";
-            txtPaymentRemark.Text = string.Empty;
-            //ReloadDeskOrder();
         }
         private void ProductSearch(object o)
         {
-            var textbox = (TextBox)o;
-            var key = textbox.Text.Trim().ToLower();
             IsAllProduct = true;
             ProductTypes.ForEach(a => a.IsCheck = false);
-            //Products = ApplicationObject.App.Products?.Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key)).ToObservable();
-            ProductObject.OriginalList = ApplicationObject.App.Products?
-                .Where(a => a.Name.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key))
-                .Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable()
-                .ToObservable();
+            FilterProducts();
         }
         private async void SubmitOrder(object o)
         {
@@ -504,9 +548,7 @@ namespace Jiandanmao.ViewModel
         private void ClearProductKey(object o)
         {
             var txt = (TextBox)o;
-            txt.Text = "";
-            //Products = ApplicationObject.App.Products;
-            ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
+            txt.Text = string.Empty;
             txt.Focus();
         }
         private void Pay(object o)
@@ -521,52 +563,51 @@ namespace Jiandanmao.ViewModel
             transition.SelectedIndex = 1;
             MenuButton = 1;
             PrePay();
+            //txtActual.Text = SelectedDesk.Order.Amount.ToString();
         }
-        private void AmountReset(object o)
-        {
-            var txt = (TextBox)o;
-            txt.Text = 0.ToString();
-            txt.SelectAll();
-            txt.Focus();
-            CalcBalance();
-        }
+        //private void AmountReset(object o)
+        //{
+        //    var txt = (TextBox)o;
+        //    txt.Text = 0.ToString();
+        //    txt.SelectAll();
+        //    txt.Focus();
+        //}
         private void CheckPayment(object o)
         {
             var selectedItem = (SelectItem)o;
             PaymentTypes.ForEach(a => a.IsSelected = false);
             selectedItem.IsSelected = !selectedItem.IsSelected;
         }
-        private void ClickMoney(object o)
-        {
-            //var money = double.Parse(o.ToString());
-            //var actual = double.Parse(txtActual.Text);
-            //txtActual.Text = (money + actual).ToString();
-            txtActual.Text = o.ToString();
-            CalcBalance();
-        }
-        private void ActualChanged(object o)
-        {
-            var txt = (TextBox)o;
-            var text = txt.Text.Trim();
-            if (string.IsNullOrEmpty(text)) txt.Text = text = "0";
-            if (!double.TryParse(text, out double distance))
-            {
-                var reg = Regex.Match(text, @"\d+");
-                txt.Text = reg.Value;
-                txt.SelectionStart = int.MaxValue;
-                return;
-            }
-            txt.Text = distance.ToString();
-            if (txt == txtPreferential)
-            {
-                txtActual.Text = (SelectedDesk.Order.Amount - double.Parse(text)).ToString();
-            }
-            txt.SelectionStart = int.MaxValue;
-            CalcBalance();
-        }
+        //private void ClickMoney(object o)
+        //{
+        //    //var money = double.Parse(o.ToString());
+        //    //var actual = double.Parse(txtActual.Text);
+        //    //txtActual.Text = (money + actual).ToString();
+        //    //txtActual.Text = o.ToString();
+        //    //CalcBalance();
+        //}
+        //private void ActualChanged(object o)
+        //{
+        //    var txt = (TextBox)o;
+        //    var text = txt.Text.Trim();
+        //    if (string.IsNullOrEmpty(text)) txt.Text = text = "0";
+        //    if (!double.TryParse(text, out double distance))
+        //    {
+        //        var reg = Regex.Match(text, @"\d+");
+        //        txt.Text = reg.Value;
+        //        txt.SelectionStart = int.MaxValue;
+        //        return;
+        //    }
+        //    txt.Text = distance.ToString();
+        //    if (txt == txtPreferential)
+        //    {
+        //        //txtActual.Text = (SelectedDesk.Order.Amount - double.Parse(text)).ToString();
+        //    }
+        //    txt.SelectionStart = int.MaxValue;
+        //    CalcBalance();
+        //}
         private async void SubmitPayment(object o)
         {
-            var total = double.Parse(txtActual.Text);
             var amount = Math.Round(SelectedDesk.Order.Amount, 2);
             var paymentItem = PaymentTypes.FirstOrDefault(a => a.IsSelected);
             var payment = paymentItem?.Target;
@@ -576,7 +617,7 @@ namespace Jiandanmao.ViewModel
                 MessageTips("请选择收款方式！");
                 return;
             }
-            if (Balance < 0)
+            if (GiveAmount < 0)
             {
                 MessageTips("找赎金额不能小于零！");
                 return;
@@ -587,10 +628,11 @@ namespace Jiandanmao.ViewModel
             order.PaymentTypeId = payment.Id;
             order.PaymentTypeName = payment.Name;
             order.PayTime = DateTime.Now;
-            order.ReceivedAmount = double.Parse(txtActual.Text);
-            order.GiveAmount = Balance;
-            order.PaymentRemark = txtPaymentRemark.Text;
-            order.PreferentialAmount = double.Parse(txtPreferential.Text);
+            order.ReceivedAmount = ReceivedAmount;
+            order.GiveAmount = GiveAmount;
+            order.PaymentRemark = PaymentRemark;
+            order.PreferentialAmount = PreferentialAmount;
+            order.OrderDiscount = OrderDiscount;
             order.StaffId = ApplicationObject.App.Staff.Id;
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
@@ -648,7 +690,11 @@ namespace Jiandanmao.ViewModel
             var num = 1;
             var desk = (Desk)o;
             if (desk.Order.TangOrderProducts == null) return;
-            var products = desk.Order.TangOrderProducts.Select(a => new { Sort = num++, a.Name, a.Quantity, a.Amount, a.ProductStatus });
+            foreach (var item in desk.Order.TangOrderProducts)
+            {
+                LoadProductsForSetmeal(item);
+            }
+            var products = desk.Order.TangOrderProducts.Select(a => new { Sort = num++, a.Name, a.Quantity, a.Amount, a.ProductStatus, Set = a.SetProducts });
 
             DialogHost.Show(new ChineseFoodOrderCat { DataContext = new { desk.Name, Products = products } }, "RootDialog");
         }
@@ -671,8 +717,25 @@ namespace Jiandanmao.ViewModel
             if (ProductObject.OriginalList.Count != 1) return;
             AddProduct(ProductObject.OriginalList[0]);
             var tb = (TextBox)o;
-            tb.Text = "";
+            tb.Text = string.Empty;
         }
+
+        private void PreferentialChanged(object o)
+        {
+            PreferentialAmount = ValidateInput((TextBox)o);
+            CalcPayment();
+        }
+        private void DiscountChanged(object o)
+        {
+            OrderDiscount = ValidateInput((TextBox)o);
+            CalcPayment();
+        }
+        private void ReceivedChanged(object o)
+        {
+            ReceivedAmount = ValidateInput((TextBox)o);
+            GiveAmount = Math.Round(ReceivedAmount - ActualAmount, 2);
+        }
+
 
         #endregion
 
@@ -685,8 +748,7 @@ namespace Jiandanmao.ViewModel
         {
             var order = SelectedDesk.Order;
             order.MealFee = mealFee * order.PeopleNumber;
-            order.Amount = order.MealFee;
-            order.OriginalAmount = order.MealFee;
+            order.OriginalAmount = order.Amount = order.MealFee;
             order.TangOrderProducts?.Where(a => a.ProductStatus != TangOrderProductStatus.Return).ForEach(a =>
             {
                 order.Amount += a.Amount;
@@ -696,7 +758,6 @@ namespace Jiandanmao.ViewModel
             order.Amount = Math.Round(order.Amount, 2);
             order.OriginalAmount = Math.Round(order.OriginalAmount, 2);
             order.ProductQuantity = order.TangOrderProducts?.Count(a => a.ProductStatus != TangOrderProductStatus.Return) ?? 0;
-            txtActual.Text = order.Amount.ToString();
         }
         /// <summary>
         /// 重新加载餐桌未完成的订单
@@ -784,22 +845,55 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         private void PrePay()
         {
-            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            var order = SelectedDesk.Order;
+            OrderAmount = order.Amount;
+            PreferentialAmount = 0;
+            OrderDiscount = 10;
+            ActualAmount = OrderAmount;
+            ReceivedAmount = OrderAmount;
+            GiveAmount = 0;
+            PaymentRemark = string.Empty;
+        }
+        /// <summary>
+        /// 验证输入，返回0时验证失败
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        private double ValidateInput(TextBox txt)
+        {
+            var text = txt.Text.Trim();
+            //if (string.IsNullOrEmpty(text)) txt.Text = text = "0";
+            if (!double.TryParse(text, out double num))
             {
-                var service = scope.Resolve<IUtilService>();
-                //PaymentTypes = service.get()?.Select(a => new SelectItem<PaymentType>(false, a.Name, a)).ToObservable();
+                var reg = Regex.Match(text, @"\d+");
+                txt.Text = reg.Value;
+                //txt.SelectionStart = int.MaxValue;
+                return 0;
             }
-            txtActual.Text = SelectedDesk.Order.Amount.ToString();
+            //txt.SelectionStart = int.MaxValue;
+            return num;
+        }
+        /// <summary>
+        /// 计算支付
+        /// </summary>
+        private void CalcPayment()
+        {
+            // 计算优惠后再折扣的金额
+            var amount = OrderAmount - PreferentialAmount;
+            var total = Math.Round(amount * OrderDiscount / 10, 2);
+
+            ActualAmount = ReceivedAmount = total;
+            GiveAmount = 0;
         }
         /// <summary>
         /// 计算找零
         /// </summary>
-        private void CalcBalance()
-        {
-            var total = double.Parse(txtActual.Text);
-            var preferential = double.Parse(txtPreferential.Text);
-            Balance = Math.Round(total + preferential - SelectedDesk.Order.Amount, 2);
-        }
+        //private void CalcBalance()
+        //{
+        //    var total = ActualAmount;
+        //    var preferential = double.Parse(txtPreferential.Text);
+        //    Balance = Math.Round(total + preferential - SelectedDesk.Order.Amount, 2);
+        //}
         /// <summary>
         /// 筛选餐桌
         /// </summary>
@@ -851,15 +945,16 @@ namespace Jiandanmao.ViewModel
         {
             var order = SelectedDesk.Order;
             ThisController.transitioner.SelectedIndex = 1;              // 订单页
-            Balance = 0;                                                // 找零设置为零
-            //Products = ApplicationObject.App.Products;                  // 重新设置已选择的商品数量
-            ProductObject.OriginalList = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0).ToObservable();
+            ProductTypes.ForEach(a => a.IsCheck = false);
+            IsAllProduct = true;
+            txtProductKey.Text = string.Empty;
+            FilterProducts();
             ProductObject.OriginalList?.ForEach(a => a.SelectedQuantity = 0);
-            order.TangOrderProducts?.ForEach(a =>
+            order.TangOrderProducts?.ForEach(item =>
             {
-                var product = ProductObject.OriginalList?.FirstOrDefault(b => b.Id == a.ProductId);
+                var product = ProductObject.OriginalList?.FirstOrDefault(b => b.Id == item.ProductId);
                 if (product == null) return;
-                product.SelectedQuantity += a.Quantity;
+                product.SelectedQuantity += item.Quantity;
             });
             if (order.OrderStatus == TangOrderStatus.Eating)
             {
@@ -867,18 +962,49 @@ namespace Jiandanmao.ViewModel
                 var unOrderingGood = order.TangOrderProducts?.Count(a => (a.ProductStatus & TangOrderProductStatus.Cumulative) > 0);   // 未下单的商品数
                 if (unOrderingGood == 0)
                 {
-                    OrderController.transition2.SelectedIndex = 1;      // 点菜模块
-                    MenuButton = 1;                                     // 加菜功能区
+                    OrderController.transition2.SelectedIndex = 1;      // 结账模块
+                    MenuButton = 1;                                     // 结账功能区
                     PrePay();
                     return;
                 }
-                OrderController.transition2.SelectedIndex = 0;      // 结账模块
-                MenuButton = 2;                                     // 结账功能区
+                OrderController.transition2.SelectedIndex = 0;      // 点菜模块
+                MenuButton = 2;                                     // 加菜功能区
                 return;
             }
             // 如果不是用餐状态，则进入点餐模块
             OrderController.transition2.SelectedIndex = 0;
             MenuButton = 0;         // 点餐功能区
+        }
+        /// <summary>
+        /// 商品筛选
+        /// </summary>
+        private void FilterProducts()
+        {
+            var key = txtProductKey.Text?.Trim();
+            var type = ProductTypes.FirstOrDefault(a => a.IsCheck);
+            IEnumerable<Product> products = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0);
+            if (type != null)
+            {
+                products = products.Where(a => a.ProductTypeId == type.Id);
+            }
+            if (!string.IsNullOrEmpty(key))
+            {
+                products = products.Where(a => a.DisplayName.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key));
+            }
+            ProductObject.OriginalList = products.ToObservable();
+        }
+        /// <summary>
+        /// 给套餐商品加载套餐上列表
+        /// </summary>
+        private void LoadProductsForSetmeal(TangOrderProduct good)
+        {
+            if (good.Feature != ProductFeature.SetMeal || good.SetProducts.Count > 0) return;
+            var ids = good.ProductIdSet.Split(',').Select(a => int.Parse(a)).ToList();
+            var products = ApplicationObject.App.Products.Where(a => ids.Contains(a.Id)).ToList();
+            foreach (var product in products)
+            {
+                good.SetProducts.Add(product);
+            }
         }
 
 

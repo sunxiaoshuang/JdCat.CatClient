@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using JdCat.CatClient.IService;
 using System.Text.RegularExpressions;
 using JdCat.CatClient.Common;
+using System.Threading.Tasks;
 
 namespace Jiandanmao.ViewModel
 {
@@ -33,6 +34,7 @@ namespace Jiandanmao.ViewModel
         public ICommand SelectedFormatCommand => new AnotherCommandImplementation(SelectedFormat);
         public ICommand IncreaseCommand => new AnotherCommandImplementation(Increase);
         public ICommand ReduceCommand => new AnotherCommandImplementation(Reduce);
+        public ICommand OriginalPriceChangedCommand => new AnotherCommandImplementation(OriginalPriceChanged);
         public ICommand PriceChangedCommand => new AnotherCommandImplementation(PriceChanged);
         public ICommand DistanceChangedCommand => new AnotherCommandImplementation(DistanceChanged);
         public ICommand UnsubscribeCommand => new AnotherCommandImplementation(Unsubscribe);
@@ -92,11 +94,11 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public double Price { get => _price; set => this.MutateVerbose(ref _price, value, RaisePropertyChanged()); }
 
-        private double _distance;
+        private double _discount;
         /// <summary>
         /// 折扣
         /// </summary>
-        public double Distance { get => _distance; set => this.MutateVerbose(ref _distance, value, RaisePropertyChanged()); }
+        public double Discount { get => _discount; set => this.MutateVerbose(ref _discount, value, RaisePropertyChanged()); }
 
         private double _quantity;
         /// <summary>
@@ -139,7 +141,7 @@ namespace Jiandanmao.ViewModel
 
             OriginalPrice = good.OriginalPrice;
             Price = good.Price;
-            Distance = good.Discount;
+            Discount = good.Discount;
             Quantity = good.Quantity;
             Amount = good.Amount;
             Remark = good.Remark;
@@ -191,7 +193,7 @@ namespace Jiandanmao.ViewModel
                 Formats.ForEach(a => a.IsSelected = false);
                 format.IsSelected = true;
                 OriginalPrice = format.Target.Price;
-                Price = Math.Round(OriginalPrice * Distance / 10, 2);
+                Price = Math.Round(OriginalPrice * Discount / 10, 2);
                 Calculate();
             }
         }
@@ -209,35 +211,24 @@ namespace Jiandanmao.ViewModel
             Calculate();
         }
 
+        private void OriginalPriceChanged(object o)
+        {
+            OriginalPrice = ValidateInput((TextBox)o);
+            Price = Math.Round(OriginalPrice * Discount / 10, 1);
+            Calculate();
+        }
+
         private void PriceChanged(object o)
         {
-            var txt = (TextBox)o;
-            var text = txt.Text.Trim();
-            if (!double.TryParse(text, out double price))
-            {
-                var reg = Regex.Match(text, @"\d+");
-                txt.Text = reg.Value;
-                txt.SelectionStart = int.MaxValue;
-                return;
-            }
-            Price = price;
-            Distance = Math.Round(Price / OriginalPrice * 10, 1);
+            Price = ValidateInput((TextBox)o);
+            Discount = Math.Round(Price / OriginalPrice * 10, 1);
             Calculate();
         }
 
         private void DistanceChanged(object o)
         {
-            var txt = (TextBox)o;
-            var text = txt.Text.Trim();
-            if (!double.TryParse(text, out double distance))
-            {
-                var reg = Regex.Match(text, @"\d+");
-                txt.Text = reg.Value;
-                txt.SelectionStart = int.MaxValue;
-                return;
-            }
-            Distance = distance;
-            Price = Math.Round(OriginalPrice * distance / 10, 1);
+            Discount = ValidateInput((TextBox)o);
+            Price = Math.Round(OriginalPrice * Discount / 10, 1);
             Calculate();
         }
 
@@ -248,7 +239,7 @@ namespace Jiandanmao.ViewModel
             var diff = Good.Quantity - Quantity;
             if (Formats.Count > 1)
             {
-                description += format?.Name + "|";
+                description += format.Name + "|";
             }
             if (Flavors != null && Flavors.Count > 0)
             {
@@ -267,7 +258,7 @@ namespace Jiandanmao.ViewModel
             Good.Price = Price;
             Good.Quantity = Quantity;
             Good.Amount = Amount;
-            Good.Discount = Distance;
+            Good.Discount = Discount;
             Good.Remark = Remark;
             Product.SelectedQuantity -= diff;
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
@@ -300,8 +291,6 @@ namespace Jiandanmao.ViewModel
         }
 
 
-
-
         private void Calculate()
         {
             Amount = Price * Quantity;
@@ -322,6 +311,18 @@ namespace Jiandanmao.ViewModel
                 Mode = PrintMode.Return,
                 Products = products
             });
+        }
+        private double ValidateInput(TextBox txt)
+        {
+            var text = txt.Text.Trim();
+            if (!double.TryParse(text, out double num))
+            {
+                var reg = Regex.Match(text, @"\d+");
+                txt.Text = reg.Value;
+                txt.SelectionStart = int.MaxValue;
+                return double.Parse(txt.Text);
+            }
+            return num;
         }
 
     }

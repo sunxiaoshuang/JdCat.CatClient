@@ -48,6 +48,10 @@ namespace JdCat.CatClient.Model
             }
         }
         /// <summary>
+        /// 订单折扣
+        /// </summary>
+        public double OrderDiscount { get; set; }
+        /// <summary>
         /// 优惠金额
         /// </summary>
         public double PreferentialAmount { get; set; }

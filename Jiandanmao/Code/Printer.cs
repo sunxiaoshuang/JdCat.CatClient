@@ -418,6 +418,11 @@ namespace Jiandanmao.Code
                 bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", order.PaymentTypeName));
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
+            if (!string.IsNullOrEmpty(order.PaymentRemark))
+            {
+                bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("支付备注：", order.PaymentRemark));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
             // 分隔
             bufferArr.Add(PrinterCmdUtils.SplitText("-", "其他", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());

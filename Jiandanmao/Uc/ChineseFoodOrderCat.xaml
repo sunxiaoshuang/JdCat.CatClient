@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
              mc:Ignorable="d"
-             Width="600" Height="700">
+             Width="800" Height="700">
     <UserControl.Resources>
 
         <ResourceDictionary>
@@ -19,6 +19,7 @@
                         <Trigger.Setters>
                             <Setter Property="Foreground" Value="Red"/>
                             <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif" />
                         </Trigger.Setters>
                     </Trigger>
                 </Style.Triggers>
@@ -59,7 +60,22 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="200" Header="名称" />
+                    <GridViewColumn Width="300" Header="名称">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Set}" Margin="40 0 0 0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"></TextBlock>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Quantity}">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
@@ -67,7 +83,8 @@
                                     <TextBlock>数量</TextBlock>
                                 </StackPanel>
                             </DataTemplate>
-                        </GridViewColumn.HeaderTemplate></GridViewColumn>
+                        </GridViewColumn.HeaderTemplate>
+                    </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Amount}" Header="总价">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
@@ -87,6 +104,17 @@
                 </GridView>
             </ListView.View>
         </ListView>
+
+
+        <!--<DataGrid ItemsSource="{Binding Products}" FontSize="14" Grid.Row="1" AutoGenerateColumns="False" materialDesign:DataGridAssist.CellPadding="13 8 8 8" materialDesign:DataGridAssist.ColumnHeaderPadding="8">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Sort}" IsReadOnly="True" Header="序号" />
+                <DataGridTextColumn Binding="{Binding Name}" IsReadOnly="True" Header="名称" />
+                <DataGridTemplateColumn
+            </DataGrid.Columns>
+        </DataGrid>-->
+        
+        
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Margin="0 0 20 0" Content="确定"/>
         </StackPanel>

@@ -80,6 +80,8 @@ namespace Jiandanmao.ViewModel
         public ICommand OrderCatCommand => new AnotherCommandImplementation(OrderCat);
         public ICommand EditPeopleNumberCommand => new AnotherCommandImplementation(EditPeopleNumber);
         public ICommand EnterToAddCommand => new AnotherCommandImplementation(EnterToAdd);
+        public ICommand EscToClearCommand => new AnotherCommandImplementation(EscToClear);
+        public ICommand NumToAddCommand => new AnotherCommandImplementation(NumToAdd);
         public ICommand PreferentialChangedCommand => new AnotherCommandImplementation(PreferentialChanged);
         public ICommand DiscountChangedCommand => new AnotherCommandImplementation(DiscountChanged);
         public ICommand ReceivedChangedCommand => new AnotherCommandImplementation(ReceivedChanged);
@@ -175,6 +177,12 @@ namespace Jiandanmao.ViewModel
         /// 订单备注
         /// </summary>
         public ObservableCollection<string> OrderRemarks { get => _orderRemarks; set => this.MutateVerbose(ref _orderRemarks, value, RaisePropertyChanged()); }
+
+        public ObservableCollection<string> _payRemarks;
+        /// <summary>
+        /// 支付备注
+        /// </summary>
+        public ObservableCollection<string> PayRemarks { get => _payRemarks; set => this.MutateVerbose(ref _payRemarks, value, RaisePropertyChanged()); }
 
         public ObservableCollection<SelectItem<PaymentType>> _paymentTypes;
         /// <summary>
@@ -289,6 +297,7 @@ namespace Jiandanmao.ViewModel
                 if (marks != null)
                 {
                     OrderRemarks = marks.Where(a => a.Category == MarkCategory.OrderMark).Select(a => a.Name).ToObservable();
+                    PayRemarks = marks.Where(a => a.Category == MarkCategory.PayRemark).Select(a => a.Name).ToObservable();
                 }
             }
             // 未完成订单
@@ -350,13 +359,13 @@ namespace Jiandanmao.ViewModel
                 Staff = ApplicationObject.App.Staff,
                 StaffName = ApplicationObject.App.Staff?.Name
             };
+            SelectedDesk.Order = order;
+            CalcOrderAmount();
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
-                order.MealFee = mealFee * order.PeopleNumber;
                 service.SaveOrder(order);
             }
-            SelectedDesk.Order = order;
             PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Add });
             EntryOrderPage();
             DialogHost.CloseDialogCommand.Execute(null, null);
@@ -379,6 +388,7 @@ namespace Jiandanmao.ViewModel
         private void AddProduct(object o)
         {
             var product = (Product)o;
+            if (product.Stock == 0) return;
             var order = SelectedDesk.Order;
             var format = product.Formats.First();
             if (order.TangOrderProducts == null) order.TangOrderProducts = new ObservableCollection<TangOrderProduct>();
@@ -411,18 +421,26 @@ namespace Jiandanmao.ViewModel
             {
                 OrderController.productScroll.ScrollToVerticalOffset(double.MaxValue);
             }
-            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<IOrderService>();
-                service.Update(order);
-                service.SaveOrderProduct(orderProduct);
-            }
-            // 添加完新商品后，发布变更通知
-            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
+
+            SaveOrderProductChange(order, orderProduct);
+
+            //using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            //{
+            //    var service = scope.Resolve<IOrderService>();
+            //    service.Update(order);
+            //    service.SaveOrderProduct(orderProduct);
+            //}
+            //// 添加完新商品后，发布变更通知
+            //PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
         }
         private void Reduce(object o)
         {
-            var product = (TangOrderProduct)o;
+            TangOrderProduct product = null;
+            if (o is TangOrderProduct)
+            {
+                product = (TangOrderProduct)o;
+            }
+            if (product == null || product.Quantity <= 0) return;
             var order = SelectedDesk.Order;
             product.Quantity--;
             if (product.Quantity == 0)
@@ -433,32 +451,23 @@ namespace Jiandanmao.ViewModel
             good.SelectedQuantity--;
             product.Amount = product.Quantity * product.Price;
             CalcOrderAmount();
-            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<IOrderService>();
-                service.Update(order);
-                service.UpdateOrderProduct(product);
-            }
-            // 减少商品后，发布变更通知
-            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
+            SaveOrderProductChange(order, product);
         }
         private void Increase(object o)
         {
-            var product = (TangOrderProduct)o;
+            TangOrderProduct product = null;
+            if (o is TangOrderProduct)
+            {
+                product = (TangOrderProduct)o;
+            }
+            if (product == null) return;
             var order = SelectedDesk.Order;
             product.Quantity++;
             var good = ApplicationObject.App.Products.FirstOrDefault(a => a.Id == product.ProductId);
             good.SelectedQuantity++;
             product.Amount = product.Quantity * product.Price;
             CalcOrderAmount();
-            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<IOrderService>();
-                service.Update(order);
-                service.UpdateOrderProduct(product);
-            }
-            // 增加商品后，发布变更通知
-            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
+            SaveOrderProductChange(order, product);
         }
         private async void ProductClick(object o)
         {
@@ -505,7 +514,7 @@ namespace Jiandanmao.ViewModel
             await Confirm("确定下单吗？");
             if (IsConfirm)
             {
-                SubmitOrder();
+                await SubmitOrderAsync();
             }
             PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
         }
@@ -541,7 +550,7 @@ namespace Jiandanmao.ViewModel
             await Confirm("确定加菜吗？");
             if (IsConfirm)
             {
-                ReSubmitOrder();
+                await ReSubmitOrderAsync();
             }
             PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
         }
@@ -630,10 +639,12 @@ namespace Jiandanmao.ViewModel
             order.PayTime = DateTime.Now;
             order.ReceivedAmount = ReceivedAmount;
             order.GiveAmount = GiveAmount;
+            order.ActualAmount = ReceivedAmount - GiveAmount;
             order.PaymentRemark = PaymentRemark;
             order.PreferentialAmount = PreferentialAmount;
             order.OrderDiscount = OrderDiscount;
             order.StaffId = ApplicationObject.App.Staff.Id;
+            order.CashierName = ApplicationObject.App.ClientData.Name;
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
@@ -710,29 +721,42 @@ namespace Jiandanmao.ViewModel
                 var service = scope.Resolve<IOrderService>();
                 service.Update(SelectedDesk.Order);
             }
+            PrePay();
         }
-
         private void EnterToAdd(object o)
         {
             if (ProductObject.OriginalList.Count != 1) return;
             AddProduct(ProductObject.OriginalList[0]);
+            //var tb = (TextBox)o;
+            //tb.Text = string.Empty;
+        }
+        private void EscToClear(object o)
+        {
             var tb = (TextBox)o;
             tb.Text = string.Empty;
         }
-
+        private void NumToAdd(object o)
+        {
+            var num = Convert.ToInt32(o);
+            if (ProductObject.OriginalList.Count <= num) return;
+            AddProduct(ProductObject.OriginalList[num - 1]);
+        }
         private void PreferentialChanged(object o)
         {
-            PreferentialAmount = ValidateInput((TextBox)o);
+            var txt = (TextBox)o;
+            PreferentialAmount = GetTextBoxNumber((TextBox)o);
             CalcPayment();
         }
         private void DiscountChanged(object o)
         {
-            OrderDiscount = ValidateInput((TextBox)o);
+            var txt = (TextBox)o;
+            OrderDiscount = GetTextBoxNumber((TextBox)o);
             CalcPayment();
         }
         private void ReceivedChanged(object o)
         {
-            ReceivedAmount = ValidateInput((TextBox)o);
+            var txt = (TextBox)o;
+            ReceivedAmount = GetTextBoxNumber((TextBox)o);
             GiveAmount = Math.Round(ReceivedAmount - ActualAmount, 2);
         }
 
@@ -781,14 +805,21 @@ namespace Jiandanmao.ViewModel
         /// <summary>
         /// 下单
         /// </summary>
-        private void SubmitOrder()
+        private async Task SubmitOrderAsync()
         {
             var order = SelectedDesk.Order;
+            // 库存验证
+            var stocks = ValidateStock(order.TangOrderProducts, out bool isSuccess);
+            if (!isSuccess) return;
+            // 创建订单
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
                 service.SubmitOrder(order);
             }
+            // 设置库存
+            await SetStockAsync(stocks);
+            // 打印订单
             PrintOrder(new PrintOption
             {
                 Title = "预结单",
@@ -802,15 +833,22 @@ namespace Jiandanmao.ViewModel
         /// <summary>
         /// 加菜
         /// </summary>
-        private void ReSubmitOrder()
+        private async Task ReSubmitOrderAsync()
         {
             var order = SelectedDesk.Order;
             var products = order.TangOrderProducts.Where(a => a.ProductStatus == TangOrderProductStatus.Add).ToList();
+            // 验证库存
+            var stocks = ValidateStock(products, out bool isSuccess);
+            if (!isSuccess) return;
+            //保存订单
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
                 service.ReSubmitOrder(order);
             }
+            // 保存库存
+            await SetStockAsync(stocks);
+            // 打印加菜单
             PrintOrder(new PrintOption
             {
                 Title = "加菜单",
@@ -828,6 +866,7 @@ namespace Jiandanmao.ViewModel
         private void PrintOrder(PrintOption option)
         {
             var order = option.Order;
+            order.CashierName = ApplicationObject.App.ClientData.Name;
             if (option.Products == null || option.Products.Count() == 0) return;
             // 加载订单产品套餐中的商品
             var products = ApplicationObject.App.Products;
@@ -855,45 +894,58 @@ namespace Jiandanmao.ViewModel
             PaymentRemark = string.Empty;
         }
         /// <summary>
-        /// 验证输入，返回0时验证失败
-        /// </summary>
-        /// <param name="txt"></param>
-        /// <returns></returns>
-        private double ValidateInput(TextBox txt)
-        {
-            var text = txt.Text.Trim();
-            //if (string.IsNullOrEmpty(text)) txt.Text = text = "0";
-            if (!double.TryParse(text, out double num))
-            {
-                var reg = Regex.Match(text, @"\d+");
-                txt.Text = reg.Value;
-                //txt.SelectionStart = int.MaxValue;
-                return 0;
-            }
-            //txt.SelectionStart = int.MaxValue;
-            return num;
-        }
-        /// <summary>
         /// 计算支付
         /// </summary>
         private void CalcPayment()
         {
-            // 计算优惠后再折扣的金额
-            var amount = OrderAmount - PreferentialAmount;
-            var total = Math.Round(amount * OrderDiscount / 10, 2);
+            /* 1. 首先计算订单中可打折商品的总价
+             * 2. 计算折扣总额
+             * 3. 计算实际收费
+             * */
+            var order = SelectedDesk.Order;
+            var discountProductAmount = 0d;
+            order.TangOrderProducts.Where(a => a.ProductStatus != TangOrderProductStatus.Return).ForEach(item =>
+            {
+                var product = ProductObject.OriginalList?.FirstOrDefault(b => b.Id == item.ProductId);
+                if (product == null || !product.IsDiscount) return;
+                discountProductAmount += item.Amount;
+            });
+            var discountAmount = discountProductAmount * (10 - OrderDiscount) / 10;
+
+
+            var amount = OrderAmount - discountAmount - PreferentialAmount;
+            var total = Math.Round(amount, 2);
 
             ActualAmount = ReceivedAmount = total;
             GiveAmount = 0;
         }
         /// <summary>
-        /// 计算找零
+        /// 获取输入框中的数字
         /// </summary>
-        //private void CalcBalance()
-        //{
-        //    var total = ActualAmount;
-        //    var preferential = double.Parse(txtPreferential.Text);
-        //    Balance = Math.Round(total + preferential - SelectedDesk.Order.Amount, 2);
-        //}
+        /// <param name="txt"></param>
+        /// <param name="property"></param>
+        private double GetTextBoxNumber(TextBox txt)
+        {
+            var val = 0d;
+            if (string.IsNullOrEmpty(txt.Text))
+            {
+                val = 0;
+                txt.Text = "0";
+            }
+            else
+            {
+                val = double.Parse(txt.Text);
+            }
+            Task.Run(() =>
+            {
+                Thread.Sleep(100);
+                Mainthread.BeginInvoke((Action)delegate ()
+                {
+                    txt.CaretIndex = int.MaxValue;
+                });
+            });
+            return val;
+        }
         /// <summary>
         /// 筛选餐桌
         /// </summary>
@@ -930,6 +982,9 @@ namespace Jiandanmao.ViewModel
             }
             Desks = desks.ToObservable();
         }
+        /// <summary>
+        /// 重置餐桌状态
+        /// </summary>
         private void ResetDeskStatus()
         {
             var desks = ApplicationObject.App.Desks;
@@ -937,6 +992,16 @@ namespace Jiandanmao.ViewModel
             UsingDeskCount = desks.Count(a => a.Order != null);
             FreeDeskCount = desks.Count(a => a.Order == null);
             DeskCount = desks.Count();
+        }
+        /// <summary>
+        /// 设置商品库存
+        /// </summary>
+        /// <param name="stock"></param>
+        private void SetStock(ProductStockModel stock)
+        {
+            var product = ApplicationObject.App.Products.FirstOrDefault(a => a.Id == stock.ProductId);
+            if (product == null) return;
+            product.Stock = stock.Stock;
         }
         /// <summary>
         /// 进入订单页面
@@ -992,6 +1057,72 @@ namespace Jiandanmao.ViewModel
                 products = products.Where(a => a.DisplayName.Contains(key) || a.Pinyin.Contains(key) || a.FirstLetter.Contains(key));
             }
             ProductObject.OriginalList = products.ToObservable();
+        }
+        private long _lastModifyTime;       // 最后修改时间戳
+        /// <summary>
+        /// 保存订单商品更改
+        /// </summary>
+        private void SaveOrderProductChange(TangOrder order, TangOrderProduct product)
+        {
+            _lastModifyTime = DateTime.Now.ToTimeStamp();
+            Task.Run(() =>
+            {
+                Thread.Sleep(200);
+                // 200毫秒后保存数据库
+                Mainthread.BeginInvoke((Action)delegate ()
+                {
+                    var curTime = DateTime.Now.ToTimeStamp();
+                    if (curTime - _lastModifyTime < 200) return;
+
+                    using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+                    {
+                        var service = scope.Resolve<IOrderService>();
+                        service.Update(order);
+                        service.SaveOrderProduct(product);
+                    }
+                    PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Change });
+                });
+            });
+        }
+        /// <summary>
+        /// 下单时，验证商品库存
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="isSuccess"></param>
+        /// <returns></returns>
+        private List<ProductStockModel> ValidateStock(IEnumerable<TangOrderProduct> list, out bool isSuccess)
+        {
+            var goods = list.GroupBy(a => a.ProductId).Select(a => new { Id = a.Key, Quantity = a.Sum(b => b.Quantity) }).ToList();
+            var stocks = new List<ProductStockModel>();
+
+            foreach (var good in goods)
+            {
+                var product = ApplicationObject.App.Products.FirstOrDefault(a => a.Id == good.Id && a.Stock != -1);
+                if (product == null) continue;
+                if (product.Stock < good.Quantity)
+                {
+                    DialogHost.Show(new MessageDialog { Message = { Text = $"商品【{product.Name}数量不足】" } });
+                    isSuccess = false;
+                    return null;
+                }
+                stocks.Add(new ProductStockModel { ProductId = product.Id, Stock = product.Stock - good.Quantity });
+            }
+            isSuccess = true;
+            return stocks;
+        }
+        /// <summary>
+        /// 设置商品库存
+        /// </summary>
+        /// <param name="stocks"></param>
+        private async Task SetStockAsync(IEnumerable<ProductStockModel> stocks)
+        {
+            if (stocks == null || stocks.Count() == 0) return;
+            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            {
+                var util = scope.Resolve<IUtilService>();
+                await util.SetProductStocksAsync(stocks);
+                stocks.ForEach(stock => util.PubSubscribe("SystemMessage", $"StockChange|{stock.ToJson()}"));
+            }
         }
         /// <summary>
         /// 给套餐商品加载套餐上列表
@@ -1075,6 +1206,7 @@ namespace Jiandanmao.ViewModel
                 //});
                 Mainthread.InvokeAsync(() =>
                 {
+                    //option.Order.CashierName = ApplicationObject.App.ClientData.Name;
                     try
                     {
                         ApplicationObject.Print(option.Order, option.Type, option);
@@ -1110,7 +1242,18 @@ namespace Jiandanmao.ViewModel
             {
                 scope.Resolve<IOrderService>().Subscribe("SystemMessage", (channel, msg) =>
                 {
-                    ResetDeskStatus();
+                    var message = msg.ToString().Split('|');
+                    switch (message[0])
+                    {
+                        case "ResetDeskStatus":
+                            ResetDeskStatus();
+                            break;
+                        case "StockChange":
+                            SetStock(message[1].ToObject<ProductStockModel>());
+                            break;
+                        default:
+                            break;
+                    }
                 });
             }
         }

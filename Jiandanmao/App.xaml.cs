@@ -52,7 +52,7 @@ namespace Jiandanmao
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.ToString());
+            MessageBox.Show(e.Exception.Message);
             e.Handled = true;
         }
     }

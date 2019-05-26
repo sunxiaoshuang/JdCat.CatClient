@@ -51,6 +51,7 @@
 
             <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignButtonTextBlock}" x:Key="DeskTextBlock">
                 <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontFamily" Value="微软雅黑,Arial,SimSun,宋体,Sans-serif,Serif"/>
                 <Style.Triggers>
                     <Trigger Property="Tag" Value="{x:Null}">
                         <Trigger.Setters>

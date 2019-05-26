@@ -9,6 +9,23 @@ namespace Jiandanmao.Code
 {
     public class ClientData: INotifyPropertyChanged, ICloneable
     {
+        private string _name;
+        /// <summary>
+        /// 收银台名称
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Name"));
+            }
+        }
+
         private bool _isReceive;
         /// <summary>
         /// 是否接单（外卖订单接单打印）

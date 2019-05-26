@@ -36,7 +36,7 @@
                     <RowDefinition Height="50" />
                     <RowDefinition Height="50" />
                     <RowDefinition Height="50" />
-                    <RowDefinition Height="150" />
+                    <RowDefinition Height="50" />
                     <RowDefinition Height="150" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -45,22 +45,28 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Computer" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
+                    <TextBlock Text="收银台名称" FontSize="18"></TextBlock>
+                </StackPanel>
+                <TextBox Grid.Column="1" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding ClientData.Name}" />
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="PrinterAlert" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
                     <TextBlock Text="接收外卖订单打印" FontSize="18"></TextBlock>
                 </StackPanel>
-                <CheckBox IsChecked="{Binding ClientData.IsReceive}" Grid.Column="1" ToolTip="勾选表示接收" HorizontalAlignment="Left" />
-
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Cash" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
-                    <TextBlock Text="主收银台" FontSize="18"></TextBlock>
-                </StackPanel>
-                <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding ClientData.IsHost}" ToolTip="勾选表示本电脑是主收银台" HorizontalAlignment="Left" />
+                <CheckBox IsChecked="{Binding ClientData.IsReceive}" Grid.Row="1" Grid.Column="1" ToolTip="勾选表示接收" HorizontalAlignment="Left" />
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ImportantDevices" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
+                    <TextBlock Text="是否是主收银台" FontSize="18"></TextBlock>
+                </StackPanel>
+                <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding ClientData.IsHost}" ToolTip="勾选表示本电脑是主收银台" HorizontalAlignment="Left" />
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Cash" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
                     <TextBlock Text="餐位费" FontSize="18"></TextBlock>
                 </StackPanel>
-                <TextBox Grid.Row="2" Grid.Column="1" Width="15" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding MealFee}" />
+                <TextBox Grid.Row="3" Grid.Column="1" Width="15" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding MealFee}" />
 
             </Grid>
         </ScrollViewer>

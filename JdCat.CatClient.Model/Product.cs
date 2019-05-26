@@ -62,6 +62,10 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public ActionScope Scope { get; set; }
         /// <summary>
+        /// 是否参与订单折扣活动
+        /// </summary>
+        public bool IsDiscount { get; set; }
+        /// <summary>
         /// 最小购买量
         /// </summary>
         public decimal? MinBuyQuantity { get; set; }
@@ -112,10 +116,12 @@ namespace JdCat.CatClient.Model
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsCheck"));
             }
         }
+
         private double _selectedQuantity;
         /// <summary>
         /// 已选择的数量
         /// </summary>
+        [JsonIgnore]
         public double SelectedQuantity
         {
             get { return _selectedQuantity; }
@@ -125,11 +131,29 @@ namespace JdCat.CatClient.Model
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuantity"));
             }
         }
+
+        private double _stock = -1;
+        /// <summary>
+        /// 商品库存
+        /// </summary>
+        [JsonIgnore]
+        public double Stock
+        {
+            get { return _stock; }
+            set
+            {
+                _stock = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Stock"));
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>
         /// 商品列表显示名称
         /// </summary>
         public string DisplayName { get { return $"{Code}|{Name}"; } }
+
+
 
     }
 }

@@ -199,6 +199,9 @@
     <Compile Include="Code\SelectItem.cs" />
     <Compile Include="Code\SharePrint.cs" />
     <Compile Include="Code\StateObject.cs" />
+    <Compile Include="Converter\StockColorTypeConverter.cs" />
+    <Compile Include="Converter\NumberTypeConverter.cs" />
+    <Compile Include="Converter\StockTypeConverter.cs" />
     <Compile Include="Converter\TangOrderProductStatusTypeConverter.cs" />
     <Compile Include="Converter\TangOrderProductOperateTypeConvert.cs" />
     <Compile Include="Converter\DateTimeToString3TypeConverter.cs" />
@@ -285,6 +288,9 @@
     <Compile Include="Uc\OrderList.xaml.cs">
       <DependentUpon>OrderList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\ProductStock.xaml.cs">
+      <DependentUpon>ProductStock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\SystemSetting.xaml.cs">
       <DependentUpon>SystemSetting.xaml</DependentUpon>
     </Compile>
@@ -294,6 +300,7 @@
     <Compile Include="ViewModel\ContorllerItem.cs" />
     <Compile Include="ViewModel\ChangeWorkViewModel.cs" />
     <Compile Include="ViewModel\OrderProductViewModel.cs" />
+    <Compile Include="ViewModel\ProductStockViewModel.cs" />
     <Compile Include="ViewModel\SystemSettingViewModel.cs" />
     <Compile Include="ViewModel\OrderListInfoViewModel.cs" />
     <Compile Include="ViewModel\OrderListViewModel.cs" />
@@ -393,6 +400,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\OrderList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ProductStock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

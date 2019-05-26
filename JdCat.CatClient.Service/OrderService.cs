@@ -43,11 +43,13 @@ namespace JdCat.CatClient.Service
 
         public void SaveOrderProduct(TangOrderProduct product)
         {
-            if (string.IsNullOrEmpty(product.ObjectId))
+            if (!string.IsNullOrEmpty(product.ObjectId))
             {
-                product.ObjectId = Guid.NewGuid().ToString().ToLower();
-                product.CreateTime = DateTime.Now;
+                UpdateOrderProduct(product);
+                return;
             }
+            product.ObjectId = Guid.NewGuid().ToString().ToLower();
+            product.CreateTime = DateTime.Now;
             var key = AddKeyPrefix(product.ObjectId, typeof(TangOrderProduct).Name);
             Database.StringSet(key, JsonConvert.SerializeObject(product));
             // 保存到订单关联的产品列表中

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Jiandanmao.Uc"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
@@ -37,51 +38,51 @@
             </Grid.RowDefinitions>
             
             <StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
+                <StackPanel Orientation="Horizontal" Height="45">
                     <TextBlock Width="120">订单金额：</TextBlock>
                     <TextBlock Foreground="Red" Text="{Binding OrderAmount}"></TextBlock>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
-                    <TextBlock Width="120">优惠金额：</TextBlock>
-                    <TextBox Foreground="Red" FontSize="20" x:Name="txtPreferential" Height="30" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding PreferentialAmount}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="TextChanged">
-                                <i:InvokeCommandAction Command="{Binding PreferentialChangedCommand}" CommandParameter="{Binding ElementName=txtPreferential}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
+                <StackPanel Orientation="Horizontal" Height="45">
                     <TextBlock Width="120">订单折扣：</TextBlock>
-                    <TextBox Foreground="Red" FontSize="20" x:Name="txtDiscount" Height="30" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding OrderDiscount}">
+                    <TextBox Foreground="Red" FontSize="20" x:Name="txtDiscount" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding OrderDiscount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="TextChanged">
+                            <i:EventTrigger EventName="KeyUp">
                                 <i:InvokeCommandAction Command="{Binding DiscountChangedCommand}" CommandParameter="{Binding ElementName=txtDiscount}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120">优惠金额：</TextBlock>
+                    <TextBox Foreground="Red" FontSize="20" x:Name="txtPreferential" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding PreferentialAmount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="KeyUp">
+                                <i:InvokeCommandAction Command="{Binding PreferentialChangedCommand}" CommandParameter="{Binding ElementName=txtPreferential}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
                     <TextBlock Width="120" Foreground="Red">应收金额：</TextBlock>
                     <TextBlock Foreground="Red" Text="{Binding ActualAmount}"></TextBlock>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
+                <StackPanel Orientation="Horizontal" Height="45">
                     <TextBlock Width="120" Foreground="Red">实收：</TextBlock>
-                    <TextBox Foreground="Red" FontSize="20" x:Name="txtReceived" Height="30" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding ReceivedAmount}">
+                    <TextBox Foreground="Red" FontSize="20" x:Name="txtReceived" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding ReceivedAmount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="TextChanged">
+                            <i:EventTrigger EventName="KeyUp">
                                 <i:InvokeCommandAction Command="{Binding ReceivedChangedCommand}" CommandParameter="{Binding ElementName=txtReceived}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
+                <StackPanel Orientation="Horizontal" Height="45">
                     <TextBlock Width="120" Foreground="Red">找零：</TextBlock>
                     <TextBlock Foreground="Red" Text="{Binding GiveAmount}"></TextBlock>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
+                <StackPanel Orientation="Horizontal" Height="45">
                     <TextBlock Width="120">备注：</TextBlock>
-                    <TextBox FontSize="20" x:Name="txtPaymentRemark" Height="30" Width="400" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding PaymentRemark}" />
+                    <ComboBox Grid.Column="1" materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" Height="35" Width="400" Margin="0 -5 0 0" Text="{Binding PaymentRemark}" ItemsSource="{Binding PayRemarks}" />
                 </StackPanel>
             </StackPanel>
             

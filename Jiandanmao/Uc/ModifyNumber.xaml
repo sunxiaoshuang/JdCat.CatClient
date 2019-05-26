@@ -8,7 +8,7 @@
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
              mc:Ignorable="d">
     <StackPanel Margin="8">
-        <TextBox materialDesign:HintAssist.Hint="用餐人数" FontSize="22" Text="{Binding SelectedDesk.Quantity, Mode=OneWay}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextChanged="TxtNumber_TextChanged" Width="300" Margin="50 100" x:Name="txtNumber" KeyUp="TxtNumber_KeyUp">
+        <TextBox materialDesign:HintAssist.Hint="用餐人数" FontSize="22" Text="{Binding SelectedDesk.Quantity, Mode=OneWay}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" PreviewTextInput="Txt_PreviewTextInput" Width="300" Margin="50 100" x:Name="txtNumber" KeyUp="TxtNumber_KeyUp">
         </TextBox>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" HorizontalAlignment="Center">取消</Button>

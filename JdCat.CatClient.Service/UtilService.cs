@@ -107,5 +107,47 @@ namespace JdCat.CatClient.Service
         }
 
 
+        public async Task SetProductStocksAsync(ProductStockModel stock)
+        {
+            var expire = GetNextDay() - DateTime.Now;
+            var setKey = AddKeyPrefix<ProductStockModel>("Set");
+            await Database.SetAddAsync(setKey, stock.ProductId);
+            await Database.KeyExpireAsync(setKey, expire);
+            var entityKey = AddKeyPrefix<ProductStockModel>(stock.ProductId.ToString());
+            await Database.StringSetAsync(entityKey, stock.ToJson(), expire);
+        }
+
+        public async Task SetProductStocksAsync(IEnumerable<ProductStockModel> stocks)
+        {
+            var expire = GetNextDay() - DateTime.Now;
+            var setKey = AddKeyPrefix<ProductStockModel>("Set");
+            await Database.SetAddAsync(setKey, stocks.Select(a => (RedisValue)a.ProductId).ToArray());
+            await Database.KeyExpireAsync(setKey, expire);
+
+            stocks.ForEach(async stock =>
+            {
+                var key = AddKeyPrefix<ProductStockModel>(stock.ProductId.ToString());
+                await Database.StringSetAsync(key, stock.ToJson(), expire);
+            });
+            //var entityKeys = stocks.Select(a => new KeyValuePair<RedisKey, RedisValue>(AddKeyPrefix<ProductStockModel>(a.ProductId.ToString()), a.ToJson())).ToArray();
+            //await Database.StringSetAsync(entityKeys);
+            //entityKeys.ForEach(async key => await Database.KeyExpireAsync(key.Key, expire));
+        }
+
+        public async Task<List<ProductStockModel>> GetProductStocksAsync()
+        {
+            var setKey = AddKeyPrefix<ProductStockModel>("Set");
+            var ids = await Database.SetMembersAsync(setKey);
+            if (ids == null || ids.Length == 0) return null;
+            var keys = ids.Select(a => (RedisKey)AddKeyPrefix<ProductStockModel>(a)).ToArray();
+            return (await Database.StringGetAsync(keys)).Select(a => a.ToString().ToObject<ProductStockModel>()).ToList();
+        }
+
+
+        private DateTime GetNextDay()
+        {
+            return new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(1);
+        }
+
     }
 }

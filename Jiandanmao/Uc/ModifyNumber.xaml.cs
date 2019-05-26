@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,7 +31,7 @@ namespace Jiandanmao.Uc
             InitializeComponent();
             var main = Dispatcher;
             Task.Run(() => {
-                Task.Delay(500);
+                Thread.Sleep(500);
                 main.BeginInvoke((Action)delegate() {
                     txtNumber.Text = Number.ToString();
                     txtNumber.Focus();
@@ -44,23 +45,17 @@ namespace Jiandanmao.Uc
             Submit();
         }
 
-        private void TxtNumber_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            var txt = (TextBox)sender;
-            var text = txt.Text.Trim();
-            if (!double.TryParse(text, out double distance))
-            {
-                var reg = Regex.Match(text, @"\d+");
-                txt.Text = reg.Value;
-                txt.SelectionStart = int.MaxValue;
-                return;
-            }
-        }
-
         private void TxtNumber_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
             Submit();
+        }
+
+        private void Txt_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex re = new Regex("[^0-9.-]+");
+
+            e.Handled = re.IsMatch(e.Text);
         }
 
         private void Submit()

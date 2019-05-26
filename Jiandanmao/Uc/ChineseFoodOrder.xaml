@@ -30,8 +30,8 @@
             <convert:TangOrderProductOperateTypeConvert x:Key="topotc" />
 
             <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="FontSize" Value="18"/>
-                <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif"/>
+                <Setter Property="FontSize" Value="17"/>
+                <Setter Property="FontFamily" Value="微软雅黑,Arial,SimSun,宋体,Sans-serif,Serif"/>
             </Style>
 
         </ResourceDictionary>
@@ -58,7 +58,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Button Style="{DynamicResource MaterialDesignToolButton}">
-                    <materialDesign:PackIcon Kind="Magnify" Opacity=".56" Foreground="White" />
+                    <materialDesign:PackIcon Kind="Magnify" Opacity=".56" FontSize="22" Foreground="White" />
                 </Button>
                 <TextBox Grid.Column="1" Margin="8 0 0 0" x:Name="txtProductkey" materialDesign:HintAssist.Hint="菜品搜索" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" Foreground="White" MinWidth="200" VerticalAlignment="Center" CaretBrush="White">
                     <i:Interaction.Triggers>
@@ -68,10 +68,20 @@
                     </i:Interaction.Triggers>
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding EnterToAddCommand}" CommandParameter="{Binding ElementName=txtProductkey}"></KeyBinding>
+                        <KeyBinding Key="Esc" Command="{Binding EscToClearCommand}" CommandParameter="{Binding ElementName=txtProductkey}"></KeyBinding>
+                        <KeyBinding Gesture="Ctrl+1" Command="{Binding NumToAddCommand}" CommandParameter="1"/>
+                        <KeyBinding Gesture="Ctrl+2" Command="{Binding NumToAddCommand}" CommandParameter="2"/>
+                        <KeyBinding Gesture="Ctrl+3" Command="{Binding NumToAddCommand}" CommandParameter="3"/>
+                        <KeyBinding Gesture="Ctrl+4" Command="{Binding NumToAddCommand}" CommandParameter="4"/>
+                        <KeyBinding Gesture="Ctrl+5" Command="{Binding NumToAddCommand}" CommandParameter="5"/>
+                        <KeyBinding Gesture="Ctrl+6" Command="{Binding NumToAddCommand}" CommandParameter="6"/>
+                        <KeyBinding Gesture="Ctrl+7" Command="{Binding NumToAddCommand}" CommandParameter="7"/>
+                        <KeyBinding Gesture="Ctrl+8" Command="{Binding NumToAddCommand}" CommandParameter="8"/>
+                        <KeyBinding Gesture="Ctrl+9" Command="{Binding NumToAddCommand}" CommandParameter="9"/>
                     </TextBox.InputBindings>
                 </TextBox>
-                <Button Style="{DynamicResource MaterialDesignToolButton}" Grid.Column="2" Command="{Binding ClearProductKeyCommand}" CommandParameter="{Binding ElementName=txtProductkey}">
-                    <materialDesign:PackIcon Kind="CloseCircle" Opacity=".56" Margin="8 0 0 0" Foreground="White" />
+                <Button Style="{DynamicResource MaterialDesignToolButton}" Height="35" Width="35" Margin="0 0 5 0" Grid.Column="2" Command="{Binding ClearProductKeyCommand}" CommandParameter="{Binding ElementName=txtProductkey}">
+                    <materialDesign:PackIcon Kind="CloseCircle" Width="30" Height="30" Opacity=".7" Foreground="White" />
                 </Button>
             </Grid>
             <Border Grid.Row="1" BorderBrush="#ddd" BorderThickness="1">

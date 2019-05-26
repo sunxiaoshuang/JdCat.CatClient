@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -10,10 +11,16 @@ namespace JdCat.CatClient.Common
 {
     public static class UtilExtend
     {
-        public static string GetDescription(this System.Enum value, bool nameInstend = true)
+        /// <summary>
+        /// 获取枚举描述
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="nameInstend"></param>
+        /// <returns></returns>
+        public static string GetDescription(this Enum value, bool nameInstend = true)
         {
             Type type = value.GetType();
-            string name = System.Enum.GetName(type, value);
+            string name = Enum.GetName(type, value);
             if (name == null)
             {
                 return null;
@@ -24,7 +31,7 @@ namespace JdCat.CatClient.Common
             {
                 return name;
             }
-            return attribute == null ? null : attribute.Description;
+            return attribute?.Description;
         }
 
         /// <summary>
@@ -44,7 +51,7 @@ namespace JdCat.CatClient.Common
         }
 
         /// <summary>
-        /// 循环
+        /// 返回可通知列表
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -84,6 +91,38 @@ namespace JdCat.CatClient.Common
         public static byte[] ToByte(this string str)
         {
             return Encoding.GetEncoding("gbk").GetBytes(str);
+        }
+
+        /// <summary>
+        /// 将时间转化为时间戳
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public static long ToTimeStamp(this DateTime time)
+        {
+            var ts = time - new DateTime(1970, 1, 1, 8, 0, 0, 0);
+            return Convert.ToInt64(ts.TotalMilliseconds);
+        }
+
+        /// <summary>
+        /// 对象转化为JSON字符串
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string ToJson(this object obj)
+        {
+            return JsonConvert.SerializeObject(obj);
+        }
+
+        /// <summary>
+        /// 字符串转化为对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static T ToObject<T>(this string str) where T : class, new()
+        {
+            return JsonConvert.DeserializeObject<T>(str);
         }
     }
 }

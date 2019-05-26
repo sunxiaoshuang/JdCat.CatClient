@@ -172,12 +172,12 @@
             <!--我的样式-->
 
             <Style TargetType="{x:Type TextElement}">
-                <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif"/>
+                <Setter Property="FontFamily" Value="微软雅黑,Arial,SimSun,宋体,Sans-serif,Serif"/>
             </Style>
 
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="FontFamily" Value="Arial,SimSun,宋体,Sans-serif,Serif"/>
+                <Setter Property="FontFamily" Value="微软雅黑,Arial,SimSun,宋体,Sans-serif,Serif"/>
             </Style>
 
         </ResourceDictionary>

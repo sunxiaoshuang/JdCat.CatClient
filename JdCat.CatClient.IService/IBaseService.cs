@@ -40,7 +40,7 @@ namespace JdCat.CatClient.IService
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="objectId"></param>
         /// <returns></returns>
-        TEntity Get<TEntity>(string objectId) where TEntity : ClientBaseEntity;
+        TEntity Get<TEntity>(string objectId) where TEntity : class, new();//ClientBaseEntity;
         /// <summary>
         /// 获取实体对象的记录数
         /// </summary>
@@ -53,7 +53,7 @@ namespace JdCat.CatClient.IService
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="objectId"></param>
         /// <returns></returns>
-        Task<TEntity> GetAsync<TEntity>(string objectId) where TEntity : ClientBaseEntity;
+        Task<TEntity> GetAsync<TEntity>(string objectId) where TEntity : class, new();//ClientBaseEntity;
         /// <summary>
         /// 根据id列表获取实体对象列表
         /// </summary>
@@ -71,7 +71,7 @@ namespace JdCat.CatClient.IService
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        Task<TEntity> GetEntityByCodeAsync<TEntity>(string code) where TEntity : ClientBaseEntity;
+        Task<TEntity> GetEntityByCodeAsync<TEntity>(string code) where TEntity : class, new();//ClientBaseEntity
         /// <summary>
         /// 获取指定页数的实体对象，
         /// </summary>

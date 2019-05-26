@@ -74,31 +74,31 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">销售净额：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding ActualAmount}"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="Bold">订单数：</TextBlock>
                         <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding OrderCount}"></TextBlock>
                     </Grid>
-                    <!--<Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock FontWeight="Bold">销售净额：</TextBlock>
-                    <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right">160.00</TextBlock>
-                </Grid>-->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock>消费人数：</TextBlock>
-                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{Binding PeopleCount}"></TextBlock>
+                        <TextBlock FontWeight="Bold">消费人数：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding PeopleCount}"></TextBlock>
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontWeight="Bold">收取现金：</TextBlock>
+                        <TextBlock FontWeight="Bold">现金净额：</TextBlock>
                         <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding CashAmount}"></TextBlock>
                     </Grid>
                     <Grid>
@@ -116,6 +116,14 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="Bold">优惠金额：</TextBlock>
                         <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding PreferentialAmount}"></TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">订单折扣金额：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding DiscountAmount}"></TextBlock>
                     </Grid>
                     <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray"></Border>
                     <Grid>

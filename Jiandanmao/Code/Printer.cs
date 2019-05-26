@@ -219,7 +219,17 @@ namespace Jiandanmao.Code
         {
             if (Device.Type == 1)
             {
-                ReceptionPrint(order, socket, option);
+                if (!string.IsNullOrEmpty(Device.CashierName))
+                {
+                    if (Device.CashierName.Trim().Equals(order.CashierName?.Trim() ?? ""))
+                    {
+                        ReceptionPrint(order, socket, option);
+                    }
+                }
+                else
+                {
+                    ReceptionPrint(order, socket, option);
+                }
             }
             else if (Device.Type == 2)
             {

@@ -52,6 +52,20 @@ namespace JdCat.CatClient.IService
         /// </summary>
         /// <returns></returns>
         Task<List<DeskType>> GetDeskTypesAsync();
-
+        /// <summary>
+        /// 设置商品库存
+        /// </summary>
+        /// <param name="stock"></param>
+        Task SetProductStocksAsync(ProductStockModel stock);
+        /// <summary>
+        /// 设置商品库存
+        /// </summary>
+        /// <param name="stocks"></param>
+        Task SetProductStocksAsync(IEnumerable<ProductStockModel> stocks);
+        /// <summary>
+        /// 获取商品库存
+        /// </summary>
+        /// <returns></returns>
+        Task<List<ProductStockModel>> GetProductStocksAsync();
     }
 }

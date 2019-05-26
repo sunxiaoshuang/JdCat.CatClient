@@ -213,21 +213,24 @@ namespace Jiandanmao.ViewModel
 
         private void OriginalPriceChanged(object o)
         {
-            OriginalPrice = ValidateInput((TextBox)o);
+            var txt = (TextBox)o;
+            OriginalPrice = GetTextBoxNumber((TextBox)o);
             Price = Math.Round(OriginalPrice * Discount / 10, 1);
             Calculate();
         }
 
         private void PriceChanged(object o)
         {
-            Price = ValidateInput((TextBox)o);
-            Discount = Math.Round(Price / OriginalPrice * 10, 1);
+            var txt = (TextBox)o;
+            Price = GetTextBoxNumber((TextBox)o);
+            Discount = OriginalPrice == 0 ? 0 : Math.Round(Price / OriginalPrice * 10, 1);
             Calculate();
         }
 
         private void DistanceChanged(object o)
         {
-            Discount = ValidateInput((TextBox)o);
+            var txt = (TextBox)o;
+            Discount = GetTextBoxNumber((TextBox)o);
             Price = Math.Round(OriginalPrice * Discount / 10, 1);
             Calculate();
         }
@@ -270,7 +273,7 @@ namespace Jiandanmao.ViewModel
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
-        private void Unsubscribe(object o)
+        private async void Unsubscribe(object o)
         {
             var snack = (Snackbar)o;
             if (ReturnQuantity > Quantity)
@@ -281,8 +284,19 @@ namespace Jiandanmao.ViewModel
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
+                // 记录退菜
                 Good.RefundReason = ReturnReason;
                 var good = service.Unsubscribe(Order, Good, ReturnQuantity);
+                // 退还库存
+                var util = scope.Resolve<IUtilService>();
+                var stock = await util.GetAsync<ProductStockModel>(good.ProductId.ToString());
+                if (stock != null)
+                {
+                    stock.Stock += good.Quantity;
+                    await util.SetProductStocksAsync(stock);
+                    util.PubSubscribe("SystemMessage", $"StockChange|{stock.ToJson()}");
+                }
+                // 打印退菜
                 Print(good);
             }
             IsSubmit = true;
@@ -312,18 +326,32 @@ namespace Jiandanmao.ViewModel
                 Products = products
             });
         }
-        private double ValidateInput(TextBox txt)
+        /// <summary>
+        /// 获取输入框中的数字
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <param name="property"></param>
+        private double GetTextBoxNumber(TextBox txt)
         {
-            var text = txt.Text.Trim();
-            if (!double.TryParse(text, out double num))
+            var val = 0d;
+            if (string.IsNullOrEmpty(txt.Text))
             {
-                var reg = Regex.Match(text, @"\d+");
-                txt.Text = reg.Value;
-                txt.SelectionStart = int.MaxValue;
-                return double.Parse(txt.Text);
+                val = 0;
+                txt.Text = "0";
             }
-            return num;
+            else
+            {
+                val = double.Parse(txt.Text);
+            }
+            Task.Run(() =>
+            {
+                Task.Delay(100);
+                Mainthread.BeginInvoke((Action)delegate ()
+                {
+                    txt.CaretIndex = int.MaxValue;
+                });
+            });
+            return val;
         }
-
     }
 }

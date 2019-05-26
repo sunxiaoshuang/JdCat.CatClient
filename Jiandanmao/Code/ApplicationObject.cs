@@ -233,6 +233,13 @@ namespace Jiandanmao.Code
                     Types.Add(a);
                     a.Products?.ForEach(b => Products.Add(b));
                 });
+                // 产品库存
+                (await service.GetProductStocksAsync())?.ForEach(a =>
+                {
+                    var product = Products.FirstOrDefault(b => b.Id == a.ProductId);
+                    if (product == null) return;
+                    product.Stock = a.Stock;
+                });
                 // 桌台
                 (await service.GetDeskTypesAsync())?.ForEach(a =>
                 {

@@ -27,12 +27,14 @@ namespace Jiandanmao.ViewModel
             if (ApplicationObject.App.IsAdmin)
             {
                 list.Add(new ContorllerItem("外卖订单", new OrderList() { DataContext = new OrderListViewModel() }));
+                list.Add(new ContorllerItem("库存设置", new ProductStock() { DataContext = new ProductStockViewModel() }));
                 list.Add(new ContorllerItem("系统设置", new SystemSetting { DataContext = new SystemSettingViewModel(snackbarMessageQueue) }));
             }
             else
             {
                 list.Add(new ContorllerItem("餐台", new ChineseFood { DataContext = new ChineseFoodViewModel(snackbarMessageQueue) }));
                 list.Add(new ContorllerItem("外卖订单", new OrderList() { DataContext = new OrderListViewModel() }));
+                list.Add(new ContorllerItem("库存设置", new ProductStock() { DataContext = new ProductStockViewModel() }));
                 if ((ApplicationObject.App.Staff.StaffPost.Authority & StaffPostAuth.Manager) > 0)
                 {
                     list.Add(new ContorllerItem("系统设置", new SystemSetting { DataContext = new SystemSettingViewModel(snackbarMessageQueue) }));

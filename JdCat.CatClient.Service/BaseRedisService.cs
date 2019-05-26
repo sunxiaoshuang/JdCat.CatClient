@@ -121,7 +121,7 @@ namespace JdCat.CatClient.Service
             Update(entity);
         }
 
-        public TEntity Get<TEntity>(string objectId) where TEntity : ClientBaseEntity
+        public TEntity Get<TEntity>(string objectId) where TEntity : class, new()//ClientBaseEntity
         {
             var result = Database.StringGet(AddKeyPrefix<TEntity>(objectId));
             if (result.IsNullOrEmpty) return null;
@@ -131,7 +131,7 @@ namespace JdCat.CatClient.Service
         {
             return await Database.ListLengthAsync(AddKeyPrefix<TEntity>("List"));
         }
-        public async Task<TEntity> GetAsync<TEntity>(string objectId) where TEntity : ClientBaseEntity
+        public async Task<TEntity> GetAsync<TEntity>(string objectId) where TEntity : class, new() // ClientBaseEntity
         {
             var result = await Database.StringGetAsync(AddKeyPrefix<TEntity>(objectId));
             if (result.IsNullOrEmpty) return null;
@@ -154,7 +154,7 @@ namespace JdCat.CatClient.Service
             var entitys = vals.Select(a => JsonConvert.DeserializeObject<TEntity>(a)).ToList();
             return entitys;
         }
-        public async Task<TEntity> GetEntityByCodeAsync<TEntity>(string code) where TEntity : ClientBaseEntity
+        public async Task<TEntity> GetEntityByCodeAsync<TEntity>(string code) where TEntity : class, new()//ClientBaseEntity
         {
             var objectId = await Database.StringGetAsync(AddKeyPrefix<TEntity>(code));
             if (objectId.IsNullOrEmpty) return null;
@@ -253,7 +253,7 @@ namespace JdCat.CatClient.Service
         /// 返回列表最后一个元素的对象
         /// </summary>
         /// <returns></returns>
-        protected TEntity GetLastEntity<TEntity>() where TEntity : ClientBaseEntity
+        protected TEntity GetLastEntity<TEntity>() where TEntity : class, new()//ClientBaseEntity
         {
             var key = AddKeyPrefix<TEntity>("List");
             var len = Database.ListLength(key);

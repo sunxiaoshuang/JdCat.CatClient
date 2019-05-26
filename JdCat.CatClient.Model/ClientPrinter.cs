@@ -49,6 +49,10 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public ActionScope Scope { get; set; }
         /// <summary>
+        /// 前台小票机关联的收银台（如果设置了名称，仅在该对应的收银台下单、结算时出小票）
+        /// </summary>
+        public string CashierName { get; set; }
+        /// <summary>
         /// 打印机关联的菜品id
         /// </summary>
         public string FoodIds { get; set; }

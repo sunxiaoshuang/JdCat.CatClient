@@ -89,6 +89,7 @@
     <Compile Include="ProductAttribute.cs" />
     <Compile Include="ProductFormat.cs" />
     <Compile Include="ProductImage.cs" />
+    <Compile Include="ProductStockModel.cs" />
     <Compile Include="ProductType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaleCoupon.cs" />

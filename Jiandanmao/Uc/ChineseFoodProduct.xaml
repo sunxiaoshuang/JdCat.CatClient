@@ -24,11 +24,26 @@
             <convert:ProductBackgroundTypeConverter x:Key="pbtc" />
             <convert:ProductFontColorTypeConverter x:Key="pfctc" />
             <convert:BlockCheckBackgroundTypeConverter x:Key="bcbtc" />
+            <convert:StockTypeConverter x:Key="stc" />
+            <convert:StockColorTypeConverter x:Key="sctc" />
+            <convert:NumberTypeConverter x:Key="ntc" />
 
 
             <Style TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource MaterialDesignRaisedButton}" x:Key="ButtonStyle">
                 <Setter Property="Height" Value="44"/>
                 <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+            
+            <Style TargetType="{x:Type TextBlock}" x:Key="StockText">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Foreground" Value="AntiqueWhite"/>
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="0">
+                        <Trigger.Setters>
+                            <Setter Property="Foreground" Value="#009789" />
+                        </Trigger.Setters>
+                    </Trigger>
+                </Style.Triggers>
             </Style>
 
         </ResourceDictionary>
@@ -93,7 +108,7 @@
                         <materialDesign:Badged.Badge>
                             <TextBlock Text="{Binding SelectedQuantity}"></TextBlock>
                         </materialDesign:Badged.Badge>
-                        <Button DataContext="{Binding DataContext, ElementName=ChineseFoodProductControl}"
+                        <Button DataContext="{Binding DataContext, ElementName=ChineseFoodProductControl}" Padding="5 0"
                                 Command="{Binding AddProductCommand}"
                                 CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}"
                                 Background="{Binding DataContext.SelectedQuantity, Converter={StaticResource pbtc}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}" 
@@ -103,17 +118,31 @@
                                 <Grid Height="100" DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
+                                        <RowDefinition Height="30" />
                                         <RowDefinition Height="20" />
                                     </Grid.RowDefinitions>
-                                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding DisplayName}"></TextBlock>
+                                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center" Text="{Binding DisplayName}"></TextBlock>
                                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                                        <TextBlock Text="￥" />
-                                        <TextBlock Text="{Binding Formats[0].Price}" />
+                                        <TextBlock Text="￥" Foreground="#d0862a" x:Name="txtRmb" />
+                                        <TextBlock Text="{Binding Formats[0].Price}" Foreground="#d0862a" x:Name="txtPrice" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Stock, Converter={StaticResource stc}}" FontSize="12" x:Name="txtStock" />
                                     </StackPanel>
                                 </Grid>
                             </Button.Content>
                         </Button>
                     </materialDesign:Badged>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Stock}" Value="0">
+                            <Setter TargetName="txtStock" Property="Foreground" Value="OrangeRed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedQuantity, Converter={StaticResource ntc}}" Value="1">
+                            <Setter TargetName="txtStock" Property="Foreground" Value="AntiqueWhite" />
+                            <Setter TargetName="txtRmb" Property="Foreground" Value="AntiqueWhite" />
+                            <Setter TargetName="txtPrice" Property="Foreground" Value="AntiqueWhite" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

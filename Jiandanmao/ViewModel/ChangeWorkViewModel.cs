@@ -29,7 +29,6 @@ namespace Jiandanmao.ViewModel
         public ICommand LoadedCommand => new AnotherCommandImplementation(Loaded);
         public ICommand ConfirmChangeWorkCommand => new AnotherCommandImplementation(ConfirmChangeWork);
 
-
         #endregion
 
         #region 属性
@@ -108,13 +107,25 @@ namespace Jiandanmao.ViewModel
 
         private double _discountAmount;
         /// <summary>
-        /// 折扣
+        /// 订单折扣金额
         /// </summary>
         public double DiscountAmount { get => _discountAmount; set => this.MutateVerbose(ref _discountAmount, value, RaisePropertyChanged()); }
 
-        private double _orderAmount;
+        private double _productDiscountAmount;
+        /// <summary>
+        /// 单品折扣金额
+        /// </summary>
+        public double ProductDiscountAmount { get => _productDiscountAmount; set => this.MutateVerbose(ref _productDiscountAmount, value, RaisePropertyChanged()); }
+
+        private double _businessAmount;
         /// <summary>
         /// 营业额
+        /// </summary>
+        public double BusinessAmount { get => _businessAmount; set => this.MutateVerbose(ref _businessAmount, value, RaisePropertyChanged()); }
+
+        private double _orderAmount;
+        /// <summary>
+        /// 订单总额
         /// </summary>
         public double OrderAmount { get => _orderAmount; set => this.MutateVerbose(ref _orderAmount, value, RaisePropertyChanged()); }
 
@@ -233,10 +244,12 @@ namespace Jiandanmao.ViewModel
                                         products.AddRange(product);
                                     }
                                     //DiscountAmount = Math.Round(products.Where(a => a.ProductStatus != TangOrderProductStatus.Return).Sum(a => (a.OriginalPrice * a.Quantity) - a.Amount), 2);
-                                    DiscountAmount = Math.Round(orders.Sum(a => a.Amount - a.ActualAmount - a.PreferentialAmount), 2);
+                                    BusinessAmount = Math.Round(orders.Sum(a => a.OriginalAmount), 2);
                                     OrderAmount = Math.Round(orders.Sum(a => a.Amount), 2);
                                     ActualAmount = Math.Round(orders.Sum(a => a.ActualAmount), 2);
                                     PreferentialAmount = Math.Round(orders.Sum(a => a.PreferentialAmount), 2);
+                                    DiscountAmount = Math.Round(OrderAmount - ActualAmount - PreferentialAmount, 2);
+                                    ProductDiscountAmount = Math.Round(BusinessAmount - OrderAmount, 2);
                                     // 收款数据
                                     var payments = await service.GetAllAsync<PaymentType>() ?? new List<PaymentType>();
                                     Payments = payments.Select(payment =>
@@ -337,7 +350,7 @@ namespace Jiandanmao.ViewModel
                             bufferArr.Add($"打印时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}".ToByte());
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                             bufferArr.Add(PrinterCmdUtils.SplitLine("-", printer.Device.Format));
-                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("营业额", OrderAmount.ToString("f2"), printer.Device.Format));
+                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("营业额", BusinessAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("销售净额", ActualAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
@@ -349,9 +362,11 @@ namespace Jiandanmao.ViewModel
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("找赎", GiveAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
-                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠金额", PreferentialAmount.ToString("f2"), printer.Device.Format));
+                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("整单立减优惠", PreferentialAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
-                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("订单折扣金额", DiscountAmount.ToString("f2"), printer.Device.Format));
+                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("整单折扣优惠", DiscountAmount.ToString("f2"), printer.Device.Format));
+                            bufferArr.Add(PrinterCmdUtils.NextLine());
+                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("单品折扣优惠", ProductDiscountAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                             bufferArr.Add(PrinterCmdUtils.SplitText("-", "收款", printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.PrintLineLeftMidRight("收款统计", "笔数", "金额"));

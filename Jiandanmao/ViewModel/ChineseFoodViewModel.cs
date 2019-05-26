@@ -738,7 +738,7 @@ namespace Jiandanmao.ViewModel
         private void NumToAdd(object o)
         {
             var num = Convert.ToInt32(o);
-            if (ProductObject.OriginalList.Count <= num) return;
+            if (ProductObject.OriginalList.Count <= num - 1) return;
             AddProduct(ProductObject.OriginalList[num - 1]);
         }
         private void PreferentialChanged(object o)

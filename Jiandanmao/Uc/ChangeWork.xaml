@@ -67,7 +67,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="Bold">营业额：</TextBlock>
-                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding OrderAmount}"></TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding BusinessAmount}"></TextBlock>
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -114,7 +114,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontWeight="Bold">优惠金额：</TextBlock>
+                        <TextBlock FontWeight="Bold">整单立减优惠：</TextBlock>
                         <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding PreferentialAmount}"></TextBlock>
                     </Grid>
                     <Grid>
@@ -122,8 +122,16 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontWeight="Bold">订单折扣金额：</TextBlock>
+                        <TextBlock FontWeight="Bold">整单折扣优惠：</TextBlock>
                         <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding DiscountAmount}"></TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold">单品折扣优惠：</TextBlock>
+                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding ProductDiscountAmount}"></TextBlock>
                     </Grid>
                     <Border BorderThickness="0 1 0 0" Margin="0 10" BorderBrush="Gray"></Border>
                     <Grid>

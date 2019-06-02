@@ -421,12 +421,33 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount + order.PreferentialAmount).ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", (order.ReceivedAmount - order.GiveAmount).ToString()));
+            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", order.ActualAmount.ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            if (!string.IsNullOrEmpty(order.PaymentTypeName))
+
+            //if (!string.IsNullOrEmpty(order.PaymentTypeName))
+            //{
+            //    bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", order.PaymentTypeName));
+            //    bufferArr.Add(PrinterCmdUtils.NextLine());
+            //}
+            if (order.TangOrderPayments != null && order.TangOrderPayments.Count > 0)
             {
-                bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", order.PaymentTypeName));
-                bufferArr.Add(PrinterCmdUtils.NextLine());
+                if (order.TangOrderPayments.Count == 1)
+                {
+                    var first = order.TangOrderPayments.First();
+                    bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", first.Name));
+                    bufferArr.Add(PrinterCmdUtils.NextLine());
+                }
+                else
+                {
+                    var first = order.TangOrderPayments.First();
+                    bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("付款方式：", $"{first.Name}:{first.Amount}"));
+                    bufferArr.Add(PrinterCmdUtils.NextLine());
+                    for (int i = 1; i < order.TangOrderPayments.Count; i++)
+                    {
+                        bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("", $"{order.TangOrderPayments[i].Name}:{order.TangOrderPayments[i].Amount}"));
+                        bufferArr.Add(PrinterCmdUtils.NextLine());
+                    }
+                }
             }
             if (!string.IsNullOrEmpty(order.PaymentRemark))
             {

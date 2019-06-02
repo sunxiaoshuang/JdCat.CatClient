@@ -55,7 +55,7 @@ namespace JdCat.CatClient.IService
         /// 订单支付
         /// </summary>
         /// <param name="order"></param>
-        void Payment(TangOrder order);
+        Task PaymentAsync(TangOrder order);
         /// <summary>
         /// 退菜
         /// </summary>

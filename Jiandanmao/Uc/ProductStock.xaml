@@ -123,57 +123,59 @@
 
 
         </Grid>
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding ProductObject.List}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <materialDesign:DialogHost HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding ElementName=txtStock}" CloseOnClickAway="True">
+        <ScrollViewer Grid.Row="2">
+            <ItemsControl ItemsSource="{Binding ProductObject.List}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:DialogHost HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding ElementName=txtStock}" CloseOnClickAway="True">
 
-                        <materialDesign:DialogHost.DialogContent>
-                            <StackPanel Margin="16">
-                                <TextBlock Text="库存数量" />
-                                <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch" x:Name="txtStock" PreviewTextInput="Txt_PreviewTextInput" DataContext="{Binding DataContext, ElementName=ProductStockControl}">
-                                    <TextBox.InputBindings>
-                                        <KeyBinding Key="Enter" Command="{Binding SaveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DialogHost}}}" />
-                                    </TextBox.InputBindings>
-                                </TextBox>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Command="materialDesign:DialogHost.CloseDialogCommand" Content="取消" />
-                                    <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" DataContext="{Binding DataContext, ElementName=ProductStockControl}" Command="{Binding SaveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DialogHost}}}" Content="保存">
-                                    </Button>
-                                </StackPanel>
-                        </StackPanel>
-                        </materialDesign:DialogHost.DialogContent>
-                        <Border Margin="5" BorderThickness="1" BorderBrush="{DynamicResource PrimaryHueMidBrush}" ClipToBounds="True"
-    HorizontalAlignment="Stretch">
-                            <StackPanel Width="150" Height="150" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding DisplayName}" Height="70" Style="{StaticResource TextBlock}" />
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock Text="￥" Foreground="#d0862a" Style="{StaticResource TextBlock}" />
-                                    <TextBlock Text="{Binding Formats[0].Price}" Foreground="#d0862a" Style="{StaticResource TextBlock}" />
-                                </StackPanel>
-                                <Border BorderBrush="#ccc" BorderThickness="0 1 0 0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="库存：" FontSize="16" Margin="10 5 0 0" Foreground="#d0862a" Style="{StaticResource TextBlock}" />
-                                        <TextBlock Text="{Binding Stock}" Width="40" FontSize="22" FontWeight="Bold" TextAlignment="Left" Foreground="#d0862a" Style="{StaticResource TextBlock}" Margin="0" />
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}" FontSize="16" Foreground="IndianRed" Margin="0" HorizontalAlignment="Right" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
-                                            <TextBlock  FontFamily="微软雅黑">修改</TextBlock>
-                                            <!--<materialDesign:PackIcon Kind="Settings"/>-->
+                            <materialDesign:DialogHost.DialogContent>
+                                <StackPanel Margin="16">
+                                    <TextBlock Text="库存数量" />
+                                    <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch" x:Name="txtStock" PreviewTextInput="Txt_PreviewTextInput" DataContext="{Binding DataContext, ElementName=ProductStockControl}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding SaveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DialogHost}}}" />
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Command="materialDesign:DialogHost.CloseDialogCommand" Content="取消" />
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" DataContext="{Binding DataContext, ElementName=ProductStockControl}" Command="{Binding SaveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:DialogHost}}}" Content="保存">
                                         </Button>
                                     </StackPanel>
-                                </Border>
-                            </StackPanel>
-                        </Border>
-                    </materialDesign:DialogHost>
+                                </StackPanel>
+                            </materialDesign:DialogHost.DialogContent>
+                            <Border Margin="5" BorderThickness="1" BorderBrush="{DynamicResource PrimaryHueMidBrush}" ClipToBounds="True"
+    HorizontalAlignment="Stretch">
+                                <StackPanel Width="150" Height="150" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DisplayName}" Height="70" Style="{StaticResource TextBlock}" />
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="￥" Foreground="#d0862a" Style="{StaticResource TextBlock}" />
+                                        <TextBlock Text="{Binding Formats[0].Price}" Foreground="#d0862a" Style="{StaticResource TextBlock}" />
+                                    </StackPanel>
+                                    <Border BorderBrush="#ccc" BorderThickness="0 1 0 0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="库存：" FontSize="16" Margin="10 5 0 0" Foreground="#d0862a" Style="{StaticResource TextBlock}" />
+                                            <TextBlock Text="{Binding Stock}" Width="40" FontSize="22" FontWeight="Bold" TextAlignment="Left" Foreground="#d0862a" Style="{StaticResource TextBlock}" Margin="0" />
+                                            <Button Style="{StaticResource MaterialDesignFlatButton}" FontSize="16" Foreground="IndianRed" Margin="0" HorizontalAlignment="Right" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
+                                                <TextBlock  FontFamily="微软雅黑">修改</TextBlock>
+                                                <!--<materialDesign:PackIcon Kind="Settings"/>-->
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </materialDesign:DialogHost>
 
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         <StackPanel HorizontalAlignment="Center" Grid.Row="3" Orientation="Horizontal" DataContext="{Binding ProductObject}">
             <Button Style="{StaticResource ButtonStyle}" IsEnabled="{Binding CanPrev}" Command="{Binding PrevCommand}" Background="#d0862a" Content="上一页" />
             <Button Style="{StaticResource ButtonStyle}" IsEnabled="{Binding CanNext}" Command="{Binding NextCommand}" Margin="50 0 0 0" Background="#d0862a" Content="下一页" />

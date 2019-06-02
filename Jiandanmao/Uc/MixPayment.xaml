@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.MixPayment"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Jiandanmao.Uc"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             x:Name="MixPaymentControl"
+             Width="600"
+             Height="500">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=MixPaymentControl}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontFamily" Value="微软雅黑"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <materialDesign:DialogHost Identifier="MixPayment" CloseOnClickAway="True">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="120">应收金额：</TextBlock>
+                <TextBlock Foreground="Red" Text="{Binding Order.ActualAmount}"></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <TextBlock Width="120">收款方式：</TextBlock>
+                <ItemsControl Width="330" ItemsSource="{Binding Payments}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" x:Name="payment">
+                                <ComboBox Width="150" IsEditable="False" DisplayMemberPath="Name" Text="{Binding Name}" ItemsSource="{Binding DataContext.Types, ElementName=MixPaymentControl}" FontSize="20" />
+                                <TextBox Foreground="Red" Margin="10 0 0 0" FontSize="20" Width="100" 
+                                         Text="{Binding DataContext.Amount, ElementName=payment}" 
+                                         DataContext="{Binding DataContext, ElementName=MixPaymentControl}" 
+                                         PreviewTextInput="Txt_PreviewTextInput">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="LostFocus">
+                                            <i:InvokeCommandAction Command="{Binding AmountChangedCommand}" CommandParameter="{Binding DataContext, ElementName=payment}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" VerticalAlignment="Top" Command="{Binding DeletePaymentCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=StackPanel}}" DataContext="{Binding DataContext, ElementName=MixPaymentControl}">
+                                    <Button.Content>
+                                        <materialDesign:PackIcon Kind="MinusBox" Height="20" Width="20" />
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" VerticalAlignment="Top" Command="{Binding AddPaymentCommand}">
+                    <Button.Content>
+                        <materialDesign:PackIcon Kind="PlusBox" Height="20" Width="20" />
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right">
+                <Button Content="取消" Height="40" Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Left" FontSize="20" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"></Button>
+                <Button Content="确定" Height="40" Margin="20 0 0 0" HorizontalAlignment="Left" FontSize="20" Command="{Binding SubmitCommand}"></Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

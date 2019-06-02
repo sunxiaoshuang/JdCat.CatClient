@@ -106,14 +106,6 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontWeight="Bold">找赎：</TextBlock>
-                        <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding GiveAmount}"></TextBlock>
-                    </Grid>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="Bold">整单立减优惠：</TextBlock>
                         <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" Text="{Binding PreferentialAmount}"></TextBlock>
                     </Grid>

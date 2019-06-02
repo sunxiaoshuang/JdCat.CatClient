@@ -11,7 +11,8 @@ namespace Jiandanmao.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is TangOrderProduct entity && (entity.ProductStatus & TangOrderProductStatus.Cumulative) > 0)
+            var status = (TangOrderProductStatus)value;
+            if ((status & TangOrderProductStatus.Cumulative) > 0)
             {
                 return true;
             }

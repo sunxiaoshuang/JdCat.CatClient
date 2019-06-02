@@ -310,6 +310,7 @@ namespace Jiandanmao.Code
                     .ToList();
                 if (list == null || list.Count == 0) return;
                 await Request.UploadDataAsync(list);
+
                 var products = new List<TangOrderProduct>();
                 foreach (var item in list)
                 {
@@ -318,8 +319,14 @@ namespace Jiandanmao.Code
                     products.AddRange(goods);
                 }
                 await Request.UploadDataAsync(products);
+
+                var payments = await service.GetRelativeEntitysAsync<TangOrderPayment, TangOrder>(list.Select(a => a.ObjectId).ToArray());
+                await Request.UploadDataAsync(payments);
+
+
                 service.SyncFinish(list);
                 service.SyncFinish(products);
+                service.SyncFinish(payments);
             }
         }
         /// <summary>

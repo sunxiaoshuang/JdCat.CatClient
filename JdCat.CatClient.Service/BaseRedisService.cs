@@ -249,6 +249,39 @@ namespace JdCat.CatClient.Service
             });
         }
 
+        public async Task<List<TEntity>> GetRelativeEntitysAsync<TEntity, TParent>(string id) where TEntity : class, new()
+        {
+            var orderPaymentKey = AddKeyPrefix<TEntity>($"{typeof(TParent).Name}:{id}");
+            var ids = await Database.ListRangeAsync(orderPaymentKey);
+            var keys = ids.Select(a => (RedisKey)AddKeyPrefix(a, typeof(TEntity).Name)).ToArray();
+            var vals = Database.StringGet(keys);
+            var entitys = vals.Select(a => JsonConvert.DeserializeObject<TEntity>(a)).ToList();
+            return entitys;
+        }
+
+        public async Task<List<TEntity>> GetRelativeEntitysAsync<TEntity, TParent>(params string[] ids) where TEntity : class, new()
+        {
+            if (ids == null || ids.Length == 0) return new List<TEntity>();
+            var listKeys = ids.Select(a => AddKeyPrefix<TEntity>($"{typeof(TParent).Name}:{a}" )).ToList();
+            var vals = new List<string>();
+            foreach (var key in listKeys)
+            {
+                vals.AddRange((await Database.ListRangeAsync(key)).Select(a => a.ToString()));
+            }
+            vals = vals.Distinct().ToList();
+            if (vals.Count == 0) return new List<TEntity>();
+            var keys = vals.Select(a => (RedisKey)AddKeyPrefix(a, typeof(TEntity).Name)).ToArray();
+            var results = await Database.StringGetAsync(keys);
+            var entitys = results.Select(a => JsonConvert.DeserializeObject<TEntity>(a)).ToList();
+            return entitys;
+        }
+
+        public async Task SetRelativeEntitysAsync<TEntity, TParent>(string id, params TEntity[] entities) where TEntity : ClientBaseEntity, new()
+        {
+            var key = AddKeyPrefix<TEntity>($"{typeof(TParent).Name}:{id}");
+            await Database.ListRightPushAsync(key, entities.Select(a => (RedisValue)a.ObjectId).ToArray());
+        }
+
         /// <summary>
         /// 返回列表最后一个元素的对象
         /// </summary>

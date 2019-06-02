@@ -59,14 +59,6 @@ namespace JdCat.CatClient.Model
         /// 优惠金额
         /// </summary>
         public double PreferentialAmount { get; set; }
-        /// <summary>
-        /// 收到的金额
-        /// </summary>
-        public double ReceivedAmount { get; set; }
-        /// <summary>
-        /// 找赎
-        /// </summary>
-        public double GiveAmount { get; set; }
         private int _peopleNumber;
         /// <summary>
         /// 用餐人数
@@ -144,23 +136,16 @@ namespace JdCat.CatClient.Model
         /// 订单类别
         /// </summary>
         public OrderCategory OrderMode { get; set; }
-        /// <summary>
-        /// 支付方式id（远程）
-        /// </summary>
-        public int PaymentTypeId { get; set; }
-        /// <summary>
-        /// 支付方式id（本地）
-        /// </summary>
-        public string PaymentTypeObjectId { get; set; }
+
+
+        
+
         /// <summary>
         /// 支付方式
         /// </summary>
         [JsonIgnore]
-        public PaymentType PaymentType { get; set; }
-        /// <summary>
-        /// 支付方式名称
-        /// </summary>
-        public string PaymentTypeName { get; set; }
+        public List<TangOrderPayment> TangOrderPayments { get; set; }
+
         /// <summary>
         /// 支付时间
         /// </summary>

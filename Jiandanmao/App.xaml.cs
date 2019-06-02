@@ -48,6 +48,7 @@ namespace Jiandanmao
             builder.RegisterType<UtilService>().As<IUtilService>();
             //builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
             ApplicationObject.App.DataBase = builder.Build();
+            
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

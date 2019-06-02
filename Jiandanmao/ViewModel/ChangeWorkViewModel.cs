@@ -141,12 +141,6 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public double CashAmount { get => _cashAmount; set => this.MutateVerbose(ref _cashAmount, value, RaisePropertyChanged()); }
 
-        private double _giveAmount;
-        /// <summary>
-        /// 找赎
-        /// </summary>
-        public double GiveAmount { get => _giveAmount; set => this.MutateVerbose(ref _giveAmount, value, RaisePropertyChanged()); }
-
         private double _preferentialAmount;
         /// <summary>
         /// 优惠
@@ -251,17 +245,17 @@ namespace Jiandanmao.ViewModel
                                     DiscountAmount = Math.Round(OrderAmount - ActualAmount - PreferentialAmount, 2);
                                     ProductDiscountAmount = Math.Round(BusinessAmount - OrderAmount, 2);
                                     // 收款数据
-                                    var payments = await service.GetAllAsync<PaymentType>() ?? new List<PaymentType>();
+                                    var payments = await service.GetAllAsync<PaymentType>() ?? new List<PaymentType>(); // 付款方式
+                                    var receivables = await service.GetRelativeEntitysAsync<TangOrderPayment, TangOrder>(orders.Select(a => a.ObjectId).ToArray()); // 支付细节
                                     Payments = payments.Select(payment =>
                                     {
-                                        var items = orders.Where(a => a.PaymentTypeId == payment.Id);
+                                        var items = receivables.Where(a => a.PaymentTypeId == payment.Id);
                                         if (!items.Any()) return null;
                                         if (payment.Category == PaymentCategory.Money)
                                         {
-                                            CashAmount = Math.Round(items.Sum(a => a.ReceivedAmount), 2);
-                                            GiveAmount = Math.Round(items.Sum(a => a.GiveAmount), 2);
+                                            CashAmount = Math.Round(items.Sum(a => a.Amount), 2);
                                         }
-                                        return new Tuple<string, int, double>(payment.Name, items.Count(), Math.Round(items.Sum(a => a.ActualAmount), 2));
+                                        return new Tuple<string, int, double>(payment.Name, items.Count(), Math.Round(items.Sum(a => a.Amount), 2));
                                     }).Where(a => a != null).ToObservable();
                                     Payments.Add(new Tuple<string, int, double>("收款汇总", Payments.Sum(a => a.Item2), Math.Round(Payments.Sum(a => a.Item3), 2)));
                                     // （管理员才打印厨师、档口报表）
@@ -359,8 +353,6 @@ namespace Jiandanmao.ViewModel
                             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("消费人数", PeopleCount.ToString(), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("现金净额", CashAmount.ToString("f2"), printer.Device.Format));
-                            bufferArr.Add(PrinterCmdUtils.NextLine());
-                            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("找赎", GiveAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());
                             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("整单立减优惠", PreferentialAmount.ToString("f2"), printer.Device.Format));
                             bufferArr.Add(PrinterCmdUtils.NextLine());

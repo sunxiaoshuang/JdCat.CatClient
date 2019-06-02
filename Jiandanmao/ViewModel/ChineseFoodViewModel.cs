@@ -85,7 +85,7 @@ namespace Jiandanmao.ViewModel
         public ICommand PreferentialChangedCommand => new AnotherCommandImplementation(PreferentialChanged);
         public ICommand DiscountChangedCommand => new AnotherCommandImplementation(DiscountChanged);
         public ICommand ReceivedChangedCommand => new AnotherCommandImplementation(ReceivedChanged);
-
+        public ICommand MixPayCommand => new AnotherCommandImplementation(MixPay);
 
 
 
@@ -249,6 +249,10 @@ namespace Jiandanmao.ViewModel
 
         #region 界面绑定方法
         private bool isLoaded = false;
+        /// <summary>
+        /// 中餐页面加载完成事件
+        /// </summary>
+        /// <param name="o"></param>
         private void Loaded(object o)
         {
             if (!isLoaded)
@@ -257,15 +261,27 @@ namespace Jiandanmao.ViewModel
                 Init(o);
             }
         }
+        /// <summary>
+        /// 餐桌加载完成事件
+        /// </summary>
+        /// <param name="o"></param>
         private void DeskLoaded(object o)
         {
 
         }
+        /// <summary>
+        /// 订单页面加载完成事件
+        /// </summary>
+        /// <param name="o"></param>
         private void OrderLoaded(object o)
         {
             OrderController = (ChineseFoodOrder)o;
             txtProductKey = OrderController.txtProductkey;
         }
+        /// <summary>
+        /// 支付页面加载完成事件
+        /// </summary>
+        /// <param name="o"></param>
         private void PaymentLoaded(object o)
         {
             var control = (ChineseFoodPayment)o;
@@ -357,7 +373,8 @@ namespace Jiandanmao.ViewModel
                 OrderMode = OrderCategory.ChineseFood,
                 StaffId = ApplicationObject.App.Staff?.Id ?? 0,
                 Staff = ApplicationObject.App.Staff,
-                StaffName = ApplicationObject.App.Staff?.Name
+                StaffName = ApplicationObject.App.Staff?.Name,
+                CreateTime = DateTime.Now
             };
             SelectedDesk.Order = order;
             CalcOrderAmount();
@@ -496,6 +513,7 @@ namespace Jiandanmao.ViewModel
         private void BackDesk(object o = null)
         {
             ThisController.transitioner.SelectedIndex = 0;
+            ResetDeskStatus();
         }
         private void ProductSearch(object o)
         {
@@ -617,10 +635,10 @@ namespace Jiandanmao.ViewModel
         //}
         private async void SubmitPayment(object o)
         {
-            var amount = Math.Round(SelectedDesk.Order.Amount, 2);
+            var order = SelectedDesk.Order;
+
             var paymentItem = PaymentTypes.FirstOrDefault(a => a.IsSelected);
             var payment = paymentItem?.Target;
-            var order = SelectedDesk.Order;
             if (payment == null)
             {
                 MessageTips("请选择收款方式！");
@@ -633,36 +651,8 @@ namespace Jiandanmao.ViewModel
             }
             await Confirm("确定收款吗？");
             if (!IsConfirm) return;
-            order.PaymentTypeObjectId = payment.ObjectId;
-            order.PaymentTypeId = payment.Id;
-            order.PaymentTypeName = payment.Name;
-            order.PayTime = DateTime.Now;
-            order.ReceivedAmount = ReceivedAmount;
-            order.GiveAmount = GiveAmount;
-            order.ActualAmount = ReceivedAmount - GiveAmount;
-            order.PaymentRemark = PaymentRemark;
-            order.PreferentialAmount = PreferentialAmount;
-            order.OrderDiscount = OrderDiscount;
-            order.StaffId = ApplicationObject.App.Staff.Id;
-            order.CashierName = ApplicationObject.App.ClientData.Name;
-            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<IOrderService>();
-                service.Payment(order);
-            }
-            PrintOrder(new PrintOption
-            {
-                Title = "结算单",
-                Order = order,
-                Type = 1,
-                Mode = PrintMode.Payment,
-                Products = order.TangOrderProducts.Where(a => a.ProductStatus != TangOrderProductStatus.Return)
-            });
-            SelectedDesk.Order = null;
-            paymentItem.IsSelected = false;
-            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Finish });
-            BackDesk();
-            SnackbarTips("结算成功");
+            order.TangOrderPayments = new List<TangOrderPayment> { new TangOrderPayment { Amount = ActualAmount, Name = payment.Name, OrderObjectId = order.ObjectId, PaymentTypeId = payment.Id, PaymentTypeObjectId = payment.ObjectId } };
+            await FinishOrder();
         }
         private void RemarkChange(object o)
         {
@@ -758,6 +748,15 @@ namespace Jiandanmao.ViewModel
             var txt = (TextBox)o;
             ReceivedAmount = GetTextBoxNumber((TextBox)o);
             GiveAmount = Math.Round(ReceivedAmount - ActualAmount, 2);
+        }
+        private async void MixPay(object o)
+        {
+            SelectedDesk.Order.ActualAmount = ActualAmount;
+            var vm = new MixPaymentViewModel(SelectedDesk.Order);
+            await DialogHost.Show(new MixPayment { DataContext = vm });
+            if (!vm.IsConfirm) return;
+            SelectedDesk.Order.TangOrderPayments = vm.Payments.ToList();
+            await FinishOrder();
         }
 
 
@@ -1137,6 +1136,37 @@ namespace Jiandanmao.ViewModel
                 good.SetProducts.Add(product);
             }
         }
+        private async Task FinishOrder()
+        {
+            var order = SelectedDesk.Order;
+            if (!IsConfirm) return;
+            order.PayTime = DateTime.Now;
+            //order.ReceivedAmount = ReceivedAmount;
+            //order.GiveAmount = GiveAmount;
+            order.ActualAmount = ActualAmount;
+            order.PaymentRemark = PaymentRemark;
+            order.PreferentialAmount = PreferentialAmount;
+            order.OrderDiscount = OrderDiscount;
+            order.StaffId = ApplicationObject.App.Staff.Id;
+            order.CashierName = ApplicationObject.App.ClientData.Name;
+            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IOrderService>();
+                await service.PaymentAsync(order);
+            }
+            PrintOrder(new PrintOption
+            {
+                Title = "结算单",
+                Order = order,
+                Type = 1,
+                Mode = PrintMode.Payment,
+                Products = order.TangOrderProducts.Where(a => a.ProductStatus != TangOrderProductStatus.Return)
+            });
+            SelectedDesk.Order = null;
+            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Finish });
+            BackDesk();
+            SnackbarTips("结算成功");
+        }
 
 
         private string orderChangeChannel = "orderChangeChannel";
@@ -1149,6 +1179,7 @@ namespace Jiandanmao.ViewModel
             env.Resolve<IOrderService>().Subscribe(orderChangeChannel, (channel, msg) =>
             {
                 var data = JsonConvert.DeserializeObject<SubscribeObj>(msg.ToString());
+                if (data.Sign == ApplicationObject.App.ClientData.Sign) return;
                 var desk = ApplicationObject.App.Desks.FirstOrDefault(a => a.Id == data.DeskId);
                 if (desk == null) return;
                 if (data.Mode == SubscribeMode.Finish || data.Mode == SubscribeMode.Delete)
@@ -1177,6 +1208,7 @@ namespace Jiandanmao.ViewModel
         /// <param name="msg"></param>
         private void PubSubscribe(SubscribeObj msg)
         {
+            msg.Sign = ApplicationObject.App.ClientData.Sign;
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 try
@@ -1263,9 +1295,22 @@ namespace Jiandanmao.ViewModel
 
         class SubscribeObj
         {
+            /// <summary>
+            /// 餐台id
+            /// </summary>
             public int DeskId { get; set; }
+            /// <summary>
+            /// 订单id
+            /// </summary>
             public string OrderObjectId { get; set; }
+            /// <summary>
+            /// 订单改变模式
+            /// </summary>
             public SubscribeMode Mode { get; set; }
+            /// <summary>
+            /// 标识符
+            /// </summary>
+            public string Sign { get; set; }
         }
         enum SubscribeMode
         {

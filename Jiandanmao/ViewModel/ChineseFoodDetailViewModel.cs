@@ -76,6 +76,10 @@ namespace Jiandanmao.ViewModel
         /// </summary>
         public List<SelectItem> Flavors { get; set; }
         /// <summary>
+        /// 单品备注
+        /// </summary>
+        public List<string> GoodRemarks { get; set; }
+        /// <summary>
         /// 退菜原因
         /// </summary>
         public List<string> ReturnReasons { get; set; }
@@ -153,6 +157,7 @@ namespace Jiandanmao.ViewModel
                 Flavors = marks?.Where(a => a.Category == MarkCategory.Flavor).Select(a => new SelectItem(false, a.Name)).ToList();
                 Formats = product.Formats.Select(a => new SelectItem<ProductFormat>(false, a.Name, a)).ToList();
                 ReturnReasons = marks?.Where(a => a.Category == MarkCategory.RefundFoodReason).Select(a => a.Name).ToList();
+                GoodRemarks = marks?.Where(a => a.Category == MarkCategory.GoodRemark).Select(a => a.Name).ToList();
 
                 var format = Formats.FirstOrDefault(a => a.Target.Id == Good.FormatId);
                 if (format != null) format.IsSelected = true;

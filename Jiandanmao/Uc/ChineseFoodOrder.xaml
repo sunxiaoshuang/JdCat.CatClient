@@ -28,6 +28,7 @@
             <convert:DateTimeToStringValueConverter x:Key="dtts" />
             <convert:StoreOrderOperateTypeConverter x:Key="sootc" />
             <convert:TangOrderProductOperateTypeConvert x:Key="topotc" />
+            <convert:TangOrderProductDescriptionTypeConvert x:Key="topdtc" />
 
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="FontSize" Value="17"/>
@@ -145,8 +146,8 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="40" />
-                                                    <RowDefinition Height="40" />
+                                                    <RowDefinition Height="45" />
+                                                    <RowDefinition Height="35" />
                                                 </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="20" />
@@ -154,12 +155,26 @@
                                                     <ColumnDefinition Width="130" />
                                                 </Grid.ColumnDefinitions>
                                                 <Grid Grid.ColumnSpan="3">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30" />
+                                                        <RowDefinition Height="15" />
+                                                    </Grid.RowDefinitions>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="65"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="40" FontSize="20" Text="{Binding Name}"/>
-                                                    <TextBlock Grid.Column="1" x:Name="txtStatus" VerticalAlignment="Top" FontWeight="Bold" Foreground="Red" Height="40" FontSize="20"/>
+                                                    <TextBlock VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="25" FontSize="20" Text="{Binding Name}"/>
+                                                    <TextBlock Grid.Column="1" x:Name="txtStatus" VerticalAlignment="Top" FontWeight="Bold" Foreground="Red" Height="25" FontSize="20"/>
+                                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" DataContext="{Binding DataContext, ElementName=StackPanel}">
+                                                        <TextBlock TextWrapping="NoWrap" FontSize="12" Foreground="#aaa">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding Converter="{StaticResource topdtc}">
+                                                                    <Binding Path="Remark"/>
+                                                                    <Binding Path="Description"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </StackPanel>
                                                 </Grid>
                                                 <TextBlock Grid.Row="1" Height="40" Padding="0 15 0 0" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="￥ "/>
                                                 <TextBlock Grid.Row="1" Height="40" Grid.Column="1" Padding="0 15 0 0" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="{Binding Price}"/>
@@ -173,14 +188,14 @@
                                                         DataContext="{Binding DataContext, ElementName=ChineseFoodOrderControl}"
                                                         Command="{Binding ReduceCommand}"
                                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Grid}}"
-                                                        IsEnabled="{Binding DataContext, Converter={StaticResource topotc}, ElementName=StackPanel}">
+                                                        IsEnabled="{Binding DataContext.ProductStatus, Converter={StaticResource topotc}, ElementName=StackPanel}">
                                                         <materialDesign:PackIcon Kind="Minus" Height="24" Width="24" />
                                                     </Button>
                                                     <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="{Binding Quantity}"></TextBlock>
                                                     <Button Grid.Column="2" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"  Height="26" Width="26" Command="{Binding IncreaseCommand}"
                                                         DataContext="{Binding DataContext, ElementName=ChineseFoodOrderControl}"
                                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Grid}}"
-                                                        IsEnabled="{Binding DataContext, Converter={StaticResource topotc}, ElementName=StackPanel}">
+                                                        IsEnabled="{Binding DataContext.ProductStatus, Converter={StaticResource topotc}, ElementName=StackPanel}">
                                                         <materialDesign:PackIcon Kind="Plus" Height="24" Width="24" />
                                                     </Button>
                                                 </Grid>

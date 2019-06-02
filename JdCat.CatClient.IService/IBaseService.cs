@@ -133,5 +133,29 @@ namespace JdCat.CatClient.IService
         /// <param name="channel"></param>
         /// <param name="action"></param>
         void Subscribe(string channel, Action<string, object> action);
+        /// <summary>
+        /// 根据实体对象的objectid获取实体对象的关联对象
+        /// </summary>
+        /// <typeparam name="TEntity">关联对象类型</typeparam>
+        /// <typeparam name="TParent">实体对象类型</typeparam>
+        /// <returns></returns>
+        Task<List<TEntity>> GetRelativeEntitysAsync<TEntity, TParent>(string id) where TEntity : class, new();
+        /// <summary>
+        /// 根据实体对象的objectid获取实体对象的关联对象
+        /// </summary>
+        /// <typeparam name="TEntity">关联对象类型</typeparam>
+        /// <typeparam name="TParent">实体对象类型</typeparam>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<List<TEntity>> GetRelativeEntitysAsync<TEntity, TParent>(params string[] ids) where TEntity : class, new();
+        /// <summary>
+        /// 设置实体对象的关联对象
+        /// </summary>
+        /// <typeparam name="TEntity">关联对象类型</typeparam>
+        /// <typeparam name="TParent">实体对象类型</typeparam>
+        /// <param name="id"></param>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        Task SetRelativeEntitysAsync<TEntity, TParent>(string id, params TEntity[] entities) where TEntity : ClientBaseEntity, new();
     }
 }

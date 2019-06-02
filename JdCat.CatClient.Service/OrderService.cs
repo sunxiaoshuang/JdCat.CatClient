@@ -101,6 +101,8 @@ namespace JdCat.CatClient.Service
              *  3. 删除未完成订单列表项
              *  4. 删除已点菜品实体
              *  5. 删除订单已点菜品列表
+             *  6. 删除订单支付数据
+             *  7. 删除订单支付列表
              */
             var orderKey = AddKeyPrefix<TangOrder>(order.ObjectId);
             Database.KeyDelete(orderKey);
@@ -112,28 +114,30 @@ namespace JdCat.CatClient.Service
             Database.ListRemove(unFinishKey, order.ObjectId);
 
             var orderProductListKey = AddKeyPrefix($"Order:{order.ObjectId}", typeof(TangOrderProduct).Name);
-            if (order.TangOrderProducts != null && order.TangOrderProducts.Count > 0)
+            var productList = Database.ListRange(orderProductListKey);
+            if (productList.Length > 0)
             {
-                foreach (var product in order.TangOrderProducts)
+                foreach (var val in productList)
                 {
-                    var key = AddKeyPrefix(product.ObjectId, typeof(TangOrderProduct).Name);
+                    var key = AddKeyPrefix(val, typeof(TangOrderProduct).Name);
                     Database.KeyDelete(key);
                 }
             }
-            else
+            Database.KeyDelete(orderProductListKey);
+
+            var orderPaymentListKey = AddKeyPrefix($"TangOrder:{order.ObjectId}", typeof(TangOrderPayment).Name);
+            var paymentListKey = AddKeyPrefix("List", typeof(TangOrderPayment).Name);
+            var paymentList = Database.ListRange(orderPaymentListKey);
+            if (paymentList.Length > 0)
             {
-                var productListIds = Database.ListRange(orderProductListKey);
-                if(productListIds.Length > 0)
+                foreach (var val in paymentList)
                 {
-                    foreach (var id in productListIds)
-                    {
-                        var key = AddKeyPrefix(id, typeof(TangOrderProduct).Name);
-                        Database.KeyDelete(key);
-                    }
+                    var key = AddKeyPrefix(val, typeof(TangOrderPayment).Name);
+                    Database.KeyDelete(key);
+                    Database.ListRemove(paymentListKey, val);
                 }
             }
-
-            Database.KeyDelete(orderProductListKey);
+            Database.KeyDelete(orderPaymentListKey);
         }
 
         public void UpdateOrderProduct(TangOrderProduct product)
@@ -152,13 +156,22 @@ namespace JdCat.CatClient.Service
             }
         }
 
-        public void Payment(TangOrder order)
+        public async Task PaymentAsync(TangOrder order)
         {
             order.OrderStatus = TangOrderStatus.Settled;
             Update(order);
+            // 保存支付方式
+            var orderPaymentKey = AddKeyPrefix<TangOrderPayment>($"Order:{order.ObjectId}");
+            order.TangOrderPayments.ForEach(payment => 
+            {
+                Save(payment);
+            });
+            await SetRelativeEntitysAsync<TangOrderPayment, TangOrder>(order.ObjectId, order.TangOrderPayments.ToArray());
             var key = AddKeyPrefix<TangOrder>("UnFinish");
             Database.ListRemove(key, order.ObjectId);
         }
+
+
 
         public TangOrderProduct Unsubscribe(TangOrder order, TangOrderProduct product, double quantity)
         {
@@ -227,5 +240,6 @@ namespace JdCat.CatClient.Service
             var key = $"{DatabaseConfig.KeyPrefix}:OrderIdentity:{DateTime.Now:yyyyMMdd}";
             return Database.StringIncrement(key);
         }
+
     }
 }

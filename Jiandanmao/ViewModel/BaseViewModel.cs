@@ -56,7 +56,10 @@ namespace Jiandanmao.ViewModel
         {
             SnackbarMessageQueue?.Enqueue(message);
         }
-        protected bool IsConfirm;
+        /// <summary>
+        /// 是否是提交操作
+        /// </summary>
+        public bool IsConfirm { get; set; }
         public async Task Confirm(string message, string dialog = null)
         {
             var sampleMessageDialog = new ConfirmDialog

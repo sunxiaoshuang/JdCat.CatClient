@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Jiandanmao.Code
 {
@@ -60,6 +61,11 @@ namespace Jiandanmao.Code
             }
         }
 
+        /// <summary>
+        /// 客户端标识
+        /// </summary>
+        [JsonIgnore]
+        public string Sign { get; set; } = Guid.NewGuid().ToString();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

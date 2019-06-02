@@ -19,6 +19,7 @@
         <ResourceDictionary>
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontFamily" Value="微软雅黑"/>
             </Style>
             <Style TargetType="{x:Type Border}" x:Key="PayMoney">
                 <Setter Property="Padding" Value="10" />
@@ -43,7 +44,7 @@
                     <TextBlock Foreground="Red" Text="{Binding OrderAmount}"></TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Height="45">
-                    <TextBlock Width="120">订单折扣：</TextBlock>
+                    <TextBlock Width="120">整单折扣：</TextBlock>
                     <TextBox Foreground="Red" FontSize="20" x:Name="txtDiscount" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding OrderDiscount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="KeyUp">
@@ -53,7 +54,7 @@
                     </TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Height="45">
-                    <TextBlock Width="120">优惠金额：</TextBlock>
+                    <TextBlock Width="120">整单立减：</TextBlock>
                     <TextBox Foreground="Red" FontSize="20" x:Name="txtPreferential" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding PreferentialAmount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="KeyUp">
@@ -115,8 +116,9 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal">
                 <Button Content="确定收款" Height="60" Margin="0 40 0 0" Width="200" HorizontalAlignment="Left" FontSize="30" Command="{Binding SubmitPaymentCommand}"></Button>
+                <Button Content="混合支付" Height="40" Margin="0 40 0 0" Style="{StaticResource MaterialDesignFlatButton}" Width="150" HorizontalAlignment="Left" FontSize="20" Command="{Binding MixPayCommand}"></Button>
             </StackPanel>
         </Grid>
 

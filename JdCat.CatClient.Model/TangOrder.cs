@@ -143,7 +143,7 @@ namespace JdCat.CatClient.Model
         /// <summary>
         /// 支付方式
         /// </summary>
-        [JsonIgnore]
+        //[JsonIgnore]
         public List<TangOrderPayment> TangOrderPayments { get; set; }
 
         /// <summary>
@@ -154,10 +154,19 @@ namespace JdCat.CatClient.Model
         /// 退款原因
         /// </summary>
         public string CancelReason { get; set; }
+        private int _productQuantity;
         /// <summary>
         /// 餐品数量
         /// </summary>
-        public int ProductQuantity { get; set; }
+        public int ProductQuantity
+        {
+            get { return _productQuantity; }
+            set
+            {
+                _productQuantity = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ProductQuantity"));
+            }
+        }
         /// <summary>
         /// 所属员工id（远程）
         /// </summary>

@@ -17,7 +17,7 @@ namespace JdCat.CatClient.Model.Enum
         [Description("外卖")]
         Takeout = 1,
         /// <summary>
-        /// 快餐
+        /// 堂食
         /// </summary>
         [Description("堂食")]
         Store = 2

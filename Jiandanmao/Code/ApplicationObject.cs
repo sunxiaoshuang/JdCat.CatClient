@@ -172,6 +172,10 @@ namespace Jiandanmao.Code
                     }
                     else if (order is TangOrder tang)
                     {
+                        if (printer.Device.Type == 1 &&                                                 // 前台小票机
+                            !string.IsNullOrEmpty(printer.Device.CashierName) &&                        // 打印机有设置关联收银台
+                            !printer.Device.CashierName.Trim().Equals(tang.CashierName?.Trim() ?? ""))  // 打印机关联收银台与订单不匹配
+                            continue;                                                                   // 不进行打印
                         if ((printer.Device.Scope & ActionScope.Store) > 0)
                             printer.Print(tang, option);
                     }
@@ -309,6 +313,7 @@ namespace Jiandanmao.Code
                     ?.Where(a => !a.Sync && (a.OrderStatus & TangOrderStatus.Finish) > 0)
                     .ToList();
                 if (list == null || list.Count == 0) return;
+                list.ForEach(a => a.TangOrderPayments = null);
                 await Request.UploadDataAsync(list);
 
                 var products = new List<TangOrderProduct>();

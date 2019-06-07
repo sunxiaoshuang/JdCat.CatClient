@@ -86,6 +86,7 @@ namespace Jiandanmao.ViewModel
         public ICommand DiscountChangedCommand => new AnotherCommandImplementation(DiscountChanged);
         public ICommand ReceivedChangedCommand => new AnotherCommandImplementation(ReceivedChanged);
         public ICommand MixPayCommand => new AnotherCommandImplementation(MixPay);
+        public ICommand ChangeDeskCommand => new AnotherCommandImplementation(ChangeDesk);
 
 
 
@@ -757,6 +758,13 @@ namespace Jiandanmao.ViewModel
             if (!vm.IsConfirm) return;
             SelectedDesk.Order.TangOrderPayments = vm.Payments.ToList();
             await FinishOrder();
+        }
+        private async void ChangeDesk(object o)
+        {
+            var vm = new ChineseFoodChangeDeskViewModel(Desks);
+            await DialogHost.Show(new ChineseFoodChangeDesk { DataContext = vm });
+            if (!vm.IsConfirm) return;
+
         }
 
 

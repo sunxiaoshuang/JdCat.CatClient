@@ -199,8 +199,10 @@
                 <Button Style="{StaticResource DeskStateButton}" Tag="{Binding DeskStateButton[2].Content}" Content="使用中"
                         Command="{Binding DeskStatusChangedCommand}" CommandParameter="{Binding DeskStateButton[2]}" />
             </materialDesign:Badged>
-
-            <Button Content="刷新餐台" Grid.Column="3" Style="{StaticResource DeskStateButton}" Tag="Focus" HorizontalAlignment="Right" Command="{Binding RefreshDeskCommand}" />
+            <StackPanel Orientation="Horizontal" Grid.Column="3" HorizontalAlignment="Right">
+                <Button Content="转台" Style="{DynamicResource MaterialDesignFlatButton}" FontSize="23" Margin="0 0 20 0" Tag="Focus" Command="{Binding ChangeDeskCommand}" />
+                <Button Content="刷新餐台" Style="{StaticResource DeskStateButton}" Tag="Focus" HorizontalAlignment="Right" Command="{Binding RefreshDeskCommand}" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

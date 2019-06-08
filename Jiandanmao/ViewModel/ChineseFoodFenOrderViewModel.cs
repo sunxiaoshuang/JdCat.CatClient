@@ -22,51 +22,41 @@ namespace Jiandanmao.ViewModel
 {
     public class ChineseFoodFenOrderViewModel : BaseViewModel
     {
-        public ChineseFoodFenOrderViewModel(IEnumerable<Desk> desks)
+        public ChineseFoodFenOrderViewModel(IEnumerable<Desk> desks, TangOrder order, TangOrderProduct product)
         {
-            DeskChanges = desks.Where(a => a.Order != null).ToObservable();
-            DeskTargets = desks.Where(a => a.Order == null).ToObservable();
+            Desks = desks.Where(a => a.Order != null && a.Id != order.DeskId).ToObservable();
+            Good = product;
         }
 
         public ICommand ConfirmCommand => new AnotherCommandImplementation(ConfirmChange);
 
         #region 属性
 
-        private Desk _deskChange;
+        private Desk _desk;
         /// <summary>
-        /// 更换餐台
+        /// 选择的餐台
         /// </summary>
-        public Desk DeskChange { get => _deskChange; set => this.MutateVerbose(ref _deskChange, value, RaisePropertyChanged()); }
+        public Desk Desk { get => _desk; set => this.MutateVerbose(ref _desk, value, RaisePropertyChanged()); }
 
-        private Desk _deskTarget;
-        /// <summary>
-        /// 目标餐台
-        /// </summary>
-        public Desk DeskTarget { get => _deskTarget; set => this.MutateVerbose(ref _deskTarget, value, RaisePropertyChanged()); }
+        public TangOrderProduct Good { get; set; }
 
-        private ObservableCollection<Desk> _deskChanges;
+        private ObservableCollection<Desk> _desks;
         /// <summary>
-        /// 可选择的更换餐台
+        /// 可分单的餐台
         /// </summary>
-        public ObservableCollection<Desk> DeskChanges { get => _deskChanges; set => this.MutateVerbose(ref _deskChanges, value, RaisePropertyChanged()); }
-
-        private ObservableCollection<Desk> _deskTargets;
-        /// <summary>
-        /// 可选择的目标餐台
-        /// </summary>
-        public ObservableCollection<Desk> DeskTargets { get => _deskTargets; set => this.MutateVerbose(ref _deskTargets, value, RaisePropertyChanged()); }
+        public ObservableCollection<Desk> Desks { get => _desks; set => this.MutateVerbose(ref _desks, value, RaisePropertyChanged()); }
         #endregion
 
         #region 界面绑定方法
 
         public async void ConfirmChange(object o)
         {
-            if(DeskTarget == null || DeskTarget == null)
+            if(Desk == null)
             {
-                MessageTips("请选择餐台信息！", "ChangeDeskDialog");
+                MessageTips("请选择餐台！", "FenOrderDialog");
                 return;
             }
-            await Confirm($"确定将餐台[{DeskChange.Name}]转到[{DeskTarget.Name}]吗？", "ChangeDeskDialog");
+            await Confirm($"确定将商品[{Good.Name}]分单到[{Desk.Name}]吗？", "FenOrderDialog");
             if (!IsConfirm) return;
 
             DialogHost.CloseDialogCommand.Execute(null, null);

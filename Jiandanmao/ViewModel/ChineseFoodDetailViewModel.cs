@@ -8,7 +8,6 @@ using MaterialDesignThemes.Wpf;
 using Jiandanmao.Uc;
 using Jiandanmao.Code;
 using MaterialDesignThemes.Wpf.Transitions;
-
 using Autofac;
 using Jiandanmao.Enum;
 using Jiandanmao.Helper;
@@ -38,7 +37,6 @@ namespace Jiandanmao.ViewModel
         public ICommand PriceChangedCommand => new AnotherCommandImplementation(PriceChanged);
         public ICommand DistanceChangedCommand => new AnotherCommandImplementation(DistanceChanged);
         public ICommand UnsubscribeCommand => new AnotherCommandImplementation(UnsubscribeAsync);
-        public ICommand FenOrderCommand => new AnotherCommandImplementation(FenOrderAsync);
 
         /// <summary>
         /// 订单
@@ -278,11 +276,7 @@ namespace Jiandanmao.ViewModel
             IsSubmit = true;
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
-
-        private async void FenOrderAsync(object o)
-        {
-
-        }
+        
 
 
         private async void UnsubscribeAsync(object o)

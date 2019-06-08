@@ -87,6 +87,7 @@ namespace Jiandanmao.ViewModel
         public ICommand ReceivedChangedCommand => new AnotherCommandImplementation(ReceivedChanged);
         public ICommand MixPayCommand => new AnotherCommandImplementation(MixPay);
         public ICommand ChangeDeskCommand => new AnotherCommandImplementation(ChangeDesk);
+        public ICommand FenOrderCommand => new AnotherCommandImplementation(FenOrderAsync);
 
 
 
@@ -496,7 +497,7 @@ namespace Jiandanmao.ViewModel
 
             orderProduct.IsSelected = true;
             var viewModel = new ChineseFoodDetailViewModel(order, orderProduct, ApplicationObject.App.Products.First(a => a.Id == orderProduct.ProductId));
-            var detail = new ChineseFoodDetail { DataContext = viewModel };
+            var detail = new ChineseFoodDetail { DataContext = viewModel, Tag = Desks };
 
             await DialogHost.Show(detail, "RootDialog");
             if (viewModel.IsSubmit)
@@ -780,6 +781,38 @@ namespace Jiandanmao.ViewModel
             PubSubscribe(new SubscribeObj { DeskId = deskChange.Id, Mode = SubscribeMode.Delete, Sign = ApplicationObject.App.ClientData.Sign });
             PubSubscribe(new SubscribeObj { DeskId = deskTarget.Id, Mode = SubscribeMode.Change, Sign = ApplicationObject.App.ClientData.Sign, OrderObjectId = order.ObjectId });
             // 打印转台单（只有一单一打的打印机才出单）
+            var bufferArr = new List<byte[]> {
+                PrinterCmdUtils.AlignCenter(),
+                PrinterCmdUtils.FontSizeSetBig(2),
+                "转台单".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FontSizeSetBig(1),
+                PrinterCmdUtils.AlignLeft(),
+                $"转台时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.SplitLine("-"),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FontSizeSetBig(2),
+                $"原餐台：{deskChange.Name}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                $"目标餐台：{deskTarget.Name}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                $"订单流水：{order.Identifier}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FeedPaperCutAll()
+        };
+            foreach(var printer in ApplicationObject.App.Printers.Where(a => a.Device.Type == 2 && a.Device.Mode == 2 && (a.Device.Scope & ActionScope.Store) > 0))
+            {
+                printer.Print(bufferArr);
+            }
+
+        }
+        private async void FenOrderAsync(object o)
+        {
+            var vm = new ChineseFoodFenOrderViewModel(Desks, SelectedDesk.Order, o as TangOrderProduct);
+            await DialogHost.Show(new ChineseFoodFenOrder { DataContext = vm });
+            if (!vm.IsConfirm) return;
 
         }
 

@@ -165,6 +165,7 @@
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="25" FontSize="20" Text="{Binding Name}"/>
                                                     <TextBlock Grid.Column="1" x:Name="txtStatus" VerticalAlignment="Top" FontWeight="Bold" Foreground="Red" Height="25" FontSize="20"/>
+                                                    <Button Grid.Column="1" Visibility="Hidden"  Content="分单" x:Name="btnFenOrder" VerticalAlignment="Top" Height="25" Command="{Binding FenOrderCommand}" CommandParameter="{Binding DataContext, ElementName=StackPanel}" />
                                                     <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" DataContext="{Binding DataContext, ElementName=StackPanel}">
                                                         <TextBlock TextWrapping="NoWrap" FontSize="12" Foreground="#aaa">
                                                             <TextBlock.Text>
@@ -209,6 +210,12 @@
                                         <DataTrigger Binding="{Binding ProductStatus}" Value="16">
                                             <Setter TargetName="Border" Property="Background" Value="Pink" />
                                             <Setter TargetName="txtStatus" Property="Text" Value="已退菜" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ProductStatus}" Value="2">
+                                            <Setter TargetName="btnFenOrder" Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ProductStatus}" Value="8">
+                                            <Setter TargetName="btnFenOrder" Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
                                 </DataTemplate>

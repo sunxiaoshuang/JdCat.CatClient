@@ -7,7 +7,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
              xmlns:local="clr-namespace:Jiandanmao.Uc"
-             xmlns:convert="clr-namespace:Jiandanmao.Converter"
              mc:Ignorable="d"
              Width="400" Height="300">
     <UserControl.Resources>
@@ -19,16 +18,21 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock>选择分单餐台：</TextBlock>
-
-            <ComboBox materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" SelectedItem="{Binding DeskTarget}" DisplayMemberPath="Name" ItemsSource="{Binding DeskTargets}" Width="250" >
-            </ComboBox>
-        </StackPanel>
-    </Grid>
+    <materialDesign:DialogHost Identifier="FenOrderDialog">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock Margin="20">选择分单餐台：</TextBlock>
+                <ComboBox Margin="20 0 0 0" materialDesign:HintAssist.Hint="选择..." IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" SelectedItem="{Binding Desk}" DisplayMemberPath="Name" ItemsSource="{Binding Desks}" Width="300" >
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" HorizontalAlignment="Center">取消</Button>
+                <Button Command="{Binding ConfirmCommand}" HorizontalAlignment="Center">确定</Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:DialogHost>
 </UserControl>

@@ -253,6 +253,9 @@
     <Compile Include="Uc\ChineseFoodDetail.xaml.cs">
       <DependentUpon>ChineseFoodDetail.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\ChineseFoodFenOrder.xaml.cs">
+      <DependentUpon>ChineseFoodFenOrder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\ChineseFoodOrder.xaml.cs">
       <DependentUpon>ChineseFoodOrder.xaml</DependentUpon>
     </Compile>
@@ -303,6 +306,7 @@
     </Compile>
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodChangeDeskViewModel.cs" />
+    <Compile Include="ViewModel\ChineseFoodFenOrderViewModel.cs" />
     <Compile Include="ViewModel\MixPaymentViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodDetailViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodViewModel.cs" />
@@ -363,6 +367,10 @@
     <Page Include="Uc\ChineseFoodDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\ChineseFoodFenOrder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Uc\ChineseFoodOrder.xaml">
       <SubType>Designer</SubType>

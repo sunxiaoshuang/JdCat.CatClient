@@ -34,7 +34,7 @@ namespace Jiandanmao.Code
         }
         public virtual void Print()
         {
-            if (Option.Products.Count() == 0) return;
+            if (Products.Count == 0) return;
             BeforePrint();
             Printing();
             AfterPrint();

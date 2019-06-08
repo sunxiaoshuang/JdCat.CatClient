@@ -63,7 +63,14 @@ namespace JdCat.CatClient.IService
         /// <param name="product"></param>
         /// <param name="quantity"></param>
         TangOrderProduct Unsubscribe(TangOrder order, TangOrderProduct product, double quantity);
-
+        /// <summary>
+        /// 分单
+        /// </summary>
+        /// <param name="good">商品</param>
+        /// <param name="originalOrder">原订单</param>
+        /// <param name="targetOrder">目标订单</param>
+        /// <returns></returns>
+        Task FenOrderAsync(TangOrderProduct good, TangOrder originalOrder, TangOrder targetOrder);
 
     }
 }

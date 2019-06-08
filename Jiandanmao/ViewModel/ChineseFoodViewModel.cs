@@ -85,8 +85,8 @@ namespace Jiandanmao.ViewModel
         public ICommand PreferentialChangedCommand => new AnotherCommandImplementation(PreferentialChanged);
         public ICommand DiscountChangedCommand => new AnotherCommandImplementation(DiscountChanged);
         public ICommand ReceivedChangedCommand => new AnotherCommandImplementation(ReceivedChanged);
-        public ICommand MixPayCommand => new AnotherCommandImplementation(MixPay);
-        public ICommand ChangeDeskCommand => new AnotherCommandImplementation(ChangeDesk);
+        public ICommand MixPayCommand => new AnotherCommandImplementation(MixPayAsync);
+        public ICommand ChangeDeskCommand => new AnotherCommandImplementation(ChangeDeskAsync);
         public ICommand FenOrderCommand => new AnotherCommandImplementation(FenOrderAsync);
 
 
@@ -751,7 +751,7 @@ namespace Jiandanmao.ViewModel
             ReceivedAmount = GetTextBoxNumber((TextBox)o);
             GiveAmount = Math.Round(ReceivedAmount - ActualAmount, 2);
         }
-        private async void MixPay(object o)
+        private async void MixPayAsync(object o)
         {
             SelectedDesk.Order.ActualAmount = ActualAmount;
             var vm = new MixPaymentViewModel(SelectedDesk.Order);
@@ -760,7 +760,7 @@ namespace Jiandanmao.ViewModel
             SelectedDesk.Order.TangOrderPayments = vm.Payments.ToList();
             await FinishOrder();
         }
-        private async void ChangeDesk(object o)
+        private async void ChangeDeskAsync(object o)
         {
             var vm = new ChineseFoodChangeDeskViewModel(Desks);
             await DialogHost.Show(new ChineseFoodChangeDesk { DataContext = vm });
@@ -802,7 +802,7 @@ namespace Jiandanmao.ViewModel
                 PrinterCmdUtils.NextLine(),
                 PrinterCmdUtils.FeedPaperCutAll()
         };
-            foreach(var printer in ApplicationObject.App.Printers.Where(a => a.Device.Type == 2 && a.Device.Mode == 2 && (a.Device.Scope & ActionScope.Store) > 0))
+            foreach (var printer in ApplicationObject.App.Printers.Where(a => a.Device.Type == 2 && a.Device.Mode == 2 && (a.Device.Scope & ActionScope.Store) > 0))
             {
                 printer.Print(bufferArr);
             }
@@ -813,6 +813,18 @@ namespace Jiandanmao.ViewModel
             var vm = new ChineseFoodFenOrderViewModel(Desks, SelectedDesk.Order, o as TangOrderProduct);
             await DialogHost.Show(new ChineseFoodFenOrder { DataContext = vm });
             if (!vm.IsConfirm) return;
+            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IOrderService>();
+                await service.FenOrderAsync(vm.Good, SelectedDesk.Order, vm.Desk.Order);
+                CalcOrderAmount(SelectedDesk.Order);
+                CalcOrderAmount(vm.Desk.Order);
+                service.Update(SelectedDesk.Order);
+                service.Update(vm.Desk.Order);
+            }
+            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, Mode = SubscribeMode.Change, OrderObjectId = SelectedDesk.Order.ObjectId });
+            PubSubscribe(new SubscribeObj { DeskId = vm.Desk.Id, Mode = SubscribeMode.Change, OrderObjectId = vm.Desk.Order.ObjectId });
+            // 打印
 
         }
 
@@ -824,9 +836,9 @@ namespace Jiandanmao.ViewModel
         /// <summary>
         /// 计算订单总额
         /// </summary>
-        private void CalcOrderAmount()
+        private void CalcOrderAmount(TangOrder tangOrder = null)
         {
-            var order = SelectedDesk.Order;
+            var order = tangOrder ?? SelectedDesk.Order;
             order.MealFee = mealFee * order.PeopleNumber;
             order.OriginalAmount = order.Amount = order.MealFee;
             order.TangOrderProducts?.Where(a => a.ProductStatus != TangOrderProductStatus.Return).ForEach(a =>

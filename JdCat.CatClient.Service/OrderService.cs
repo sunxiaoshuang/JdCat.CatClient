@@ -211,6 +211,25 @@ namespace JdCat.CatClient.Service
             return retProduct;
         }
 
+        public async Task FenOrderAsync(TangOrderProduct good, TangOrder originalOrder, TangOrder targetOrder)
+        {
+            good.OrderId = targetOrder.Id;
+            good.OrderObjectId = targetOrder.ObjectId;
+            originalOrder.TangOrderProducts.Remove(good);
+            if(targetOrder.TangOrderProducts == null)
+            {
+                targetOrder.TangOrderProducts = new ObservableCollection<TangOrderProduct>();
+            }
+            targetOrder.TangOrderProducts.Add(good);
+
+            var originalKey = AddKeyPrefix($"Order:{originalOrder.ObjectId}", typeof(TangOrderProduct).Name);
+            await Database.ListRemoveAsync(originalKey, good.ObjectId);
+
+            var targetKey = AddKeyPrefix($"Order:{targetOrder.ObjectId}", typeof(TangOrderProduct).Name);
+            await Database.ListRightPushAsync(targetKey, good.ObjectId);
+
+        }
+
         /// <summary>
         /// 生成订单编号
         /// </summary>

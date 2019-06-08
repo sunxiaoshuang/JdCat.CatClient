@@ -76,8 +76,10 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
-                    <!--<TextBlock Grid.Column="1">￥<TextBlock Text="{Binding OriginalPrice}"></TextBlock></TextBlock>-->
-                    <Button Grid.Column="1" FontFamily="微软雅黑" Content="退菜" HorizontalAlignment="Right" IsEnabled="{Binding CanReturn}" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button FontFamily="微软雅黑" Content="分单" Margin="0 0 10 0" IsEnabled="{Binding CanReturn}" Command="{Binding FenOrderCommand}"/>
+                        <Button FontFamily="微软雅黑" Content="退菜" IsEnabled="{Binding CanReturn}" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"/>
+                    </StackPanel>
 
                     <TextBlock Grid.Row="1">单价：</TextBlock>
                     <TextBox Grid.Row="1" FontSize="20" Text="{Binding Price}" Grid.Column="1" Height="40" Foreground="Red" x:Name="txtPrice" Padding="0 0 0 5" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">

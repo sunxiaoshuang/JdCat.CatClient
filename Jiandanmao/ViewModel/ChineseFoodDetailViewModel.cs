@@ -37,7 +37,8 @@ namespace Jiandanmao.ViewModel
         public ICommand OriginalPriceChangedCommand => new AnotherCommandImplementation(OriginalPriceChanged);
         public ICommand PriceChangedCommand => new AnotherCommandImplementation(PriceChanged);
         public ICommand DistanceChangedCommand => new AnotherCommandImplementation(DistanceChanged);
-        public ICommand UnsubscribeCommand => new AnotherCommandImplementation(Unsubscribe);
+        public ICommand UnsubscribeCommand => new AnotherCommandImplementation(UnsubscribeAsync);
+        public ICommand FenOrderCommand => new AnotherCommandImplementation(FenOrderAsync);
 
         /// <summary>
         /// 订单
@@ -278,7 +279,13 @@ namespace Jiandanmao.ViewModel
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
-        private async void Unsubscribe(object o)
+        private async void FenOrderAsync(object o)
+        {
+
+        }
+
+
+        private async void UnsubscribeAsync(object o)
         {
             var snack = (Snackbar)o;
             if (ReturnQuantity > Quantity)

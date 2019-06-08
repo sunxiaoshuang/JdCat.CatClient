@@ -764,6 +764,22 @@ namespace Jiandanmao.ViewModel
             var vm = new ChineseFoodChangeDeskViewModel(Desks);
             await DialogHost.Show(new ChineseFoodChangeDesk { DataContext = vm });
             if (!vm.IsConfirm) return;
+            // 切换餐台订单
+            var deskChange = vm.DeskChange;
+            var deskTarget = vm.DeskTarget;
+            var order = deskChange.Order;
+            order.DeskId = deskTarget.Id;
+            order.DeskName = deskTarget.Name;
+            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IOrderService>();
+                service.Update(order);
+            }
+            deskTarget.Order = deskChange.Order;
+            deskChange.Order = null;
+            PubSubscribe(new SubscribeObj { DeskId = deskChange.Id, Mode = SubscribeMode.Delete, Sign = ApplicationObject.App.ClientData.Sign });
+            PubSubscribe(new SubscribeObj { DeskId = deskTarget.Id, Mode = SubscribeMode.Change, Sign = ApplicationObject.App.ClientData.Sign, OrderObjectId = order.ObjectId });
+            // 打印转台单（只有一单一打的打印机才出单）
 
         }
 

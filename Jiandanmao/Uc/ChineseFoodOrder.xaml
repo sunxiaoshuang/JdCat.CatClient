@@ -122,8 +122,8 @@
                             <ColumnDefinition Width="80" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock FontSize="14">开台时间：</TextBlock>
-                        <TextBlock FontSize="14" Text="{Binding SelectedDesk.Order.CreateTime, Converter={StaticResource dtts}}"></TextBlock>
+                            <TextBlock FontSize="14">开台时间：</TextBlock>
+                            <TextBlock FontSize="14" Text="{Binding SelectedDesk.Order.CreateTime, Converter={StaticResource dtts}}"></TextBlock>
                         </StackPanel>
                         <Button Grid.Column="1" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="#ff5722" FontWeight="Bold" HorizontalAlignment="Right"
                                 Command="{Binding OrderCatCommand}" CommandParameter="{Binding SelectedDesk}">查看</Button>

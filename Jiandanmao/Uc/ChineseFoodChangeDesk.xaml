@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
-             Width="700" Height="700">
+             Width="400">
     <UserControl.Resources>
         <ResourceDictionary>
             <Style TargetType="{x:Type TextBlock}">
@@ -18,12 +18,12 @@
     </UserControl.Resources>
     <materialDesign:DialogHost Identifier="ChangeDeskDialog">
         <StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0 20">
+            <StackPanel Orientation="Horizontal" Margin="10 20">
                 <TextBlock Width="100">更换餐台：</TextBlock>
                 <ComboBox materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" SelectedItem="{Binding DeskChange}" DisplayMemberPath="Name" ItemsSource="{Binding DeskChanges}" Width="250" >
                 </ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Margin="10 0">
                 <TextBlock Width="100">目标餐台：</TextBlock>
                 <ComboBox materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" SelectedItem="{Binding DeskTarget}" DisplayMemberPath="Name" ItemsSource="{Binding DeskTargets}" Width="250" >
                 </ComboBox>

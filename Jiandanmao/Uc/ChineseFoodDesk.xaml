@@ -7,6 +7,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             xmlns:virtualCollection="clr-namespace:VirtualCollection.VirtualCollection"
              mc:Ignorable="d" 
              x:Name="ChineseFoodDeskControl">
     <i:Interaction.Triggers>
@@ -139,7 +140,8 @@
         <ListBox Grid.Row="1" ItemsSource="{Binding Desks}" Width="Auto">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel/>
+                    <!--<WrapPanel/>-->
+                    <virtualCollection:VirtualizingWrapPanel ItemHeight="148" ItemWidth="148" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>

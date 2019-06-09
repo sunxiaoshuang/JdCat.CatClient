@@ -277,6 +277,9 @@
     <Compile Include="Uc\DialogAsync.xaml.cs">
       <DependentUpon>DialogAsync.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\FastFood.xaml.cs">
+      <DependentUpon>FastFood.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
@@ -305,6 +308,7 @@
       <DependentUpon>SystemSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\FastFoodViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodChangeDeskViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodFenOrderViewModel.cs" />
     <Compile Include="ViewModel\MixPaymentViewModel.cs" />
@@ -319,6 +323,7 @@
     <Compile Include="ViewModel\OrderListViewModel.cs" />
     <Compile Include="ViewModel\HomeViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="VirtualCollection\VirtualizingWrapPanel.cs" />
     <Page Include="Demo\Ctrl1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -397,6 +402,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\DialogAsync.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\FastFood.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

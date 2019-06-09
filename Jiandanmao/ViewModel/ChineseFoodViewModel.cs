@@ -801,13 +801,13 @@ namespace Jiandanmao.ViewModel
                 PrinterCmdUtils.NextLine(),
                 PrinterCmdUtils.NextLine(),
                 PrinterCmdUtils.FeedPaperCutAll()
-        };
-            foreach (var printer in ApplicationObject.App.Printers.Where(a => a.Device.Type == 2 && a.Device.Mode == 2 && (a.Device.Scope & ActionScope.Store) > 0))
+            };
+            foreach (var printer in ApplicationObject.App.Printers.Where(a => a.Device.State == 1 && a.Device.Type == 2 && a.Device.Mode == 2 && (a.Device.Scope & ActionScope.Store) > 0))
             {
                 printer.Print(bufferArr);
             }
-
         }
+
         private async void FenOrderAsync(object o)
         {
             var vm = new ChineseFoodFenOrderViewModel(Desks, SelectedDesk.Order, o as TangOrderProduct);
@@ -825,6 +825,33 @@ namespace Jiandanmao.ViewModel
             PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, Mode = SubscribeMode.Change, OrderObjectId = SelectedDesk.Order.ObjectId });
             PubSubscribe(new SubscribeObj { DeskId = vm.Desk.Id, Mode = SubscribeMode.Change, OrderObjectId = vm.Desk.Order.ObjectId });
             // 打印
+            var bufferArr = new List<byte[]> {
+                PrinterCmdUtils.AlignCenter(),
+                PrinterCmdUtils.FontSizeSetBig(2),
+                "分菜单".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FontSizeSetBig(1),
+                PrinterCmdUtils.AlignLeft(),
+                $"分菜时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.SplitLine("-"),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FontSizeSetBig(2),
+                $"原餐台：{SelectedDesk.Name}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                $"目标餐台：{vm.Desk.Name}".ToByte(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FontSizeSetBig(2),
+                $"菜品：{vm.Good.Name}".ToByte(),
+                PrinterCmdUtils.FontSizeSetBig(1),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.NextLine(),
+                PrinterCmdUtils.FeedPaperCutAll()
+            };
+            foreach (var printer in ApplicationObject.App.Printers.Where(a => a.Device.State == 1 && a.Device.Type == 2 && a.Device.Mode == 2 && (a.Device.Scope & ActionScope.Store) > 0))
+            {
+                printer.Print(bufferArr);
+            }
 
         }
 

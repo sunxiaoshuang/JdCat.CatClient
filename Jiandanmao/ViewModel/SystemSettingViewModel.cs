@@ -46,7 +46,7 @@ namespace Jiandanmao.ViewModel
         /// 餐位费
         /// </summary>
         public double MealFee { get => _mealFee; set => this.MutateVerbose(ref _mealFee, value, RaisePropertyChanged()); }
-
+        public List<string> Modes { get; set; } = new List<string> { "快餐", "中餐" };
 
         #endregion
 

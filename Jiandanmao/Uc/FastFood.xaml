@@ -1,0 +1,189 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.FastFood"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+             xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             xmlns:local="clr-namespace:Jiandanmao.Uc"
+             mc:Ignorable="d" 
+             x:Name="FastFoodControl">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=FastFoodControl}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!--已点菜品-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+            <Grid Background="#009789">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{DynamicResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="Magnify" Opacity=".56" FontSize="22" Foreground="White" />
+                </Button>
+                <TextBox Grid.Column="1" Margin="8 0 0 0" x:Name="txtProductkey" materialDesign:HintAssist.Hint="菜品搜索" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" Foreground="White" MinWidth="200" VerticalAlignment="Center" CaretBrush="White">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="TextChanged">
+                            <i:InvokeCommandAction Command="{Binding ProductSearchCommand}" CommandParameter="{Binding ElementName=txtProductkey}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding EnterToAddCommand}" CommandParameter="{Binding ElementName=txtProductkey}"></KeyBinding>
+                        <KeyBinding Key="Esc" Command="{Binding EscToClearCommand}" CommandParameter="{Binding ElementName=txtProductkey}"></KeyBinding>
+                        <KeyBinding Gesture="Ctrl+1" Command="{Binding NumToAddCommand}" CommandParameter="1"/>
+                        <KeyBinding Gesture="Ctrl+2" Command="{Binding NumToAddCommand}" CommandParameter="2"/>
+                        <KeyBinding Gesture="Ctrl+3" Command="{Binding NumToAddCommand}" CommandParameter="3"/>
+                        <KeyBinding Gesture="Ctrl+4" Command="{Binding NumToAddCommand}" CommandParameter="4"/>
+                        <KeyBinding Gesture="Ctrl+5" Command="{Binding NumToAddCommand}" CommandParameter="5"/>
+                        <KeyBinding Gesture="Ctrl+6" Command="{Binding NumToAddCommand}" CommandParameter="6"/>
+                        <KeyBinding Gesture="Ctrl+7" Command="{Binding NumToAddCommand}" CommandParameter="7"/>
+                        <KeyBinding Gesture="Ctrl+8" Command="{Binding NumToAddCommand}" CommandParameter="8"/>
+                        <KeyBinding Gesture="Ctrl+9" Command="{Binding NumToAddCommand}" CommandParameter="9"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Style="{DynamicResource MaterialDesignToolButton}" Height="35" Width="35" Margin="0 0 5 0" Grid.Column="2" Command="{Binding ClearProductKeyCommand}" CommandParameter="{Binding ElementName=txtProductkey}">
+                    <materialDesign:PackIcon Kind="CloseCircle" Width="30" Height="30" Opacity=".7" Foreground="White" />
+                </Button>
+            </Grid>
+
+            <smtx:XamlDisplay Grid.Row="1" BorderBrush="#ddd" BorderThickness="1 0 1 0" DataContext="{Binding SelectedDesk.Order}">
+                <Border BorderBrush="#ddd" BorderThickness="1 1 1 0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="productScroll">
+                        <ItemsControl ItemsSource="{Binding TangOrderProducts}" Grid.IsSharedSizeScope="True">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel x:Name="StackPanel">
+                                        <Border x:Name="Border" Cursor="Hand" BorderBrush="#ddd" Padding="0 10 0 0" BorderThickness="0 0 0 1" DataContext="{Binding DataContext, ElementName=ChineseFoodOrderControl}">
+                                            <Grid Margin="10 0 0 0">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseDown">
+                                                        <i:InvokeCommandAction Command="{Binding ProductClickCommand}" CommandParameter="{Binding DataContext, ElementName=StackPanel}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="45" />
+                                                    <RowDefinition Height="35" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="20" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="130" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid Grid.ColumnSpan="3">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30" />
+                                                        <RowDefinition Height="15" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="65"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="25" FontSize="20" Text="{Binding Name}"/>
+                                                    <TextBlock Grid.Column="1" x:Name="txtStatus" VerticalAlignment="Top" FontWeight="Bold" Foreground="Red" Height="25" FontSize="20"/>
+                                                    <Button Grid.Column="1" Visibility="Hidden"  Content="分单" x:Name="btnFenOrder" VerticalAlignment="Top" Height="25" Command="{Binding FenOrderCommand}" CommandParameter="{Binding DataContext, ElementName=StackPanel}" />
+                                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" DataContext="{Binding DataContext, ElementName=StackPanel}">
+                                                        <TextBlock TextWrapping="NoWrap" FontSize="12" Foreground="#aaa">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding Converter="{StaticResource topdtc}">
+                                                                    <Binding Path="Remark"/>
+                                                                    <Binding Path="Description"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <TextBlock Grid.Row="1" Height="40" Padding="0 15 0 0" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="￥ "/>
+                                                <TextBlock Grid.Row="1" Height="40" Grid.Column="1" Padding="0 15 0 0" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="{Binding Price}"/>
+                                                <Grid Grid.Row="1" Grid.Column="2" DataContext="{Binding DataContext, ElementName=StackPanel}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="40"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="40"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Height="26" Width="26" 
+                                                        DataContext="{Binding DataContext, ElementName=ChineseFoodOrderControl}"
+                                                        Command="{Binding ReduceCommand}"
+                                                        CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Grid}}"
+                                                        IsEnabled="{Binding DataContext.ProductStatus, Converter={StaticResource topotc}, ElementName=StackPanel}">
+                                                        <materialDesign:PackIcon Kind="Minus" Height="24" Width="24" />
+                                                    </Button>
+                                                    <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="{Binding Quantity}"></TextBlock>
+                                                    <Button Grid.Column="2" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"  Height="26" Width="26" Command="{Binding IncreaseCommand}"
+                                                        DataContext="{Binding DataContext, ElementName=ChineseFoodOrderControl}"
+                                                        CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Grid}}"
+                                                        IsEnabled="{Binding DataContext.ProductStatus, Converter={StaticResource topotc}, ElementName=StackPanel}">
+                                                        <materialDesign:PackIcon Kind="Plus" Height="24" Width="24" />
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ProductStatus}" Value="16">
+                                            <Setter TargetName="Border" Property="Background" Value="Pink" />
+                                            <Setter TargetName="txtStatus" Property="Text" Value="已退菜" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ProductStatus}" Value="2">
+                                            <Setter TargetName="btnFenOrder" Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ProductStatus}" Value="8">
+                                            <Setter TargetName="btnFenOrder" Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+            </smtx:XamlDisplay>
+            <Border Grid.Row="2" BorderBrush="#ddd" BorderThickness="1" DataContext="{Binding SelectedDesk.Order}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="15">订单总额：</TextBlock>
+                    <TextBlock FontSize="15" Foreground="Red" Text="￥"></TextBlock>
+                    <TextBlock FontSize="15" Foreground="Red" Text="{Binding MealFee}"></TextBlock>
+                    <TextBlock FontSize="15">，合计</TextBlock>
+                    <TextBlock FontSize="15" Foreground="Red" Text="{Binding ProductQuantity}"></TextBlock>
+                    <TextBlock FontSize="15" Text="项"></TextBlock>
+                </StackPanel>
+            </Border>
+            <Border Grid.Row="3" BorderBrush="#ddd" BorderThickness="1 0 1 1">
+                
+            </Border>
+
+        </Grid>
+        <!--功能区-->
+        <smtx:XamlDisplay Height="Auto" Grid.Column="1">
+            <!--<materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transition2">
+                --><!--选择菜品--><!--
+                <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
+                    <local:ChineseFoodProduct />
+                </materialDesign:TransitionerSlide>
+
+                --><!--结账--><!--
+                <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect SlideInFromLeft}">
+                    <local:ChineseFoodPayment />
+                </materialDesign:TransitionerSlide>
+
+            </materialDesign:Transitioner>-->
+        </smtx:XamlDisplay>
+    </Grid>
+</UserControl>

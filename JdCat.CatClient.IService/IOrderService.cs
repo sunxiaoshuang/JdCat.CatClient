@@ -71,6 +71,24 @@ namespace JdCat.CatClient.IService
         /// <param name="targetOrder">目标订单</param>
         /// <returns></returns>
         Task FenOrderAsync(TangOrderProduct good, TangOrder originalOrder, TangOrder targetOrder);
+        /// <summary>
+        /// 保存快餐订单
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        Task SaveFastOrderAsync(TangOrder order);
+        /// <summary>
+        /// 载入快餐正在点餐的订单
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        Task<TangOrder> GetFastOrderAsync();
+        /// <summary>
+        /// 完成快餐订单
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        Task<TangOrder> FinishFastOrderAsync(TangOrder order);
 
     }
 }

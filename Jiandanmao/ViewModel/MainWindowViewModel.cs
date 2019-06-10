@@ -32,7 +32,14 @@ namespace Jiandanmao.ViewModel
             }
             else
             {
-                list.Add(new ContorllerItem("餐台", new ChineseFood { DataContext = new ChineseFoodViewModel(snackbarMessageQueue) }));
+                if (ApplicationObject.App.ClientData.Mode == Enum.HostMode.Chinese)
+                {
+                    list.Add(new ContorllerItem("餐台", new ChineseFood { DataContext = new ChineseFoodViewModel(snackbarMessageQueue) }));
+                }
+                else
+                {
+                    list.Add(new ContorllerItem("收银", new FastFood { DataContext = new FastFoodViewModel() }));
+                }
                 list.Add(new ContorllerItem("外卖订单", new OrderList() { DataContext = new OrderListViewModel() }));
                 list.Add(new ContorllerItem("库存设置", new ProductStock() { DataContext = new ProductStockViewModel() }));
                 if ((ApplicationObject.App.Staff.StaffPost.Authority & StaffPostAuth.Manager) > 0)

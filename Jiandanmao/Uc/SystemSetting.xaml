@@ -70,10 +70,10 @@
                 <TextBox Grid.Row="3" Grid.Column="1" Width="15" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding MealFee}" />
                 
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Cash" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
+                    <materialDesign:PackIcon Kind="Category" Width="30" Foreground="#555" VerticalAlignment="Center" Height="20" />
                     <TextBlock Text="经营模式" FontSize="18"></TextBlock>
                 </StackPanel>
-                <ComboBox Grid.Row="4" IsEditable="False" Text="{Binding Mode}" ItemsSource="{Binding Modes}" >
+                <ComboBox Grid.Row="4" Grid.Column="1" Width="200" IsEditable="False" SelectedValue="{Binding ClientData.Mode}" SelectedValuePath="Value" DisplayMemberPath="Key" HorizontalAlignment="Left" ItemsSource="{Binding Modes}" >
                 </ComboBox>
 
             </Grid>

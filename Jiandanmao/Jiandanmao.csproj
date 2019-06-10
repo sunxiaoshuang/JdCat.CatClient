@@ -235,6 +235,7 @@
       <DependentUpon>TransitionDemo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Enum\DeskStatus.cs" />
+    <Compile Include="Enum\HostMode.cs" />
     <Compile Include="Enum\PrintMode.cs" />
     <Compile Include="Code\ApplicationObject.cs" />
     <Compile Include="Code\Printer.cs" />
@@ -279,6 +280,12 @@
     </Compile>
     <Compile Include="Uc\FastFood.xaml.cs">
       <DependentUpon>FastFood.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\FastFoodPayment.xaml.cs">
+      <DependentUpon>FastFoodPayment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\FastFoodProduct.xaml.cs">
+      <DependentUpon>FastFoodProduct.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uc\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -406,6 +413,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\FastFood.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\FastFoodPayment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\FastFoodProduct.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

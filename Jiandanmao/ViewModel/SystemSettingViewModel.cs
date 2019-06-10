@@ -15,6 +15,7 @@ using JdCat.CatClient.Model;
 using System.Collections.Generic;
 using JdCat.CatClient.Model.Enum;
 using JdCat.CatClient.Common;
+using Jiandanmao.Enum;
 
 namespace Jiandanmao.ViewModel
 {
@@ -46,7 +47,7 @@ namespace Jiandanmao.ViewModel
         /// 餐位费
         /// </summary>
         public double MealFee { get => _mealFee; set => this.MutateVerbose(ref _mealFee, value, RaisePropertyChanged()); }
-        public List<string> Modes { get; set; } = new List<string> { "快餐", "中餐" };
+        public List<KeyValuePair<string, HostMode>> Modes { get; set; } = new List<KeyValuePair<string, HostMode>> { new KeyValuePair<string, HostMode>("正餐模式", HostMode.Chinese), new KeyValuePair<string, HostMode>("快餐模式", HostMode.Fast) };
 
         #endregion
 

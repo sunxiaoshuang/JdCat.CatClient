@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Jiandanmao.Enum;
 using Newtonsoft.Json;
 
 namespace Jiandanmao.Code
@@ -58,6 +59,23 @@ namespace Jiandanmao.Code
             {
                 _isHost = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsHost"));
+            }
+        }
+
+        private HostMode _mode;
+        /// <summary>
+        /// 经营模式
+        /// </summary>
+        public HostMode Mode
+        {
+            get
+            {
+                return _mode;
+            }
+            set
+            {
+                _mode = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Mode"));
             }
         }
 

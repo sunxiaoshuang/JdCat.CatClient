@@ -35,7 +35,8 @@ namespace JdCat.CatClient.Service
             var unfinish = Database.ListRange(key);
             if (unfinish == null || unfinish.Length == 0) return null;
             var list = Get<TangOrder>(unfinish.Select(a => a.ToString()).ToArray());
-            list.ForEach(order => {
+            list.ForEach(order =>
+            {
                 order.TangOrderProducts = GetOrderProduct(order.ObjectId).ToObservable();
             });
             return list;
@@ -162,7 +163,7 @@ namespace JdCat.CatClient.Service
             Update(order);
             // 保存支付方式
             var orderPaymentKey = AddKeyPrefix<TangOrderPayment>($"Order:{order.ObjectId}");
-            order.TangOrderPayments.ForEach(payment => 
+            order.TangOrderPayments.ForEach(payment =>
             {
                 Save(payment);
             });
@@ -216,7 +217,7 @@ namespace JdCat.CatClient.Service
             good.OrderId = targetOrder.Id;
             good.OrderObjectId = targetOrder.ObjectId;
             originalOrder.TangOrderProducts.Remove(good);
-            if(targetOrder.TangOrderProducts == null)
+            if (targetOrder.TangOrderProducts == null)
             {
                 targetOrder.TangOrderProducts = new ObservableCollection<TangOrderProduct>();
             }
@@ -227,7 +228,32 @@ namespace JdCat.CatClient.Service
 
             var targetKey = AddKeyPrefix($"Order:{targetOrder.ObjectId}", typeof(TangOrderProduct).Name);
             await Database.ListRightPushAsync(targetKey, good.ObjectId);
+        }
 
+        public async Task SaveFastOrderAsync(TangOrder order)
+        {
+            order.Code = GenerateOrderCode();
+            Save(order);
+            var key = AddKeyPrefix<TangOrder>("FastOrder");
+            await Database.StringSetAsync(key, order.ObjectId);
+        }
+
+        public async Task<TangOrder> GetFastOrderAsync()
+        {
+            var key = AddKeyPrefix<TangOrder>("FastOrder");
+            var id = await Database.StringGetAsync(key);
+            if (id.HasValue)
+            {
+                var order = await GetAsync<TangOrder>(id);
+                order.TangOrderProducts = GetOrderProduct(order.ObjectId)?.ToObservable() ?? new ObservableCollection<TangOrderProduct>();
+            }
+            return null;
+        }
+
+        public async Task<TangOrder> FinishFastOrderAsync(TangOrder order)
+        {
+
+            return null;
         }
 
         /// <summary>
@@ -259,6 +285,8 @@ namespace JdCat.CatClient.Service
             var key = $"{DatabaseConfig.KeyPrefix}:OrderIdentity:{DateTime.Now:yyyyMMdd}";
             return Database.StringIncrement(key);
         }
+
+
 
     }
 }

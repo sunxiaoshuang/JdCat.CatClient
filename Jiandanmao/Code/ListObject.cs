@@ -76,6 +76,7 @@ namespace Jiandanmao.Code
                 }
                 _pageCount = value == null ? 0 : (int)Math.Ceiling(value.Count / (double)_pageSize);
                 SetList();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("OriginalList"));
             }
         }
 

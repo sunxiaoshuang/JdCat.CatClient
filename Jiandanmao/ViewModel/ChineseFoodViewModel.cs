@@ -1142,7 +1142,7 @@ namespace Jiandanmao.ViewModel
         {
             var key = txtProductKey.Text?.Trim();
             var type = ProductTypes.FirstOrDefault(a => a.IsCheck);
-            IEnumerable<Product> products = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0);
+            var products = ApplicationObject.App.Products.Where(a => (a.Scope & ActionScope.Store) > 0);
             if (type != null)
             {
                 products = products.Where(a => a.ProductTypeId == type.Id);

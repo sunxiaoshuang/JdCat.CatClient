@@ -8,6 +8,7 @@
              xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
              xmlns:local="clr-namespace:Jiandanmao.Uc"
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             xmlns:virtualCollection="clr-namespace:VirtualCollection.VirtualCollection"
              x:Name="ChineseFoodProductControl"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -53,7 +54,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
+            <!--<RowDefinition Height="50" />-->
             <RowDefinition Height="80" />
         </Grid.RowDefinitions>
         <Grid Margin="10 -2 0 0">
@@ -95,27 +96,25 @@
                 <materialDesign:PackIcon Kind="KeyboardArrowRight" />
             </Button>
         </Grid>
-
-        <ListBox Grid.Row="1" ItemsSource="{Binding ProductObject.List}" Width="Auto" Margin="0 10 0 0">
+            <ListBox Grid.Row="1" ItemsSource="{Binding ProductObject.OriginalList}" Width="Auto" Margin="0 10 0 0">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel/>
+                    <!--<WrapPanel/>-->
+                    <virtualCollection:VirtualizingWrapPanel ItemHeight="140" ItemWidth="140" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <materialDesign:Badged>
+                    <materialDesign:Badged x:Name="root">
                         <materialDesign:Badged.Badge>
                             <TextBlock Text="{Binding SelectedQuantity}"></TextBlock>
                         </materialDesign:Badged.Badge>
                         <Button DataContext="{Binding DataContext, ElementName=ChineseFoodProductControl}" Padding="5 0"
                                 Command="{Binding AddProductCommand}"
-                                CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}"
-                                Background="{Binding DataContext.SelectedQuantity, Converter={StaticResource pbtc}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}" 
-                                Foreground="{Binding DataContext.SelectedQuantity, Converter={StaticResource pfctc}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}" 
-                                BorderThickness="0" Height="120" Width="120">
+                                CommandParameter="{Binding DataContext, ElementName=root}" Background="#eee" Foreground="#555" 
+                                BorderThickness="0" Height="120" Width="120" x:Name="container">
                             <Button.Content>
-                                <Grid Height="100" DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=materialDesign:Badged}}">
+                                <Grid Height="100" DataContext="{Binding DataContext, ElementName=root}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="30" />
@@ -141,16 +140,18 @@
                             <Setter TargetName="txtStock" Property="Foreground" Value="AntiqueWhite" />
                             <Setter TargetName="txtRmb" Property="Foreground" Value="AntiqueWhite" />
                             <Setter TargetName="txtPrice" Property="Foreground" Value="AntiqueWhite" />
+                            <Setter TargetName="container" Property="Background" Value="#009789" />
+                            <Setter TargetName="container" Property="Foreground" Value="#fff" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel HorizontalAlignment="Center" Grid.Row="2" Orientation="Horizontal" DataContext="{Binding ProductObject}">
+        <!--<StackPanel HorizontalAlignment="Center" Grid.Row="2" Orientation="Horizontal" DataContext="{Binding ProductObject}">
             <Button Style="{StaticResource ButtonStyle}" IsEnabled="{Binding CanPrev}" Command="{Binding PrevCommand}" Background="#d0862a" Content="上一页" />
             <Button Style="{StaticResource ButtonStyle}" IsEnabled="{Binding CanNext}" Command="{Binding NextCommand}" Margin="50 0 0 0" Background="#d0862a" Content="下一页" />
-        </StackPanel>
-        <Grid Grid.Row="3">
+        </StackPanel>-->
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
                 <ColumnDefinition Width="*" />

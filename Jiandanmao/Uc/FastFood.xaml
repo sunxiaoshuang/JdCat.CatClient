@@ -15,6 +15,13 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=FastFoodControl}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            
+            <convert:TangOrderProductDescriptionTypeConvert x:Key="topdtc" />
+            
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
@@ -69,7 +76,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel x:Name="StackPanel">
-                                        <Border x:Name="Border" Cursor="Hand" BorderBrush="#ddd" Padding="0 10 0 0" BorderThickness="0 0 0 1" DataContext="{Binding DataContext, ElementName=FastFoodOrderControl}">
+                                        <Border x:Name="Border" Cursor="Hand" BorderBrush="#ddd" Padding="0 10 0 0" BorderThickness="0 0 0 1" DataContext="{Binding DataContext, ElementName=FastFoodControl}">
                                             <Grid Margin="10 0 0 0">
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="MouseDown">
@@ -85,7 +92,24 @@
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="130" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.ColumnSpan="3" VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="25" FontSize="20" Text="{Binding Name}"/>
+                                                <!--<TextBlock Grid.ColumnSpan="3" VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="25" FontSize="20" Text="{Binding Name}"/>-->
+                                                <Grid Grid.ColumnSpan="3">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30" />
+                                                        <RowDefinition Height="15" />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock VerticalAlignment="Top" DataContext="{Binding DataContext, ElementName=StackPanel}" FontWeight="Bold" Height="25" FontSize="20" Text="{Binding Name}"/>
+                                                    <StackPanel Grid.Row="1" Orientation="Horizontal" DataContext="{Binding DataContext, ElementName=StackPanel}">
+                                                        <TextBlock TextWrapping="NoWrap" FontSize="12" Foreground="#aaa">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding Converter="{StaticResource topdtc}">
+                                                                    <Binding Path="Remark"/>
+                                                                    <Binding Path="Description"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Grid>
                                                 <TextBlock Grid.Row="1" Height="40" Padding="0 15 0 0" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="￥ "/>
                                                 <TextBlock Grid.Row="1" Height="40" Grid.Column="1" Padding="0 15 0 0" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="{Binding Price}"/>
                                                 <Grid Grid.Row="1" Grid.Column="2" DataContext="{Binding DataContext, ElementName=StackPanel}">
@@ -95,14 +119,14 @@
                                                         <ColumnDefinition Width="40"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Height="26" Width="26" 
-                                                        DataContext="{Binding DataContext, ElementName=FastFoodOrderControl}"
+                                                        DataContext="{Binding DataContext, ElementName=FastFoodControl}"
                                                         Command="{Binding ReduceCommand}"
                                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Grid}}">
                                                         <materialDesign:PackIcon Kind="Minus" Height="24" Width="24" />
                                                     </Button>
                                                     <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding DataContext, ElementName=StackPanel}" Foreground="Red" Text="{Binding Quantity}"></TextBlock>
                                                     <Button Grid.Column="2" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"  Height="26" Width="26" Command="{Binding IncreaseCommand}"
-                                                        DataContext="{Binding DataContext, ElementName=FastFoodOrderControl}"
+                                                        DataContext="{Binding DataContext, ElementName=FastFoodControl}"
                                                         CommandParameter="{Binding DataContext, ElementName=StackPanel}">
                                                         <materialDesign:PackIcon Kind="Plus" Height="24" Width="24" />
                                                     </Button>
@@ -121,11 +145,11 @@
                     </ScrollViewer>
                 </Border>
             </smtx:XamlDisplay>
-            <Border Grid.Row="2" BorderBrush="#ddd" BorderThickness="1" DataContext="{Binding SelectedDesk.Order}">
+            <Border Grid.Row="2" BorderBrush="#ddd" BorderThickness="1" DataContext="{Binding Order}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontSize="15">订单总额：</TextBlock>
                     <TextBlock FontSize="15" Foreground="Red" Text="￥"></TextBlock>
-                    <TextBlock FontSize="15" Foreground="Red" Text="{Binding MealFee}"></TextBlock>
+                    <TextBlock FontSize="15" Foreground="Red" Text="{Binding Amount}"></TextBlock>
                     <TextBlock FontSize="15">，合计</TextBlock>
                     <TextBlock FontSize="15" Foreground="Red" Text="{Binding ProductQuantity}"></TextBlock>
                     <TextBlock FontSize="15" Text="项"></TextBlock>
@@ -133,15 +157,15 @@
             </Border>
             <Border Grid.Row="3" BorderBrush="#ddd" BorderThickness="1 0 1 1">
                 <StackPanel Orientation="Horizontal">
-                    <Button Height="78" Width="150" FontSize="22">清空</Button>
-                    <Button Height="78" Width="150" FontSize="22">收款</Button>
+                    <Button Height="78" Width="100" FontSize="22" Command="{Binding ClearCommand}">清空</Button>
+                    <Button Height="78" Width="100" FontSize="22" Command="{Binding HoogupCommand}">挂单</Button>
+                    <Button Height="78" Width="100" FontSize="22" Command="{Binding PayCommand}">收款</Button>
                 </StackPanel>
             </Border>
-
         </Grid>
         <!--功能区-->
         <smtx:XamlDisplay Height="Auto" Grid.Column="1">
-            <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transition2">
+            <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transitioner">
                 
             <!--选择菜品-->
             
@@ -158,5 +182,6 @@
 
             </materialDesign:Transitioner>
         </smtx:XamlDisplay>
+        <Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20 20 0 50" Style="{StaticResource MaterialDesignFloatingActionLightButton}" Command="{Binding PickOrderCommand}" Content="取单" />
     </Grid>
 </UserControl>

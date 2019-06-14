@@ -21,99 +21,115 @@
                 <Setter Property="Background" Value="#81cbc5"/>
             </Style>
 
+
             <convert:NumberTypeConverter x:Key="ntc" />
             <convert:DeskTypeCheckColorTypeConverter x:Key="dttc" />
             <convert:StockTypeConverter x:Key="stc" />
 
         </ResourceDictionary>
-        
+
     </UserControl.Resources>
-    <Grid Margin="10 0 0 0" Background="#eee">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="80" />
-        </Grid.RowDefinitions>
+    <Border BorderBrush="#ddd" BorderThickness="1" Margin="10 0 0 0" Padding="10 10 0 0">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button Content="全部" Style="{StaticResource ButtonStyle}" Background="{Binding IsAllProduct, Converter={StaticResource dttc}}" VerticalAlignment="Top" Command="{Binding AllTypeCommand}" Tag="{Binding IsAllProduct}" Width="80"></Button>
-            <ItemsControl Grid.Column="1" ItemsSource="{Binding Types}" Width="Auto">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <!--<virtualCollection:VirtualizingWrapPanel ItemHeight="50" ItemWidth="140" />-->
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel x:Name="container">
-                            <Button Style="{StaticResource ButtonStyle}" x:Name="product"
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="80" />
+            </Grid.RowDefinitions>
+            <Grid Margin="0 -10 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Content="全部" Style="{StaticResource ButtonStyle}" Background="{Binding IsAllProduct, Converter={StaticResource dttc}}" VerticalAlignment="Top" Command="{Binding AllTypeCommand}" Tag="{Binding IsAllProduct}" Width="80"></Button>
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding Types}" Width="Auto">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <!--<virtualCollection:VirtualizingWrapPanel />-->
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel x:Name="container">
+                                <Button Style="{StaticResource ButtonStyle}" x:Name="product"
                                         Command="{Binding TypeCheckedCommand}"
                                         CommandParameter="{Binding DataContext, ElementName=container}"
                                         DataContext="{Binding DataContext, ElementName=FastFoodProductControl}" 
                                         Content="{Binding DataContext.Name, ElementName=container}"/>
-                        </StackPanel>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding IsCheck}" Value="True">
-                                <Setter TargetName="product" Property="Background" Value="#00786a" />
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Grid>
-        <ListBox Grid.Row="1" ItemsSource="{Binding FilterProducts}" Width="Auto" Margin="0 10 0 0">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <virtualCollection:VirtualizingWrapPanel ItemHeight="140" ItemWidth="140" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <materialDesign:Badged x:Name="root">
-                        <materialDesign:Badged.Badge>
-                            <TextBlock Text="{Binding SelectedQuantity}"></TextBlock>
-                        </materialDesign:Badged.Badge>
-                        <Button DataContext="{Binding DataContext, ElementName=FastFoodProductControl}" Padding="5 0"
+                            </StackPanel>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsCheck}" Value="True">
+                                    <Setter TargetName="product" Property="Background" Value="#00786a" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+            <ListBox Grid.Row="1" ItemsSource="{Binding Pager.List}" Width="Auto" Margin="0 10 0 0">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <virtualCollection:VirtualizingWrapPanel ItemHeight="140" ItemWidth="140" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Badged x:Name="root">
+                            <materialDesign:Badged.Badge>
+                                <TextBlock Text="{Binding SelectedQuantity}"></TextBlock>
+                            </materialDesign:Badged.Badge>
+                            <Button DataContext="{Binding DataContext, ElementName=FastFoodProductControl}" Padding="5 0"
                                 Command="{Binding AddProductCommand}"
                                 CommandParameter="{Binding DataContext, ElementName=root}" Background="#eee" Foreground="#555" 
                                 BorderThickness="0" Height="120" Width="120" x:Name="container">
-                            <Button.Content>
-                                <Grid Height="100" DataContext="{Binding DataContext, ElementName=root}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="30" />
-                                        <RowDefinition Height="20" />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center" Text="{Binding DisplayName}"></TextBlock>
-                                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                                        <TextBlock Text="￥" Foreground="#d0862a" x:Name="txtRmb" />
-                                        <TextBlock Text="{Binding Formats[0].Price}" Foreground="#d0862a" x:Name="txtPrice" />
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left">
-                                        <TextBlock Text="{Binding Stock, Converter={StaticResource stc}}" FontSize="12" x:Name="txtStock" />
-                                    </StackPanel>
-                                </Grid>
-                            </Button.Content>
-                        </Button>
-                    </materialDesign:Badged>
-                    <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding Stock}" Value="0">
-                            <Setter TargetName="txtStock" Property="Foreground" Value="OrangeRed" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedQuantity, Converter={StaticResource ntc}}" Value="1">
-                            <Setter TargetName="txtStock" Property="Foreground" Value="AntiqueWhite" />
-                            <Setter TargetName="txtRmb" Property="Foreground" Value="AntiqueWhite" />
-                            <Setter TargetName="txtPrice" Property="Foreground" Value="AntiqueWhite" />
-                            <Setter TargetName="container" Property="Background" Value="#009789" />
-                            <Setter TargetName="container" Property="Foreground" Value="#fff" />
-                        </DataTrigger>
-                    </DataTemplate.Triggers>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </Grid>
+                                <Button.Content>
+                                    <Grid Height="100" DataContext="{Binding DataContext, ElementName=root}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="20" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center" Text="{Binding DisplayName}"></TextBlock>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+                                            <TextBlock Text="￥" Foreground="#d0862a" x:Name="txtRmb" />
+                                            <TextBlock Text="{Binding Formats[0].Price}" Foreground="#d0862a" x:Name="txtPrice" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding Stock, Converter={StaticResource stc}}" FontSize="12" x:Name="txtStock" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Button.Content>
+                            </Button>
+                        </materialDesign:Badged>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Stock}" Value="0">
+                                <Setter TargetName="txtStock" Property="Foreground" Value="OrangeRed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedQuantity, Converter={StaticResource ntc}}" Value="1">
+                                <Setter TargetName="txtStock" Property="Foreground" Value="AntiqueWhite" />
+                                <Setter TargetName="txtRmb" Property="Foreground" Value="AntiqueWhite" />
+                                <Setter TargetName="txtPrice" Property="Foreground" Value="AntiqueWhite" />
+                                <Setter TargetName="container" Property="Background" Value="#009789" />
+                                <Setter TargetName="container" Property="Foreground" Value="#fff" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel HorizontalAlignment="Center" Grid.Row="2" Orientation="Horizontal" DataContext="{Binding Pager}">
+                <Button Style="{StaticResource ButtonStyle}" IsEnabled="{Binding CanPrev}" Command="{Binding PrevCommand}" Background="#d0862a" Content="上一页" />
+                <Button Style="{StaticResource ButtonStyle}" IsEnabled="{Binding CanNext}" Command="{Binding NextCommand}" Margin="50 0 0 0" Background="#d0862a" Content="下一页" />
+            </StackPanel>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center">整单备注：</TextBlock>
+                <ComboBox Grid.Column="1" materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" Text="{Binding Order.Remark}" ItemsSource="{Binding OrderRemarks}"/>
+            </Grid>
+        </Grid>
+    </Border>
 </UserControl>

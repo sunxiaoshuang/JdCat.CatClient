@@ -166,8 +166,9 @@ namespace Jiandanmao.Code
         {
             var url = $"{ApiUrl}/Client/Upload{typeof(T).Name}";
             var body = new StringContent(JsonConvert.SerializeObject(list));
+            body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await HttpRequestAsync<List<T>>(url, body, "POST");
-            result.Data.ForEach(a => {
+            result.Data?.ForEach(a => {
                 var entity = list.FirstOrDefault(b => a.ObjectId == b.ObjectId);
                 if (entity == null) return;
                 entity.Id = a.Id;

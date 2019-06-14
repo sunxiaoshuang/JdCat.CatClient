@@ -71,24 +71,35 @@ namespace JdCat.CatClient.IService
         /// <param name="targetOrder">目标订单</param>
         /// <returns></returns>
         Task FenOrderAsync(TangOrderProduct good, TangOrder originalOrder, TangOrder targetOrder);
+
         /// <summary>
         /// 保存快餐订单
         /// </summary>
-        /// <param name=""></param>
+        /// <param name="order"></param>
         /// <returns></returns>
-        Task SaveFastOrderAsync(TangOrder order);
+        TangOrder SaveFastOrder(TangOrder order);
         /// <summary>
-        /// 载入快餐正在点餐的订单
-        /// </summary>
-        /// <param name="businessId"></param>
-        /// <returns></returns>
-        Task<TangOrder> GetFastOrderAsync();
-        /// <summary>
-        /// 完成快餐订单
+        /// 快餐单付款
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        Task<TangOrder> FinishFastOrderAsync(TangOrder order);
-
+        Task<TangOrder> PaymentFastAsync(TangOrder order);
+        /// <summary>
+        /// 挂单
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        Task HoogupOrderAsync(TangOrder order);
+        /// <summary>
+        /// 获取挂单列表
+        /// </summary>
+        /// <returns></returns>
+        Task<List<TangOrder>> GetHoogupOrdersAsync();
+        /// <summary>
+        /// 删除挂单
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        Task RemoveHoogupOrderAsync(TangOrder order);
     }
 }

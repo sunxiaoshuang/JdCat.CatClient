@@ -170,7 +170,7 @@ namespace Jiandanmao.ViewModel
         private ObservableCollection<Product> _products;
         public ObservableCollection<Product> Products { get => _products; set => this.MutateVerbose(ref _products, value, RaisePropertyChanged()); }
 
-        private ListObject<Product> _productObject = new ListObject<Product>(15);
+        private ListObject<Product> _productObject = new ListObject<Product>(20);
         public ListObject<Product> ProductObject { get => _productObject; set => this.MutateVerbose(ref _productObject, value, RaisePropertyChanged()); }
         #endregion
 
@@ -216,7 +216,7 @@ namespace Jiandanmao.ViewModel
 
         private double _orderDiscount;
         /// <summary>
-        /// 优惠金额
+        /// 订单折扣
         /// </summary>
         public double OrderDiscount { get => _orderDiscount; set => this.MutateVerbose(ref _orderDiscount, value, RaisePropertyChanged()); }
 
@@ -730,8 +730,8 @@ namespace Jiandanmao.ViewModel
         private void NumToAdd(object o)
         {
             var num = Convert.ToInt32(o);
-            if (ProductObject.OriginalList.Count <= num - 1) return;
-            AddProduct(ProductObject.OriginalList[num - 1]);
+            if (ProductObject.List.Count <= num - 1) return;
+            AddProduct(ProductObject.List[num - 1]);
         }
         private void PreferentialChanged(object o)
         {
@@ -1001,7 +1001,7 @@ namespace Jiandanmao.ViewModel
             var discountProductAmount = 0d;
             order.TangOrderProducts.Where(a => a.ProductStatus != TangOrderProductStatus.Return).ForEach(item =>
             {
-                var product = ProductObject.OriginalList?.FirstOrDefault(b => b.Id == item.ProductId);
+                var product = ApplicationObject.App.Products?.FirstOrDefault(b => b.Id == item.ProductId);
                 if (product == null || !product.IsDiscount) return;
                 discountProductAmount += item.Amount;
             });
@@ -1196,7 +1196,7 @@ namespace Jiandanmao.ViewModel
                 if (product == null) continue;
                 if (product.Stock < good.Quantity)
                 {
-                    DialogHost.Show(new MessageDialog { Message = { Text = $"商品【{product.Name}数量不足】" } });
+                    DialogHost.Show(new MessageDialog { Message = { Text = $"商品【{product.Name}】数量不足" } });
                     isSuccess = false;
                     return null;
                 }

@@ -3,10 +3,131 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Jiandanmao.Uc"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+             x:Name="FastFoodPaymentControl">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontFamily" Value="微软雅黑"/>
+            </Style>
+            <Style TargetType="{x:Type Border}" x:Key="PayMoney">
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="BorderBrush" Value="#009789" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Width" Value="100" />
+                <Setter Property="Margin" Value="0 0 30 0" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border BorderBrush="#ccc" BorderThickness="1" Margin="10 0 0 0" Padding="10 10 0 0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <Grid Background="#009789" Margin="-11 -11 0 10" Height="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{DynamicResource MaterialDesignToolButton}" Command="{Binding BackCommand}" Foreground="#fff" Margin="0 -2 0 0">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ArrowLeftBold" Height="28" Width="28"></materialDesign:PackIcon>
+                                <TextBlock>返回</TextBlock>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120">订单金额：</TextBlock>
+                    <TextBlock Foreground="Red" Text="{Binding OrderAmount}"></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120">整单折扣：</TextBlock>
+                    <TextBox Foreground="Red" FontSize="20" x:Name="txtDiscount" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding OrderDiscount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="KeyUp">
+                                <i:InvokeCommandAction Command="{Binding DiscountChangedCommand}" CommandParameter="{Binding ElementName=txtDiscount}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120">整单立减：</TextBlock>
+                    <TextBox Foreground="Red" FontSize="20" x:Name="txtPreferential" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding PreferentialAmount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="KeyUp">
+                                <i:InvokeCommandAction Command="{Binding PreferentialChangedCommand}" CommandParameter="{Binding ElementName=txtPreferential}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120" Foreground="Red">应收金额：</TextBlock>
+                    <TextBlock Foreground="Red" Text="{Binding ActualAmount}"></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120" Foreground="Red">实收：</TextBlock>
+                    <TextBox Foreground="Red" FontSize="20" x:Name="txtReceived" Height="35" Width="100" Margin="0 -5 0 0" VerticalAlignment="Top" Text="{Binding ReceivedAmount}" PreviewTextInput="Txt_PreviewTextInput" GotFocus="Txt_GotFocus">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="KeyUp">
+                                <i:InvokeCommandAction Command="{Binding ReceivedChangedCommand}" CommandParameter="{Binding ElementName=txtReceived}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120" Foreground="Red">找零：</TextBlock>
+                    <TextBlock Foreground="Red" Text="{Binding GiveAmount}"></TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Width="120">备注：</TextBlock>
+                    <ComboBox Grid.Column="1" materialDesign:HintAssist.Hint="输入或选择" IsEditable="True" materialDesign:HintAssist.HintOpacity=".26" Height="35" Width="400" Margin="0 -5 0 0" Text="{Binding PaymentRemark}" ItemsSource="{Binding PayRemarks}" />
+                </StackPanel>
+            </StackPanel>
+
+            <ItemsControl Grid.Row="1" BorderBrush="#ccc" BorderThickness="0 1 0 0" Padding="0 10 0 0" Margin="0 20 0 0" ItemsSource="{Binding PaymentTypes}" Grid.IsSharedSizeScope="True">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel x:Name="StackPanel">
+                            <Border x:Name="Border" BorderBrush="#ccc" BorderThickness="1" Margin="0 10 20 0" DataContext="{Binding DataContext, ElementName=FastFoodPaymentControl}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <i:InvokeCommandAction Command="{Binding ClickPaymentCommand}" CommandParameter="{Binding DataContext, ElementName=StackPanel}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <TextBlock x:Name="TextBlock" TextWrapping="Wrap" Text="{Binding Name}" Padding="10" FontSize="30" DataContext="{Binding DataContext.Target, ElementName=StackPanel}"/>
+                            </Border>
+                        </StackPanel>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#009789" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#009789" />
+                                <Setter TargetName="TextBlock" Property="Foreground" Value="#fff" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Content="确定收款" Height="60" Margin="0 40 0 0" Width="200" HorizontalAlignment="Left" FontSize="30" Command="{Binding SubmitPaymentCommand}"></Button>
+                <Button Content="混合支付" Height="40" Margin="0 40 0 0" Style="{StaticResource MaterialDesignFlatButton}" Width="150" HorizontalAlignment="Left" FontSize="20" Command="{Binding MixPayCommand}"></Button>
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>

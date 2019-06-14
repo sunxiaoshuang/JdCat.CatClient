@@ -230,31 +230,83 @@ namespace JdCat.CatClient.Service
             await Database.ListRightPushAsync(targetKey, good.ObjectId);
         }
 
-        public async Task SaveFastOrderAsync(TangOrder order)
+        public TangOrder SaveFastOrder(TangOrder order)
         {
-            order.Code = GenerateOrderCode();
-            Save(order);
-            var key = AddKeyPrefix<TangOrder>("FastOrder");
-            await Database.StringSetAsync(key, order.ObjectId);
-        }
-
-        public async Task<TangOrder> GetFastOrderAsync()
-        {
-            var key = AddKeyPrefix<TangOrder>("FastOrder");
-            var id = await Database.StringGetAsync(key);
-            if (id.HasValue)
+            ValidateFastOrder(order);
+            if (string.IsNullOrEmpty(order.Code))
             {
-                var order = await GetAsync<TangOrder>(id);
-                order.TangOrderProducts = GetOrderProduct(order.ObjectId)?.ToObservable() ?? new ObservableCollection<TangOrderProduct>();
+                order.Code = GenerateOrderCode();
+                order.Identifier = (int)GenerateOrderIdentity();
+                Save(order);
             }
-            return null;
+            else
+            {
+                Update(order);
+            }
+            // 找出已经删除了的订单商品
+            var goods = GetOrderProduct(order.ObjectId);
+            if (goods != null)
+            {
+                var ids = order.TangOrderProducts.Where(a => !string.IsNullOrEmpty(a.ObjectId)).Select(a => a.ObjectId);
+                goods.Where(a => !ids.Contains(a.ObjectId)).ForEach(a => RemoveOrderProduct(a));
+            }
+            order.TangOrderProducts?.ForEach(good =>
+            {
+                good.OrderObjectId = order.ObjectId;
+                good.ModifyTime = DateTime.Now;
+                SaveOrderProduct(good);
+            });
+            return order;
         }
 
-        public async Task<TangOrder> FinishFastOrderAsync(TangOrder order)
+        public async Task<TangOrder> PaymentFastAsync(TangOrder order)
         {
-
-            return null;
+            ValidateFastOrder(order);
+            order.OrderStatus = TangOrderStatus.Settled;
+            order.TangOrderProducts?.ForEach(a => a.ProductStatus = TangOrderProductStatus.Ordered);
+            SaveFastOrder(order);
+            var orderPaymentKey = AddKeyPrefix<TangOrderPayment>($"Order:{order.ObjectId}");
+            order.TangOrderPayments.ForEach(payment =>
+            {
+                payment.OrderObjectId = order.ObjectId;
+                Save(payment);
+            });
+            await SetRelativeEntitysAsync<TangOrderPayment, TangOrder>(order.ObjectId, order.TangOrderPayments.ToArray());
+            var key = AddKeyPrefix<TangOrder>("Hoogup");
+            await Database.SetRemoveAsync(key, order.ObjectId);
+            return order;
         }
+
+        public async Task HoogupOrderAsync(TangOrder order)
+        {
+            ValidateFastOrder(order);
+            var key = AddKeyPrefix<TangOrder>("Hoogup");
+            await Database.SetAddAsync(key, order.ObjectId);
+        }
+
+        public async Task<List<TangOrder>> GetHoogupOrdersAsync()
+        {
+            var key = AddKeyPrefix<TangOrder>("Hoogup");
+            var ids = await Database.SetMembersAsync(key);
+            var orders = await GetAsync<TangOrder>(ids.Select(a => a.ToString()).ToArray());
+            orders?.ForEach(order => order.TangOrderProducts = GetOrderProduct(order.ObjectId).ToObservable());
+            return orders;
+        }
+
+        public async Task RemoveHoogupOrderAsync(TangOrder order)
+        {
+            if (order.TangOrderProducts == null || order.TangOrderProducts.Count == 0)
+            {
+                order.TangOrderProducts = GetOrderProduct(order.ObjectId)?.ToObservable();
+            }
+            await Database.KeyDeleteAsync(AddKeyPrefix<TangOrder>(order.ObjectId));
+            await Database.ListRemoveAsync(AddKeyPrefix<TangOrder>("List"), order.ObjectId);
+            order.TangOrderProducts?.ForEach(async good => await Database.KeyDeleteAsync(AddKeyPrefix<TangOrderProduct>(good.ObjectId)));
+            await Database.SetRemoveAsync(AddKeyPrefix<TangOrder>("Hoogup"), order.ObjectId);
+        }
+
+
+
 
         /// <summary>
         /// 生成订单编号
@@ -286,7 +338,32 @@ namespace JdCat.CatClient.Service
             return Database.StringIncrement(key);
         }
 
+        /// <summary>
+        /// 验证快餐订单
+        /// </summary>
+        /// <param name="order"></param>
+        private void ValidateFastOrder(TangOrder order)
+        {
+            if (string.IsNullOrEmpty(order.ObjectId)) return;
+            var entity = Get<TangOrder>(order.ObjectId);
+            if (entity == null)
+            {
+                throw new Exception("订单不存在或已被删除！");
+            }
+            if ((entity.OrderStatus & TangOrderStatus.Finish) == 0) return;
+            throw new Exception("对不起，该订单已在其他收银台结算，请勿重复操作");
+        }
 
+        /// <summary>
+        /// 移除订单商品
+        /// </summary>
+        /// <param name="product"></param>
+        public void RemoveOrderProduct(TangOrderProduct product)
+        {
+            Database.KeyDelete(AddKeyPrefix<TangOrderProduct>(product.ObjectId));
+            var orderProductKey = AddKeyPrefix<TangOrderProduct>($"Order:{product.OrderObjectId}");
+            Database.ListRemove(orderProductKey, product.ObjectId);
+        }
 
     }
 }

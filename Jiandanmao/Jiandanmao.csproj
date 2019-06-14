@@ -281,6 +281,9 @@
     <Compile Include="Uc\FastFood.xaml.cs">
       <DependentUpon>FastFood.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\FastFoodHoogup.xaml.cs">
+      <DependentUpon>FastFoodHoogup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uc\FastFoodPayment.xaml.cs">
       <DependentUpon>FastFoodPayment.xaml</DependentUpon>
     </Compile>
@@ -318,6 +321,7 @@
     <Compile Include="ViewModel\FastFoodViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodChangeDeskViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodFenOrderViewModel.cs" />
+    <Compile Include="ViewModel\FastFoodHoogupViewModel.cs" />
     <Compile Include="ViewModel\MixPaymentViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodDetailViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodViewModel.cs" />
@@ -413,6 +417,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\FastFood.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\FastFoodHoogup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

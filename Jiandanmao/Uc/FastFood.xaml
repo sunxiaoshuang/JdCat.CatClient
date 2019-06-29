@@ -17,9 +17,9 @@
     </i:Interaction.Triggers>
     <UserControl.Resources>
         <ResourceDictionary>
-            
+
             <convert:TangOrderProductDescriptionTypeConvert x:Key="topdtc" />
-            
+
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -33,7 +33,7 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="80" />
+                <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <Grid Background="#009789">
                 <Grid.ColumnDefinitions>
@@ -156,32 +156,41 @@
                 </StackPanel>
             </Border>
             <Border Grid.Row="3" BorderBrush="#ddd" BorderThickness="1 0 1 1">
-                <StackPanel Orientation="Horizontal">
-                    <Button Height="78" Width="100" FontSize="22" Command="{Binding ClearCommand}">清空</Button>
-                    <Button Height="78" Width="100" FontSize="22" Command="{Binding HoogupCommand}">挂单</Button>
-                    <Button Height="78" Width="100" FontSize="22" Command="{Binding PayCommand}">收款</Button>
-                </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Width="100" Height="50" FontSize="16" Command="{Binding ClearCommand}">整单删除</Button>
+                        <Button Width="100" Height="50" FontSize="16" Command="{Binding HoogupCommand}">挂单</Button>
+                        <Button Width="100" Height="50" FontSize="16" Command="{Binding PickOrderCommand}">取单</Button>
+                        <!--<Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20 20 0 50" Style="{StaticResource MaterialDesignFloatingActionLightButton}" Command="{Binding PickOrderCommand}" Content="取单" />-->
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <Button Height="50" FontSize="16" Command="{Binding PayCommand}" Content="￥收款"/>
+                    </StackPanel>
+                </Grid>
             </Border>
         </Grid>
         <!--功能区-->
         <smtx:XamlDisplay Height="Auto" Grid.Column="1">
             <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True" x:Name="transitioner">
-                
-            <!--选择菜品-->
-            
+
+                <!--选择菜品-->
+
                 <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
                     <local:FastFoodProduct />
                 </materialDesign:TransitionerSlide>
 
-                
-            <!--结账-->
-            
+
+                <!--结账-->
+
                 <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect SlideInFromLeft}">
                     <local:FastFoodPayment />
                 </materialDesign:TransitionerSlide>
 
             </materialDesign:Transitioner>
         </smtx:XamlDisplay>
-        <Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20 20 0 50" Style="{StaticResource MaterialDesignFloatingActionLightButton}" Command="{Binding PickOrderCommand}" Content="取单" />
     </Grid>
 </UserControl>

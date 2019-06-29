@@ -79,6 +79,7 @@ namespace Jiandanmao.ViewModel
         public ICommand ReduceCommand => new AnotherCommandImplementation(Reduce);
         public ICommand IncreaseCommand => new AnotherCommandImplementation(Increase);
         public ICommand ProductClickCommand => new AnotherCommandImplementation(ProductClickAsync);
+        public ICommand ClearProductKeyCommand => new AnotherCommandImplementation(ClearProductKey);
 
         #endregion
 
@@ -459,6 +460,13 @@ namespace Jiandanmao.ViewModel
                 CalcOrderAmount();
                 CalcPayment();
             }
+        }
+
+        private void ClearProductKey(object o)
+        {
+            var txt = (TextBox)o;
+            txt.Text = string.Empty;
+            txt.Focus();
         }
 
         #endregion

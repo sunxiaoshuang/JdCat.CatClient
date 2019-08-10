@@ -14,6 +14,10 @@ using JdCat.CatClient.Model;
 using JdCat.CatClient.Common;
 using System.Threading.Tasks;
 using JdCat.CatClient.Model.Enum;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Diagnostics;
 
 namespace Jiandanmao.Pages
 {
@@ -52,6 +56,7 @@ namespace Jiandanmao.Pages
                 PasswordBox.Focus();
                 PasswordBox.SelectAll();
             }));
+            CheckUpdate();
         }
 
         private string name;
@@ -135,64 +140,80 @@ namespace Jiandanmao.Pages
                         //Close();
 
 
-
-                        /* 登录流程
-                         * 1. 员工登录：
-                         *      a. 根据登录名，读取本地数据库中的员工信息
-                         *      b. 如果存在该员工，则使用该员工的id、密码登录远程服务器
-                         *      c. 如果登录成功，则进入系统；如果不成功，则进入下一步商户登录
-                         *      d. 如果远程登录出错，则验证已取得的员工密码是否匹配，如果匹配成功则进入系统，如果不成功则进入下一步商户登录
-                           2. 商户登录：
-                                a. 使用帐号密码，以商户的身份登录服务器
-                                b. 如果登录成功，则进入系统；如果不成功，则提示用户登录名或密码错误
-                                c. 如果远程登录出错，则使用登录名读取本地数据库中的商户信息
-                                d. 如果存在商户，则验证密码，密码验证成功进入系统，验证失败提示用户登录名或密码错误
-                         */
-                        using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+                        if (!ApplicationObject.App.Config.IsCash)           // 如果不需要收银
                         {
-                            var service = scope.Resolve<IUtilService>();
-                            var staff = await service.GetStaffByAliseAsync(name.Trim().ToLower());
-                            if (staff != null)
+                            var result = await Request.LoginAsync(name, pw);
+                            if (result.Success)
                             {
+                                EnterSystem(null, result.Data);
+                                return;
+                            }
+
+                            args.Session.Close();
+                            MessageTips("帐号或密码错误");
+                        }
+                        else
+                        {
+
+
+                            /* 登录流程
+                             * 1. 员工登录：
+                             *      a. 根据登录名，读取本地数据库中的员工信息
+                             *      b. 如果存在该员工，则使用该员工的id、密码登录远程服务器
+                             *      c. 如果登录成功，则进入系统；如果不成功，则进入下一步商户登录
+                             *      d. 如果远程登录出错，则验证已取得的员工密码是否匹配，如果匹配成功则进入系统，如果不成功则进入下一步商户登录
+                               2. 商户登录：
+                                    a. 使用帐号密码，以商户的身份登录服务器
+                                    b. 如果登录成功，则进入系统；如果不成功，则提示用户登录名或密码错误
+                                    c. 如果远程登录出错，则使用登录名读取本地数据库中的商户信息
+                                    d. 如果存在商户，则验证密码，密码验证成功进入系统，验证失败提示用户登录名或密码错误
+                             */
+                            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+                            {
+                                var service = scope.Resolve<IUtilService>();
+                                var staff = await service.GetStaffByAliseAsync(name.Trim().ToLower());
+                                if (staff != null)
+                                {
+                                    try
+                                    {
+                                        var result = await Request.LoginStaffAsync(staff.Id, pw);
+                                        if (result.Success)
+                                        {
+                                            EnterSystem(result.Data);
+                                            return;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (staff.Password == UtilHelper.MD5(pw))
+                                        {
+                                            EnterSystem(staff);
+                                            return;
+                                        }
+                                    }
+                                }
                                 try
                                 {
-                                    var result = await Request.LoginStaffAsync(staff.Id, pw);
+                                    var result = await Request.LoginAsync(name, pw);
                                     if (result.Success)
                                     {
-                                        EnterSystem(result.Data);
+                                        EnterSystem(null, result.Data);
                                         return;
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    if (staff.Password == UtilHelper.MD5(pw))
+                                    var business = await service.GetEntityByCodeAsync<Business>(name.Trim().ToLower());
+                                    if (business != null && business.Password == UtilHelper.MD5(pw))
                                     {
-                                        EnterSystem(staff);
+                                        EnterSystem(null, business);
                                         return;
                                     }
                                 }
-                            }
-                            try
-                            {
-                                var result = await Request.LoginAsync(name, pw);
-                                if (result.Success)
-                                {
-                                    EnterSystem(null, result.Data);
-                                    return;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                var business = await service.GetEntityByCodeAsync<Business>(name.Trim().ToLower());
-                                if (business != null && business.Password == UtilHelper.MD5(pw))
-                                {
-                                    EnterSystem(null, business);
-                                    return;
-                                }
-                            }
 
-                            args.Session.Close();
-                            MessageTips("帐号或密码错误");
+                                args.Session.Close();
+                                MessageTips("帐号或密码错误");
+                            }
                         }
                     });
                 }
@@ -318,6 +339,42 @@ namespace Jiandanmao.Pages
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 await scope.Resolve<IUtilService>().SetLoginBusinessAsync(ApplicationObject.App.Business);
+            }
+        }
+
+        /// <summary>
+        /// 检查更新
+        /// </summary>
+        private async void CheckUpdate()
+        {
+            try
+            {
+                var host = ApplicationObject.App.Config.BackStageWebSite;
+                var curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                var url = $"{host}/upgrade/version.json";
+                using (var client = new HttpClient())
+                {
+                    var res = await client.GetAsync(url);
+                    res.EnsureSuccessStatusCode();
+                    var content = await res.Content.ReadAsStringAsync();
+                    var json = JObject.Parse(content);
+                    var version = json["version"].Value<string>();
+                    var oldArr = curVersion.Split('.').Select(a => int.Parse(a)).ToList();
+                    var newArr = version.Split('.').Select(a => int.Parse(a)).ToList();
+                    if (!(oldArr[0] < newArr[0] || oldArr[1] < newArr[1] || oldArr[2] < newArr[2]))
+                    {
+                        // 已经是最新版本
+                        return;
+                    }
+                    var result = MessageBox.Show("存在新版本，是否更新！", "提示", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.No) return;
+                    Process.Start(System.IO.Path.Combine(Environment.CurrentDirectory, "JdCatUpgrade.exe"));
+                    this.Close();
+                }
+            }
+            catch (Exception)
+            {
+                
             }
         }
     }

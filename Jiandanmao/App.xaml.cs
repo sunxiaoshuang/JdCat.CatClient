@@ -33,22 +33,24 @@ namespace Jiandanmao
                 if (property == null) continue;
                 property.SetValue(ApplicationObject.App.Config, val);
             }
-            // 注册依赖
-            var builder = new ContainerBuilder();
-            //builder.RegisterType<CatDbContext>();
-            //builder.RegisterType<RedisHelper>();
-            builder.Register(a => new DatabaseConfig
+            if (!ApplicationObject.App.Config.IsCash)       // 如果是收银，则加载数据库连接
             {
-                Api = ApplicationObject.App.Config.ApiUrl,
-                KeyPrefix = ApplicationObject.App.Config.RedisDefaultKey
-            }).SingleInstance();
-            var conn = ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["RedisConnectionString"].ConnectionString);
-            builder.Register<IConnectionMultiplexer>(a => conn).SingleInstance();
-            builder.RegisterType<OrderService>().As<IOrderService>();
-            builder.RegisterType<UtilService>().As<IUtilService>();
-            //builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
-            ApplicationObject.App.DataBase = builder.Build();
-            
+                // 注册依赖
+                var builder = new ContainerBuilder();
+                //builder.RegisterType<CatDbContext>();
+                //builder.RegisterType<RedisHelper>();
+                builder.Register(a => new DatabaseConfig
+                {
+                    Api = ApplicationObject.App.Config.ApiUrl,
+                    KeyPrefix = ApplicationObject.App.Config.RedisDefaultKey
+                }).SingleInstance();
+                var conn = ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["RedisConnectionString"].ConnectionString);
+                builder.Register<IConnectionMultiplexer>(a => conn).SingleInstance();
+                builder.RegisterType<OrderService>().As<IOrderService>();
+                builder.RegisterType<UtilService>().As<IUtilService>();
+                //builder.RegisterType<PaymentTypeService>().As<IPaymentTypeService>();
+                ApplicationObject.App.DataBase = builder.Build();
+            }
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

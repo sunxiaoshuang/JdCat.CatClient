@@ -137,10 +137,10 @@ namespace Jiandanmao.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async static Task<List<Printer>> GetPrintersAsync(int id)
+        public async static Task<List<ClientPrinter>> GetPrintersAsync(int id)
         {
             var url = $"{ApiUrl}/Client/GetPrinters/{id}";
-            var result = await HttpRequestAsync<List<Printer>>(url);
+            var result = await HttpRequestAsync<List<ClientPrinter>>(url);
             return result.Data;
         }
         

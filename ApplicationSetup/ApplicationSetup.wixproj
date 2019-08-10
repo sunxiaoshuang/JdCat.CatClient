@@ -45,6 +45,8 @@
     <Content Include="Lib\JdCat.CatClient.IService.dll" />
     <Content Include="Lib\JdCat.CatClient.Model.dll" />
     <Content Include="Lib\JdCat.CatClient.Service.dll" />
+    <Content Include="Lib\JdCatUpgrade.exe" />
+    <Content Include="Lib\JdCatUpgrade.exe.config" />
     <Content Include="Lib\Jiandanmao.exe.config" />
     <Content Include="Lib\keyboard.exe" />
     <Content Include="Lib\MahApps.Metro.dll" />

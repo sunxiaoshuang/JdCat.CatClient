@@ -112,10 +112,13 @@ namespace Jiandanmao.Code
             //await InitCatering();
 
             // 数据库初始化
-            using (var scope = DataBase.BeginLifetimeScope())
+            if (Config.IsCash)
             {
-                var service = scope.Resolve<IUtilService>();
-                service.InitDatabase(Business.Id);
+                using (var scope = DataBase.BeginLifetimeScope())
+                {
+                    var service = scope.Resolve<IUtilService>();
+                    service.InitDatabase(Business.Id);
+                }
             }
         }
 
@@ -178,6 +181,11 @@ namespace Jiandanmao.Code
                             continue;                                                                   // 不进行打印
                         if ((printer.Device.Scope & ActionScope.Store) > 0)
                             printer.Print(tang, option);
+                    }
+                    else if (order is ThirdOrder thirdOrder)
+                    {
+                        if ((printer.Device.Scope & ActionScope.Takeout) > 0)
+                            printer.Print(thirdOrder);
                     }
                 }
             }
@@ -359,6 +367,27 @@ namespace Jiandanmao.Code
                 }
             }
         }
+
+        /// <summary>
+        /// 加载远程打印机（不需收银时）
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadRemotePrinterAsync()
+        {
+            var printers = await Request.GetPrintersAsync(Business.Id);
+            if (printers != null)
+            {
+                printers.ForEach(a =>
+                {
+                    var printer = new Printer { Device = a };
+                    if (printer.Device.State == 1)
+                    {
+                        printer.Open();
+                        Printers.Add(printer);
+                    }
+                });
+            }
+        }
     }
 
     public class ApplicationConfig
@@ -368,5 +397,7 @@ namespace Jiandanmao.Code
         public string BackStageWebSite { get; set; }
         public string RedisDefaultKey { get; set; }
         public string StaffPrefix { get; set; }
+        public string NeedCash { get; set; }
+        public bool IsCash { get { return NeedCash == "1"; } }
     }
 }

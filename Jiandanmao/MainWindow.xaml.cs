@@ -43,13 +43,23 @@ namespace Jiandanmao
             DataContext = new MainWindowViewModel(MainSnackbar.MessageQueue);
 
             Init();
+            this.KeyDown += Window_KeyDown;
             //CheckUpdate();
         }
 
-        private void Init()
+        private async void Init()
         {
             InitTimer();
             title.Text = ApplicationObject.App.Business.Name;
+            if (!ApplicationObject.App.Config.IsCash)       // 不需要收银
+            {
+                btnSettle.Visibility = Visibility.Collapsed;
+                btnChange.Visibility = Visibility.Collapsed;
+                btnSync.Visibility = Visibility.Collapsed;
+                btnUpload.Visibility = Visibility.Collapsed;
+                await ApplicationObject.App.LoadRemotePrinterAsync();
+                return;
+            }
             InitUploadTimer();
             if (!ApplicationObject.App.IsAdmin && (ApplicationObject.App.Staff.StaffPost.Authority & StaffPostAuth.Manager) == 0)
             {
@@ -59,7 +69,7 @@ namespace Jiandanmao
             {
                 btnChange.Visibility = Visibility.Collapsed;
             }
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 Thread.Sleep(500);
                 Sync();
@@ -85,32 +95,51 @@ namespace Jiandanmao
             try
             {
                 var result = await Request.HttpRequestAsync(orderUrl);
-                var json = JsonConvert.DeserializeObject<JsonData>(result);
-                if (json.Data == null) return;
-                var data = (JArray)json.Data;
-                var orders = new List<Order>();
-                foreach (string item in data)
+                var json = JsonConvert.DeserializeObject<JsonData<JObject>>(result);
+                // 本地订单
+                var local = json.Data["local"];
+                if (local.HasValues)
                 {
-                    orders.Add(JsonConvert.DeserializeObject<Order>(item));
+                    var orders = new List<Order>();
+                    foreach (string item in local)
+                    {
+                        orders.Add(JsonConvert.DeserializeObject<Order>(item));
+                    }
+                    var firstOrder = orders[0];
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        var filename = string.Empty;
+                        if (firstOrder.Status == OrderStatus.Payed)
+                        {
+                            filename = "1.mp3";
+                        }
+                        else
+                        {
+                            filename = "2.mp3";
+                        }
+                        PlayMedia("Assets/Video/" + filename);
+                    }, DispatcherPriority.Normal);
+                    orders.ForEach(order =>
+                    {
+                        if (order.Products == null || order.Products.Count == 0) return;
+                        ApplicationObject.Print(order);
+                    });
                 }
-                var firstOrder = orders[0];
-                this.Dispatcher.Invoke(() =>
+                // 第三方订单
+                var third = json.Data["third"];
+                if (third.HasValues)
                 {
-                    var filename = string.Empty;
-                    if (firstOrder.Status == OrderStatus.Payed)
+                    var orders = new List<ThirdOrder>();
+                    foreach (string item in third)
                     {
-                        filename = "1.mp3";
+                        orders.Add(JsonConvert.DeserializeObject<ThirdOrder>(item));
                     }
-                    else
+                    orders.ForEach(order =>
                     {
-                        filename = "2.mp3";
-                    }
-                    PlayMedia("Assets/Video/" + filename);
-                }, DispatcherPriority.Normal);
-                orders.ForEach(order =>
-                {
-                    ApplicationObject.Print(order);
-                });
+                        if (order.ThirdOrderProducts == null || order.ThirdOrderProducts.Count == 0) return;
+                        ApplicationObject.Print(order);
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -262,6 +291,11 @@ namespace Jiandanmao
             //run.Close();
         }
 
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
 
         /// <summary>
         /// 500毫秒后提醒
@@ -312,5 +346,23 @@ namespace Jiandanmao
             if (MessageBox.Show("确定退出吗？", "提示", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
             this.Close();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F11)
+            {
+                if (this.WindowStyle == WindowStyle.None)//全屏
+                {
+                    this.WindowState = WindowState.Normal;
+                    this.WindowStyle = WindowStyle.SingleBorderWindow;
+                }
+                else
+                {
+                    this.WindowStyle = WindowStyle.None;
+                    this.WindowState = WindowState.Maximized;
+                }
+            }
+        }
+
     }
 }

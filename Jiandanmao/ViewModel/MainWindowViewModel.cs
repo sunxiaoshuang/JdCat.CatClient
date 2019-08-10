@@ -24,6 +24,15 @@ namespace Jiandanmao.ViewModel
             //new ContorllerItem("主页", new Home(){ DataContext = new HomeViewModel() })
             var list = new List<ContorllerItem>();
 
+            // 仅接单
+            if(!ApplicationObject.App.Config.IsCash)
+            {
+                list.Add(new ContorllerItem("外卖订单", new OrderList() { DataContext = new OrderListViewModel() }));
+                Items = list.ToArray();
+                return;
+            }
+
+            // 收银
             if (ApplicationObject.App.IsAdmin)
             {
                 list.Add(new ContorllerItem("外卖订单", new OrderList() { DataContext = new OrderListViewModel() }));

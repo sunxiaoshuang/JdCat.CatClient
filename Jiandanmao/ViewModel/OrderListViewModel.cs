@@ -126,6 +126,7 @@ namespace Jiandanmao.ViewModel
         private async void Print(object obj, int type)
         {
             var order = await GetOrderDetailAsync(obj as Order);
+            if (order.Products == null || order.Products.Count == 0) return;
             ApplicationObject.Print(order, type);
         }
 

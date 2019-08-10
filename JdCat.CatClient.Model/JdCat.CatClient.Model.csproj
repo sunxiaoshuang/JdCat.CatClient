@@ -106,6 +106,9 @@
     <Compile Include="TangOrder.cs" />
     <Compile Include="TangOrderProduct.cs" />
     <Compile Include="Enum\TangOrderStatus.cs" />
+    <Compile Include="ThirdOrder.cs" />
+    <Compile Include="ThirdOrderActivity.cs" />
+    <Compile Include="ThirdOrderProduct.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>

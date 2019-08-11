@@ -127,18 +127,25 @@ namespace Jiandanmao
                 }
                 // 第三方订单
                 var third = json.Data["third"];
-                if (third.HasValues)
+                try
                 {
-                    var orders = new List<ThirdOrder>();
-                    foreach (string item in third)
+                    if (third.HasValues)
                     {
-                        orders.Add(JsonConvert.DeserializeObject<ThirdOrder>(item));
+                        var orders = new List<ThirdOrder>();
+                        foreach (string item in third)
+                        {
+                            orders.Add(JsonConvert.DeserializeObject<ThirdOrder>(item));
+                        }
+                        orders.ForEach(order =>
+                        {
+                            if (order.ThirdOrderProducts == null || order.ThirdOrderProducts.Count == 0) return;
+                            ApplicationObject.Print(order);
+                        });
                     }
-                    orders.ForEach(order =>
-                    {
-                        if (order.ThirdOrderProducts == null || order.ThirdOrderProducts.Count == 0) return;
-                        ApplicationObject.Print(order);
-                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("第三方订单打印错误：" + ex);
                 }
             }
             catch (Exception ex)

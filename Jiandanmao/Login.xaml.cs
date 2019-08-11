@@ -336,9 +336,12 @@ namespace Jiandanmao.Pages
             var user = new Tuple<string, string>(username, pwd);
             var userStr = JsonConvert.SerializeObject(user);
             System.IO.File.WriteAllText(System.IO.Path.Combine(InfoDir, "user.json"), userStr);
-            using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+            if (ApplicationObject.App.Config.IsCash)
             {
-                await scope.Resolve<IUtilService>().SetLoginBusinessAsync(ApplicationObject.App.Business);
+                using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
+                {
+                    await scope.Resolve<IUtilService>().SetLoginBusinessAsync(ApplicationObject.App.Business);
+                }
             }
         }
 

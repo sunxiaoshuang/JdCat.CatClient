@@ -252,10 +252,10 @@ namespace Jiandanmao.Code
             var bufferArr = new List<byte[]>();
             // 打印当日序号
             bufferArr.Add(PrinterCmdUtils.AlignCenter());
-            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(4));
-            bufferArr.Add(TextToByte("#" + order.Identifier));
-            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
-            bufferArr.Add(TextToByte("简单猫"));
+            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(3));
+            bufferArr.Add(TextToByte("简单猫 #" + order.Identifier));
+            //bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+            //bufferArr.Add(TextToByte("简单猫"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 打印小票类别
             bufferArr.Add(PrinterCmdUtils.AlignLeft());
@@ -307,6 +307,17 @@ namespace Jiandanmao.Code
                     bufferArr.Add(a);
                     bufferArr.Add(PrinterCmdUtils.NextLine());
                 });
+                if (product.Tag1 != null && product.Tag1.Count > 0)
+                {
+                    bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+                    // 套餐打印明细
+                    product.Tag1.ForEach(a =>
+                    {
+                        bufferArr.Add($"  - {a.Name}".ToByte());
+                        bufferArr.Add(PrinterCmdUtils.NextLine());
+                    });
+                    bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                }
             }
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
             // 分隔
@@ -495,10 +506,10 @@ namespace Jiandanmao.Code
             var sign = order.OrderSource == 0 ? "美团" : "饿了么";
             // 打印当日序号
             bufferArr.Add(PrinterCmdUtils.AlignCenter());
-            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(4));
-            bufferArr.Add(TextToByte("#" + order.DaySeq));
-            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
-            bufferArr.Add(TextToByte(sign));
+            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(3));
+            bufferArr.Add(TextToByte(sign + " #" + order.DaySeq));
+            //bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+            //bufferArr.Add(TextToByte(sign));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             // 打印小票类别
             bufferArr.Add(PrinterCmdUtils.AlignLeft());
@@ -544,12 +555,24 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
             foreach (var product in order.ThirdOrderProducts)
             {
+                if (order.OrderSource == 1 && product.Name == "餐盒") continue;
                 var buffer = ProductLine(product, 2);
                 buffer.ForEach(a =>
                 {
                     bufferArr.Add(a);
                     bufferArr.Add(PrinterCmdUtils.NextLine());
                 });
+                if(product.Tag1 != null && product.Tag1.Count > 0)
+                {
+                    bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+                    // 套餐打印明细
+                    product.Tag1.ForEach(a => 
+                    {
+                        bufferArr.Add($"  - {a.Name}".ToByte());
+                        bufferArr.Add(PrinterCmdUtils.NextLine());
+                    });
+                    bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                }
             }
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
             // 分隔
@@ -740,7 +763,7 @@ namespace Jiandanmao.Code
                 left += "(" + product.GetDesc() + ")";
             }
             var middle = "*" + Convert.ToDouble(product.Quantity);
-            var right = Convert.ToDouble(product.Price) + "";
+            var right = Convert.ToDouble(product.Price * product.Quantity) + "";
             var place = string.Empty;
             for (int i = 0; i < maxRightLen - middle.Length - right.Length; i++)
             {
@@ -749,6 +772,7 @@ namespace Jiandanmao.Code
             right = middle + place + right;
 
             var buffer = PrinterCmdUtils.PrintLineLeftRight(left, right, fontSize: fontSize);
+
             return new List<byte[]> { buffer };
         }
 

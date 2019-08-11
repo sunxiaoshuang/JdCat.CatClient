@@ -33,7 +33,7 @@ namespace Jiandanmao
                 if (property == null) continue;
                 property.SetValue(ApplicationObject.App.Config, val);
             }
-            if (!ApplicationObject.App.Config.IsCash)       // 如果是收银，则加载数据库连接
+            if (ApplicationObject.App.Config.IsCash)       // 如果是收银，则加载数据库连接
             {
                 // 注册依赖
                 var builder = new ContainerBuilder();

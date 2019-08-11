@@ -48,8 +48,8 @@ namespace Jiandanmao.Code
             var sign = Order.OrderSource == 0 ? "美团" : "饿了么";
             // 打印当日序号
             BufferList.Add(PrinterCmdUtils.AlignCenter());
-            BufferList.Add(PrinterCmdUtils.FontSizeSetBig(2));
-            BufferList.Add(Encoding.GetEncoding("gbk").GetBytes("#" + Order.DaySeq + sign));
+            BufferList.Add(PrinterCmdUtils.FontSizeSetBig(3));
+            BufferList.Add(Encoding.GetEncoding("gbk").GetBytes(sign + "  #" + Order.DaySeq));
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.AlignLeft());

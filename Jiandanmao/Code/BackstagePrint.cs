@@ -48,8 +48,8 @@ namespace Jiandanmao.Code
             BufferList = new List<byte[]>();
             // 打印当日序号
             BufferList.Add(PrinterCmdUtils.AlignCenter());
-            BufferList.Add(PrinterCmdUtils.FontSizeSetBig(2));
-            BufferList.Add(Encoding.GetEncoding("gbk").GetBytes("#" + Order.Identifier + " 简单猫"));
+            BufferList.Add(PrinterCmdUtils.FontSizeSetBig(3));
+            BufferList.Add(Encoding.GetEncoding("gbk").GetBytes("简单猫  #" + Order.Identifier));
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.AlignLeft());

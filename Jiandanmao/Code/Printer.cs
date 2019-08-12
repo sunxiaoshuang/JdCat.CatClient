@@ -511,6 +511,12 @@ namespace Jiandanmao.Code
             //bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
             //bufferArr.Add(TextToByte(sign));
             bufferArr.Add(PrinterCmdUtils.NextLine());
+            if(order.PrintTimes > 0)
+            {
+                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                bufferArr.Add(TextToByte("（补打）"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
             // 打印小票类别
             bufferArr.Add(PrinterCmdUtils.AlignLeft());
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));

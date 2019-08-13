@@ -128,11 +128,11 @@ namespace Jiandanmao.Code
                     if (isStop[0]) break;      // 是否停止任务
                     if (_printQueue.Count > 0)
                     {
+                        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                         try
                         {
                             lock (GetLock(Device.IP))
                             {
-                                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                                 socket.Connect(new IPEndPoint(IPAddress.Parse(Device.IP), Device.Port));
                                 while (true)
                                 {
@@ -146,7 +146,6 @@ namespace Jiandanmao.Code
                                     _printQueue.Remove(order);
                                     Thread.Sleep(200);              // 每次打印一单，停顿200毫秒
                                 }
-                                socket.Close();
                             }
                         }
                         catch (Exception ex)
@@ -167,6 +166,10 @@ namespace Jiandanmao.Code
 
                             // 打印失败后，线程等待2秒再开始执行打印任务
                             Thread.Sleep(2000);
+                        }
+                        finally
+                        {
+                            socket.Close();
                         }
                     }
                     else

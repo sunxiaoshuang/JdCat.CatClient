@@ -274,7 +274,14 @@ namespace Jiandanmao.Code
                 bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
                 bufferArr.Add(TextToByte($"备注：{order.Remark}"));
                 bufferArr.Add(PrinterCmdUtils.NextLine());
-                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
+            // 开票信息
+            if (!string.IsNullOrEmpty(order.InvoiceTax) && !string.IsNullOrEmpty(order.InvoiceName))
+            {
+                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                bufferArr.Add(TextToByte($"开票信息：{order.InvoiceName}，{order.InvoiceTax}"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
             // 商户名称
@@ -291,12 +298,6 @@ namespace Jiandanmao.Code
             // 订单编号
             bufferArr.Add(TextToByte($"订单编号：{order.OrderCode}"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            // 开票信息
-            if (!string.IsNullOrEmpty(order.InvoiceTax) && !string.IsNullOrEmpty(order.InvoiceName))
-            {
-                bufferArr.Add(TextToByte($"开票信息：{order.InvoiceName}，{order.InvoiceTax}"));
-                bufferArr.Add(PrinterCmdUtils.NextLine());
-            }
             // 商品分隔
             bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
@@ -514,7 +515,7 @@ namespace Jiandanmao.Code
             //bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
             //bufferArr.Add(TextToByte(sign));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            if(order.PrintTimes > 0)
+            if (order.PrintTimes > 0)
             {
                 bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
                 bufferArr.Add(TextToByte("（补打）"));
@@ -534,7 +535,14 @@ namespace Jiandanmao.Code
                 bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
                 bufferArr.Add(TextToByte($"备注：{order.Caution}"));
                 bufferArr.Add(PrinterCmdUtils.NextLine());
-                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
+            // 开票信息
+            if (!string.IsNullOrEmpty(order.InvoiceTitle) && !string.IsNullOrEmpty(order.TaxpayerId))
+            {
+                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                bufferArr.Add(TextToByte($"开票信息：{order.InvoiceTitle}，{order.TaxpayerId}"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
             // 商户名称
@@ -551,12 +559,6 @@ namespace Jiandanmao.Code
             // 订单编号
             bufferArr.Add(TextToByte($"订单编号：{order.OrderId}"));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            // 开票信息
-            if (!string.IsNullOrEmpty(order.InvoiceTitle) && !string.IsNullOrEmpty(order.TaxpayerId))
-            {
-                bufferArr.Add(TextToByte($"开票信息：{order.InvoiceTitle}，{order.TaxpayerId}"));
-                bufferArr.Add(PrinterCmdUtils.NextLine());
-            }
             // 商品分隔
             bufferArr.Add(PrinterCmdUtils.SplitText("-", "购买商品", Device.Format));
             bufferArr.Add(PrinterCmdUtils.NextLine());
@@ -571,11 +573,11 @@ namespace Jiandanmao.Code
                     bufferArr.Add(a);
                     bufferArr.Add(PrinterCmdUtils.NextLine());
                 });
-                if(product.Tag1 != null && product.Tag1.Count > 0)
+                if (product.Tag1 != null && product.Tag1.Count > 0)
                 {
                     bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
                     // 套餐打印明细
-                    product.Tag1.ForEach(a => 
+                    product.Tag1.ForEach(a =>
                     {
                         bufferArr.Add($"  - {a.Name}".ToByte());
                         bufferArr.Add(PrinterCmdUtils.NextLine());
@@ -630,7 +632,7 @@ namespace Jiandanmao.Code
         }
 
         #endregion
-        
+
 
         /// <summary>
         /// 后台打印
@@ -705,7 +707,7 @@ namespace Jiandanmao.Code
         /// <returns></returns>
         private byte[] TextToByte(string text)
         {
-            return Encoding.GetEncoding("gbk").GetBytes(text);
+            return Encoding.GetEncoding("gbk").GetBytes(text ?? " ");
         }
 
         private int maxRightLen = 10;           // 打印商品时，商品数量与商品价格最多占10个字符位

@@ -1,4 +1,5 @@
-﻿using JdCat.CatClient.Model;
+﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
 using JdCat.CatClient.Model.Enum;
 using Jiandanmao.Enum;
 using System.Collections.Generic;
@@ -51,7 +52,12 @@ namespace Jiandanmao.Code
             BufferList.Add(PrinterCmdUtils.FontSizeSetBig(3));
             BufferList.Add(Encoding.GetEncoding("gbk").GetBytes(sign + "  #" + Order.DaySeq));
             BufferList.Add(PrinterCmdUtils.NextLine());
-            BufferList.Add(PrinterCmdUtils.NextLine());
+            if (Order.PrintTimes > 0)
+            {
+                BufferList.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                BufferList.Add("（补打）".ToByte());
+                BufferList.Add(PrinterCmdUtils.NextLine());
+            }
             BufferList.Add(PrinterCmdUtils.AlignLeft());
             // 备注
             if (!string.IsNullOrEmpty(Order.Caution))

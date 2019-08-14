@@ -25,7 +25,7 @@ namespace Jiandanmao.Code
                     {
                         if (Printer.Device.Foods.Contains(item.Id))
                         {
-                            var name = item.Name + $"[{product.Name}]";
+                            var name = item.Name;// + $"[{product.Name}]";
                             Format(name, product.GetDesc(), product.Quantity + "");
                         }
                     });

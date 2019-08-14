@@ -90,7 +90,7 @@ namespace JdCat.CatClient.Common
         /// <returns></returns>
         public static byte[] ToByte(this string str)
         {
-            return Encoding.GetEncoding("gbk").GetBytes(str ?? "");
+            return Encoding.GetEncoding("gbk").GetBytes(str ?? " ");
         }
 
         /// <summary>

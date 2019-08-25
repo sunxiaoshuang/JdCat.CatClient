@@ -1,4 +1,5 @@
-﻿using JdCat.CatClient.Model;
+﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
 using JdCat.CatClient.Model.Enum;
 
 using Jiandanmao.Enum;
@@ -25,7 +26,7 @@ namespace Jiandanmao.Code
                     {
                         if (Printer.Device.Foods.Contains(item.Id))
                         {
-                            var name = item.Name;// + $"[{product.Name}]";
+                            var name = item.Name;
                             Format(name, product.GetDesc(), product.Quantity + "");
                         }
                     });
@@ -47,10 +48,14 @@ namespace Jiandanmao.Code
             }
             BufferList.Add(PrinterCmdUtils.FontSizeSetBig(3));
             BufferList.Add(PrinterCmdUtils.AlignLeft());
-            BufferList.Add(PrinterCmdUtils.PrintLineLeftRight(name, "*" + double.Parse(quantity).ToString(), Printer.FormatLen, 3));
+            BufferList.Add(PrinterCmdUtils.PrintLineLeftRight(name, "*" + quantity, Printer.FormatLen, 3));
             BufferList.Add(PrinterCmdUtils.NextLine());
             AfterPrint();
             Send();
+
+            UtilHelper.ErrorLog("编号:" + Order.DaySeq.ToString());
+            UtilHelper.ErrorLog(BufferList);
+
         }
         protected override void Printing()
         {

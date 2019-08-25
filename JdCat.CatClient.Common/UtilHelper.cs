@@ -179,5 +179,41 @@ namespace JdCat.CatClient.Common
             }
             return code;
         }
+
+        /// <summary>
+        /// 错误日志
+        /// </summary>
+        /// <param name="text">错误内容</param>
+        public static void ErrorLog(string text)
+        {
+            var logfile = $"{DateTime.Now:yyyy-MM-dd}.txt";
+            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            var filepath = Path.Combine(dirPath, logfile);
+            var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {text}";
+            var stream = File.AppendText(filepath);
+            stream.WriteLine(content);
+            stream.Close();
+        }
+
+        /// <summary>
+        /// 错误日志
+        /// </summary>
+        /// <param name="buffer">错误内容</param>
+        public static void ErrorLog(List<byte[]> buffer)
+        {
+            var text = string.Empty;
+            foreach (var item in buffer)
+            {
+                text += item.ToStr();
+            }
+            ErrorLog(text);
+        }
+
+
+
     }
 }

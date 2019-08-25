@@ -1,4 +1,5 @@
-﻿using JdCat.CatClient.Model;
+﻿using JdCat.CatClient.Common;
+using JdCat.CatClient.Model;
 
 using System.Net.Sockets;
 
@@ -21,9 +22,10 @@ namespace Jiandanmao.Code
                 {
                     name += $"({product.GetDesc()})";
                 }
-                BufferList.Add(PrinterCmdUtils.PrintLineLeftRight(name, "*" + double.Parse(product.Quantity + "").ToString(), Printer.FormatLen, 3));
+                BufferList.Add(PrinterCmdUtils.PrintLineLeftRight(name, "*" + product.Quantity, Printer.FormatLen, 3));
                 BufferList.Add(PrinterCmdUtils.NextLine());
             }
         }
+
     }
 }

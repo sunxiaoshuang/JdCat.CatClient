@@ -94,6 +94,16 @@ namespace JdCat.CatClient.Common
         }
 
         /// <summary>
+        /// 二进制数组转化为字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string ToStr(this byte[] buffer)
+        {
+            return Encoding.GetEncoding("gbk").GetString(buffer);
+        }
+
+        /// <summary>
         /// 将时间转化为时间戳
         /// </summary>
         /// <param name="time"></param>

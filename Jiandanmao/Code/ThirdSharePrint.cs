@@ -20,12 +20,11 @@ namespace Jiandanmao.Code
                 {
                     if (product.Tag1 != null)
                     {
-                        if (product.Tag1 == null) continue;
                         product.Tag1.ForEach(item =>
                         {
                             if (Printer.Device.Foods.Contains(item.Id))
                             {
-                                Format(item.Name/* + $"[{product.Name}]"*/, product.GetDesc());
+                                Format(item.Name, product.GetDesc());
                             }
                         });
                     }

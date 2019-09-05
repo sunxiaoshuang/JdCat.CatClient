@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              xmlns:convert="clr-namespace:Jiandanmao.Converter"
-             Height="500" d:DesignWidth="800">
+             Height="700" d:DesignWidth="800">
     <UserControl.Resources>
         <convert:DateTimeToStringValueConverter x:Key="dtts" />
         <convert:DeliveryModeToStringTypeConverter x:Key="dmts" />
@@ -18,7 +18,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
             <RowDefinition Height="5"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
@@ -71,14 +73,14 @@
                 <Label Content="{Binding Category, Converter={StaticResource octs}}" Grid.Row="1" Grid.Column="1"/>
                 <Label Content="微信支付流水号：" Grid.Row="1" Grid.Column="2"/>
                 <Label Content="{Binding WxPayCode}" Grid.Row="1" Grid.Column="3"/>
-                <Label Content="开票公司：" Grid.Row="2" Grid.Column="2"/>
-                <Label Content="{Binding InvoiceName}" Grid.Row="2" Grid.Column="3"/>
+                <Label Content="开票公司：" Grid.Row="2"/>
+                <Label Content="{Binding InvoiceName}" Grid.Row="2" Grid.Column="1"/>
                 <Label Content="纳税识别码：" Grid.Row="2" Grid.Column="2"/>
                 <Label Content="{Binding InvoiceTax}" Grid.Row="2" Grid.Column="3"/>
-                <Label Content="满减活动：" Grid.Row="3"/>
+                <!--<Label Content="满减活动：" Grid.Row="3"/>
                 <Label Content="-￥0" x:Name="fullReduce" Grid.Row="3" Grid.Column="1"/>
                 <Label Content="优惠券：" Grid.Row="3" Grid.Column="2"/>
-                <Label Content="-￥0" x:Name="coupon" Grid.Row="3" Grid.Column="3"/>
+                <Label Content="-￥0" x:Name="coupon" Grid.Row="3" Grid.Column="3"/>-->
                 <Label Content="应付款：" Grid.Row="4"/>
                 <Label Content="{Binding Price, Converter={StaticResource mtsv}}" Grid.Row="4" Grid.Column="1"/>
                 <Label Content="实付款：" Grid.Row="4" Grid.Column="2"/>
@@ -100,7 +102,20 @@
                 </ListView>
             </StackPanel>
         </ScrollViewer>
-        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+        <ScrollViewer Grid.Row="6">
+            <StackPanel Margin="5,0">
+                <Label Content="订单活动" FontWeight="Bold" FontSize="16"></Label>
+                <ListView ItemsSource="{Binding OrderActivities}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="参与活动" DisplayMemberBinding="{Binding Remark}" />
+                            <GridViewColumn Header="减免金额" DisplayMemberBinding="{Binding Amount}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="关闭" Margin="10" Height="30" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Width="60" Style="{DynamicResource MaterialDesignFlatButton}"></Button>
         </StackPanel>
     </Grid>

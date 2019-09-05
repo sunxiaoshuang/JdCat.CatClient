@@ -53,8 +53,8 @@ namespace Jiandanmao.Code
             AfterPrint();
             Send();
 
-            UtilHelper.ErrorLog("编号:" + Order.DaySeq.ToString());
-            UtilHelper.ErrorLog(BufferList);
+            //UtilHelper.ErrorLog("编号:" + Order.DaySeq.ToString());
+            //UtilHelper.ErrorLog(BufferList);
 
         }
         protected override void Printing()

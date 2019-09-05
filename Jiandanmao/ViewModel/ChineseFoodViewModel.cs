@@ -15,7 +15,6 @@ using Jiandanmao.Helper;
 using JdCat.CatClient.Model;
 using JdCat.CatClient.Model.Enum;
 using JdCat.CatClient.IService;
-using JdCatModel = JdCat.CatClient.Model;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
@@ -68,10 +67,7 @@ namespace Jiandanmao.ViewModel
         public ICommand ClearProductKeyCommand => new AnotherCommandImplementation(ClearProductKey);
         public ICommand PaymentLoadedCommand => new AnotherCommandImplementation(PaymentLoaded);
         public ICommand PayCommand => new AnotherCommandImplementation(Pay);
-        //public ICommand AmountResetCommand => new AnotherCommandImplementation(AmountReset);
         public ICommand CheckPaymentCommand => new AnotherCommandImplementation(CheckPayment);
-        //public ICommand ClickMoneyCommand => new AnotherCommandImplementation(ClickMoney);
-        //public ICommand ActualChangedCommand => new AnotherCommandImplementation(ActualChanged);
         public ICommand SubmitPaymentCommand => new AnotherCommandImplementation(SubmitPayment);
         public ICommand RemarkChangeCommand => new AnotherCommandImplementation(RemarkChange);
         public ICommand PrePrintCommand => new AnotherCommandImplementation(PrePrint);
@@ -1237,8 +1233,6 @@ namespace Jiandanmao.ViewModel
             var order = SelectedDesk.Order;
             if (!IsConfirm) return;
             order.PayTime = DateTime.Now;
-            //order.ReceivedAmount = ReceivedAmount;
-            //order.GiveAmount = GiveAmount;
             order.ActualAmount = ActualAmount;
             order.PaymentRemark = PaymentRemark;
             order.PreferentialAmount = PreferentialAmount;

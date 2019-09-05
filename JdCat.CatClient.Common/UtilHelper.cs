@@ -184,10 +184,10 @@ namespace JdCat.CatClient.Common
         /// 错误日志
         /// </summary>
         /// <param name="text">错误内容</param>
-        public static void ErrorLog(string text)
+        public static void Log(string text)
         {
             var logfile = $"{DateTime.Now:yyyy-MM-dd}.txt";
-            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
+            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log");
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
@@ -210,7 +210,7 @@ namespace JdCat.CatClient.Common
             {
                 text += item.ToStr();
             }
-            ErrorLog(text);
+            Log(text);
         }
 
 

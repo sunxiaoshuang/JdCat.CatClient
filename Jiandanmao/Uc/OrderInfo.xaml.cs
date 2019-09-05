@@ -15,8 +15,6 @@ namespace Jiandanmao.Uc
             this.DataContext = order;
             info.Content = $"#{order.Identifier} 配送信息";
             address.Content = order.ReceiverName + "-" + order.Phone + "-" + order.ReceiverAddress;
-            fullReduce.Content = order.SaleFullReduce == null ? "" : ("-￥" + order.SaleFullReduce.ReduceMoney);
-            coupon.Content = order.SaleCouponUser == null ? "" : ("-￥" + order.SaleCouponUser.Value);
         }
     }
 }

@@ -57,6 +57,8 @@
     <Compile Include="CookProductRelative.cs" />
     <Compile Include="Desk.cs" />
     <Compile Include="DeskType.cs" />
+    <Compile Include="Enum\OrderActivityType.cs" />
+    <Compile Include="OrderActivity.cs" />
     <Compile Include="Enum\PaymentCategory.cs" />
     <Compile Include="Enum\ActivityStatus.cs" />
     <Compile Include="Enum\CouponStatus.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Enum\OrderType.cs" />
     <Compile Include="Enum\PrinterMode.cs" />
     <Compile Include="Enum\ActionScope.cs" />
+    <Compile Include="Enum\PrintOrderMode.cs" />
     <Compile Include="Enum\ProductStatus.cs" />
     <Compile Include="Enum\ServiceProvider.cs" />
     <Compile Include="Enum\StaffPostAuth.cs" />

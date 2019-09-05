@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="简单猫" Language="2052" Codepage="936" Version="2.1.4" Manufacturer="简单猫科技（武汉）有限公司" UpgradeCode="b2249de8-bc85-41be-b6b3-a2e6a2f735a2">
+  <Product Id="*" Name="简单猫" Language="2052" Codepage="936" Version="2.1.5" Manufacturer="简单猫科技（武汉）有限公司" UpgradeCode="b2249de8-bc85-41be-b6b3-a2e6a2f735a2">
     <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
 
     <MajorUpgrade DowngradeErrorMessage="您的电脑已经安装一个更新的版本，无需重新安装！" />

@@ -110,6 +110,10 @@ namespace JdCat.CatClient.Model
         public int PrintTimes { get; set; }
 
         /// <summary>
+        /// 打印方式
+        /// </summary>
+        public PrintOrderMode PrintType { get; set; }
+        /// <summary>
         /// 订单状态
         /// </summary>
         public OrderStatus Status { get; set; }

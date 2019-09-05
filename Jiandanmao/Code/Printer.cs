@@ -142,6 +142,14 @@ namespace Jiandanmao.Code
                                     ctl.Dispatcher.Invoke(() =>
                                     {
                                         PrintOrder(order, socket);
+                                        if(order is Order entity)
+                                        {
+                                            UtilHelper.Log($"打印机{Device.Name}，小程序订单：{entity.Identifier}，{entity.OrderCode}");
+                                        }
+                                        else if (order is ThirdOrder third)
+                                        {
+                                            UtilHelper.Log($"打印机{Device.Name}，第三方订单：{third.DaySeq}，{third.OrderId}");
+                                        }
                                     });
                                     _printQueue.Remove(order);
                                     Thread.Sleep(200);              // 每次打印一单，停顿200毫秒
@@ -150,26 +158,27 @@ namespace Jiandanmao.Code
                         }
                         catch (Exception ex)
                         {
-                            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
-                            if (!Directory.Exists(dirPath))
-                            {
-                                Directory.CreateDirectory(dirPath);
-                            }
-                            var filepath = Path.Combine(dirPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
-                            var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 打印出错，打印机[{Device.Name}]连接错误，原因：{ex}";
-                            ctl.Dispatcher.Invoke(() =>
-                            {
-                                var stream = File.AppendText(filepath);
-                                stream.WriteLine(content);
-                                stream.Close();
-                            });
+                            //var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
+                            //if (!Directory.Exists(dirPath))
+                            //{
+                            //    Directory.CreateDirectory(dirPath);
+                            //}
+                            //var filepath = Path.Combine(dirPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                            var content = $"打印机[{Device.Name}]出错，原因：{ex.ToString()}";
+                            //ctl.Dispatcher.Invoke(() =>
+                            //{
+                            //    var stream = File.AppendText(filepath);
+                            //    stream.WriteLine(content);
+                            //    stream.Close();
+                            //});
+                            UtilHelper.Log(content);
 
-                            // 打印失败后，线程等待2秒再开始执行打印任务
-                            Thread.Sleep(2000);
                         }
                         finally
                         {
                             socket.Close();
+                            // 打印失败后，线程等待2秒再开始执行打印任务
+                            Thread.Sleep(2000);
                         }
                     }
                     else
@@ -211,7 +220,10 @@ namespace Jiandanmao.Code
                 }
                 else if (order is ThirdOrder third)
                 {
-                    ReceptionPrint(third, socket);
+                    if ((third.PrintType & PrintOrderMode.Reception) > 0)     // 如果订单类型为打印前台票
+                    {
+                        ReceptionPrint(third, socket);
+                    }
                 }
             }
             else if (Device.Type == 2)
@@ -222,7 +234,10 @@ namespace Jiandanmao.Code
                 }
                 else if (order is ThirdOrder third)
                 {
-                    Backstage(third, socket);
+                    if ((third.PrintType & PrintOrderMode.Backstage) > 0)     // 如果订单类型为打印后台票
+                    {
+                        Backstage(third, socket);
+                    }
                 }
             }
         }
@@ -336,17 +351,26 @@ namespace Jiandanmao.Code
             // 配送费
             bufferArr.Add(PrintLineLeftRight("配送费", double.Parse(order.Freight + "") + ""));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            // 满减活动打印
-            if (order.SaleFullReduce != null)
+            //// 满减活动打印
+            //if (order.SaleFullReduce != null)
+            //{
+            //    bufferArr.Add(PrintLineLeftRight(order.SaleFullReduce.Name, "-￥" + double.Parse(order.SaleFullReduce.ReduceMoney + "") + ""));
+            //    bufferArr.Add(PrinterCmdUtils.NextLine());
+            //}
+            //// 优惠券打印
+            //if (order.SaleCouponUser != null)
+            //{
+            //    bufferArr.Add(PrintLineLeftRight(order.SaleCouponUser.Name, "-￥" + order.SaleCouponUser.Value + ""));
+            //    bufferArr.Add(PrinterCmdUtils.NextLine());
+            //}
+            // 订单活动
+            if (order.OrderActivities != null && order.OrderActivities.Count > 0)
             {
-                bufferArr.Add(PrintLineLeftRight(order.SaleFullReduce.Name, "-￥" + double.Parse(order.SaleFullReduce.ReduceMoney + "") + ""));
-                bufferArr.Add(PrinterCmdUtils.NextLine());
-            }
-            // 优惠券打印
-            if (order.SaleCouponUser != null)
-            {
-                bufferArr.Add(PrintLineLeftRight(order.SaleCouponUser.Name, "-￥" + order.SaleCouponUser.Value + ""));
-                bufferArr.Add(PrinterCmdUtils.NextLine());
+                foreach (var activity in order.OrderActivities)
+                {
+                    bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight(activity.Remark, activity.Amount.ToString()));
+                    bufferArr.Add(PrinterCmdUtils.NextLine());
+                }
             }
             // 订单金额
             bufferArr.Add(PrinterCmdUtils.AlignRight());
@@ -521,6 +545,13 @@ namespace Jiandanmao.Code
                 bufferArr.Add(TextToByte("（补打）"));
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
+            if (order.DeliveryTime != null)
+            {
+                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                bufferArr.Add(TextToByte("（预订单）"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
+            bufferArr.Add(PrinterCmdUtils.NextLine());
             // 打印小票类别
             bufferArr.Add(PrinterCmdUtils.AlignLeft());
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));

@@ -81,7 +81,9 @@ namespace Jiandanmao.Code
         }
         protected virtual void AfterPrint()
         {
-            BufferList.Add(PrinterCmdUtils.NextLine(2));
+            BufferList.Add(PrinterCmdUtils.NextLine());
+            BufferList.Add(" ".ToByte());
+            BufferList.Add(PrinterCmdUtils.NextLine());
             BufferList.Add(PrinterCmdUtils.FeedPaperCutAll());
         }
         protected abstract void Printing();

@@ -184,6 +184,14 @@ namespace JdCat.CatClient.Model
         /// </summary>
         public int? SaleCouponUserId { get; set; }
         public SaleCouponUser SaleCouponUser { get; set; }
+        /// <summary>
+        /// 用户预计送达时间
+        /// </summary>
+        public DateTime? DeliveryTime { get; set; }
+        /// <summary>
+        /// 订单参与活动列表
+        /// </summary>
+        public virtual ICollection<OrderActivity> OrderActivities { get; set; }
 
 
 

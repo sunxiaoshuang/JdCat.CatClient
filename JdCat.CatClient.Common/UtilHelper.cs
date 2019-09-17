@@ -181,7 +181,7 @@ namespace JdCat.CatClient.Common
         }
 
         /// <summary>
-        /// 错误日志
+        /// 日志
         /// </summary>
         /// <param name="text">错误内容</param>
         public static void Log(string text)

@@ -345,7 +345,7 @@ namespace Jiandanmao.ViewModel
             }
             await Confirm("确定收款吗？");
             if (!IsConfirm) return;
-            Order.TangOrderPayments = new List<TangOrderPayment> { new TangOrderPayment { Amount = ActualAmount, Name = payment.Name, PaymentTypeId = payment.Id, PaymentTypeObjectId = payment.ObjectId } };
+            Order.TangOrderPayments = new ObservableCollection<TangOrderPayment> { new TangOrderPayment { Amount = ActualAmount, Name = payment.Name, PaymentTypeId = payment.Id, PaymentTypeObjectId = payment.ObjectId } };
             await FinishOrderAsync();
         }
 
@@ -368,7 +368,7 @@ namespace Jiandanmao.ViewModel
             var vm = new MixPaymentViewModel(Order);
             await DialogHost.Show(new MixPayment { DataContext = vm });
             if (!vm.IsConfirm) return;
-            Order.TangOrderPayments = vm.Payments.ToList();
+            Order.TangOrderPayments = vm.Payments;
             await FinishOrderAsync();
         }
 

@@ -204,6 +204,8 @@
     <Compile Include="Code\SelectItem.cs" />
     <Compile Include="Code\SharePrint.cs" />
     <Compile Include="Code\StateObject.cs" />
+    <Compile Include="Converter\TangOrderSourceToStringTypeConverter.cs" />
+    <Compile Include="Converter\TangOrderStatusToStringTypeConverter.cs" />
     <Compile Include="Converter\TangOrderProductDescriptionTypeConvert.cs" />
     <Compile Include="Converter\StockColorTypeConverter.cs" />
     <Compile Include="Converter\NumberTypeConverter.cs" />
@@ -322,6 +324,12 @@
     <Compile Include="Uc\SystemSetting.xaml.cs">
       <DependentUpon>SystemSetting.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uc\TangOrderInfo.xaml.cs">
+      <DependentUpon>TangOrderInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Uc\TangOrderList.xaml.cs">
+      <DependentUpon>TangOrderList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FastFoodViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodChangeDeskViewModel.cs" />
@@ -330,8 +338,9 @@
     <Compile Include="ViewModel\MixPaymentViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodDetailViewModel.cs" />
     <Compile Include="ViewModel\ChineseFoodViewModel.cs" />
-    <Compile Include="ViewModel\ContorllerItem.cs" />
+    <Compile Include="ViewModel\ControllerItem.cs" />
     <Compile Include="ViewModel\ChangeWorkViewModel.cs" />
+    <Compile Include="ViewModel\TangOrderListViewModel.cs" />
     <Compile Include="ViewModel\OrderProductViewModel.cs" />
     <Compile Include="ViewModel\ProductStockViewModel.cs" />
     <Compile Include="ViewModel\SystemSettingViewModel.cs" />
@@ -470,6 +479,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Uc\SystemSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\TangOrderInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Uc\TangOrderList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

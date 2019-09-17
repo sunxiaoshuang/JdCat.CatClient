@@ -129,57 +129,36 @@ namespace Jiandanmao.Code
                     if (_printQueue.Count > 0)
                     {
                         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        try
-                        {
-                            lock (GetLock(Device.IP))
+
+                        //lock (GetLock(Device.IP))
+                        //{
+                            try
                             {
                                 socket.Connect(new IPEndPoint(IPAddress.Parse(Device.IP), Device.Port));
                                 while (true)
                                 {
                                     var order = _printQueue.FirstOrDefault();
                                     if (order == null) break;
-                                    //if (order.Products == null || order.Products.Count == 0) break;
                                     ctl.Dispatcher.Invoke(() =>
                                     {
                                         PrintOrder(order, socket);
-                                        if(order is Order entity)
-                                        {
-                                            UtilHelper.Log($"打印机{Device.Name}，小程序订单：{entity.Identifier}，{entity.OrderCode}");
-                                        }
-                                        else if (order is ThirdOrder third)
-                                        {
-                                            UtilHelper.Log($"打印机{Device.Name}，第三方订单：{third.DaySeq}，{third.OrderId}");
-                                        }
                                     });
                                     _printQueue.Remove(order);
-                                    Thread.Sleep(200);              // 每次打印一单，停顿200毫秒
+                                    Thread.Sleep(1000);              // 每次打印一单，停顿1000毫秒
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            //var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "Log\\Error");
-                            //if (!Directory.Exists(dirPath))
-                            //{
-                            //    Directory.CreateDirectory(dirPath);
-                            //}
-                            //var filepath = Path.Combine(dirPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
-                            var content = $"打印机[{Device.Name}]出错，原因：{ex.ToString()}";
-                            //ctl.Dispatcher.Invoke(() =>
-                            //{
-                            //    var stream = File.AppendText(filepath);
-                            //    stream.WriteLine(content);
-                            //    stream.Close();
-                            //});
-                            UtilHelper.Log(content);
-
-                        }
-                        finally
-                        {
-                            socket.Close();
-                            // 打印失败后，线程等待2秒再开始执行打印任务
-                            Thread.Sleep(2000);
-                        }
+                            catch (Exception ex)
+                            {
+                                var content = $"打印机[{Device.Name}]出错，原因：{ex.ToString()}";
+                                UtilHelper.Log(content);
+                            }
+                            finally
+                            {
+                                socket.Close();
+                                // 打印失败后，线程等待2秒再开始执行打印任务
+                                Thread.Sleep(2000);
+                            }
+                        //}
                     }
                     else
                     {
@@ -463,8 +442,11 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("原价：", order.OriginalAmount.ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
-            bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.Amount + order.PreferentialAmount).ToString()));
-            bufferArr.Add(PrinterCmdUtils.NextLine());
+            if (order.ActualAmount > 0)
+            {
+                bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("优惠：", (order.OriginalAmount - order.ActualAmount).ToString()));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+            }
             bufferArr.Add(PrinterCmdUtils.PrintLineLeftRight("实收：", order.ActualAmount.ToString()));
             bufferArr.Add(PrinterCmdUtils.NextLine());
 
@@ -531,13 +513,12 @@ namespace Jiandanmao.Code
         private void ReceptionPrint(ThirdOrder order, Socket socket)
         {
             var bufferArr = new List<byte[]>();
+
             var sign = order.OrderSource == 0 ? "美团" : "饿了么";
             // 打印当日序号
             bufferArr.Add(PrinterCmdUtils.AlignCenter());
             bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(3));
             bufferArr.Add(TextToByte(sign + " #" + order.DaySeq));
-            //bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
-            //bufferArr.Add(TextToByte(sign));
             bufferArr.Add(PrinterCmdUtils.NextLine());
             if (order.PrintTimes > 0)
             {
@@ -654,6 +635,12 @@ namespace Jiandanmao.Code
             bufferArr.Add(PrinterCmdUtils.NextLine());
             bufferArr.Add(TextToByte(order.RecipientName));
             bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            // 打印完成
+            bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+            bufferArr.Add(PrinterCmdUtils.SplitText("-", $"{order.DaySeq}号单完", Device.Format));
+            bufferArr.Add(PrinterCmdUtils.NextLine());
+            bufferArr.Add(PrinterCmdUtils.NextLine());
 
             // 切割
             bufferArr.Add(PrinterCmdUtils.FeedPaperCutAll());
@@ -683,6 +670,7 @@ namespace Jiandanmao.Code
             }
             var enumName = System.Enum.GetName(typeof(PrinterMode), Device.Mode);
             var type = System.Type.GetType($"Jiandanmao.Code.{printSign}{enumName}Print");
+
             if (order is Order)
             {
                 ((BackstagePrint)Activator.CreateInstance(type, order, this, socket)).Print();

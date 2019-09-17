@@ -14,7 +14,7 @@ namespace Jiandanmao.ViewModel
     /// <summary>
     /// 侧边栏选择
     /// </summary>
-    public class ContorllerItem : INotifyPropertyChanged
+    public class ControllerItem : INotifyPropertyChanged
     {
 
         private string _name;
@@ -23,7 +23,7 @@ namespace Jiandanmao.ViewModel
         private ScrollBarVisibility _verticalScrollBarVisibilityRequirement;
         private Thickness _marginRequirement = new Thickness(16);
 
-        public ContorllerItem(string name, object content)
+        public ControllerItem(string name, object content)
         {
             _name = name;
             Content = content;

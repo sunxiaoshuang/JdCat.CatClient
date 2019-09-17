@@ -212,6 +212,29 @@ namespace JdCat.CatClient.Service
                 .ToList();
         }
 
+        public async Task<List<TEntity>> GetRangeAsync<TEntity>(PagingQuery paging) where TEntity : ClientBaseEntity
+        {
+            var key = AddKeyPrefix<TEntity>("List");
+            var objectIds = await Database.ListRangeAsync(key, paging.Skip, paging.Skip + paging.PageSize);
+            if (objectIds == null || objectIds.Count() == 0) return null;
+            var list = await GetAsync<TEntity>(objectIds.Select(a => a.ToString()).ToArray());
+            return list;
+        }
+
+        public async Task<List<TEntity>> GetRangeReverseAsync<TEntity>(PagingQuery paging) where TEntity : ClientBaseEntity
+        {
+            var key = AddKeyPrefix<TEntity>("List");
+            var len = await Database.ListLengthAsync(key);
+            if (len <= paging.Skip) return null;
+            var end = len - paging.Skip;
+            var start = len - paging.Skip - paging.PageSize;
+            if (start <= 0) start = 0;
+            var objectIds = await Database.ListRangeAsync(key, start, end);
+            if (objectIds == null || objectIds.Count() == 0) return null;
+            var list = await GetAsync<TEntity>(objectIds.Select(a => a.ToString()).ToArray());
+            return list;
+        }
+
         public long Length<TEntity>() where TEntity : ClientBaseEntity
         {
             var key = AddKeyPrefix<TEntity>("List");
@@ -262,7 +285,7 @@ namespace JdCat.CatClient.Service
         public async Task<List<TEntity>> GetRelativeEntitysAsync<TEntity, TParent>(params string[] ids) where TEntity : class, new()
         {
             if (ids == null || ids.Length == 0) return new List<TEntity>();
-            var listKeys = ids.Select(a => AddKeyPrefix<TEntity>($"{typeof(TParent).Name}:{a}" )).ToList();
+            var listKeys = ids.Select(a => AddKeyPrefix<TEntity>($"{typeof(TParent).Name}:{a}")).ToList();
             var vals = new List<string>();
             foreach (var key in listKeys)
             {

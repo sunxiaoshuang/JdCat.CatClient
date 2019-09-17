@@ -34,6 +34,11 @@ namespace JdCat.CatClient.Model.Enum
         /// 订单折扣
         /// </summary>
         [Description("订单折扣")]
-        OrderDiscount = 5
+        OrderDiscount = 5,
+        /// <summary>
+        /// 整单立减
+        /// </summary>
+        [Description("整单立减")]
+        OrderPreferential = 6
     }
 }

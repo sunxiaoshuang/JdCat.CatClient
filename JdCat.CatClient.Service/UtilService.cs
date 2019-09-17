@@ -144,9 +144,10 @@ namespace JdCat.CatClient.Service
         }
 
 
-        private DateTime GetNextDay()
+        private DateTime GetNextDay(DateTime? time = null)
         {
-            return new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(1);
+            time = time ?? DateTime.Now;
+            return new DateTime(time.Value.Year, time.Value.Month, time.Value.Day).AddDays(1);
         }
 
     }

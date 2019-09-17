@@ -104,6 +104,22 @@ namespace JdCat.CatClient.IService
         /// <returns></returns>
         List<TEntity> GetRange<TEntity>(PagingQuery paging, EntityStatus status = EntityStatus.Normal) where TEntity : ClientBaseEntity;
         /// <summary>
+        /// 获取指定页码的对象实体
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="paging"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<List<TEntity>> GetRangeAsync<TEntity>(PagingQuery paging) where TEntity : ClientBaseEntity;
+        /// <summary>
+        /// 获取指定页码的对象实体（倒序）
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="paging"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<List<TEntity>> GetRangeReverseAsync<TEntity>(PagingQuery paging) where TEntity : ClientBaseEntity;
+        /// <summary>
         /// 获取指定实体列表的长度
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>

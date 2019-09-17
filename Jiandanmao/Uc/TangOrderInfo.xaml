@@ -1,0 +1,176 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.TangOrderInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             xmlns:local="clr-namespace:Jiandanmao.Uc"
+             x:Name="TangOrderListControl"
+             mc:Ignorable="d" 
+             MaxHeight="800"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <convert:DateTimeToStringValueConverter x:Key="dtts" />
+            <convert:TangOrderStatusToStringTypeConverter x:Key="tostc" />
+            <convert:TangOrderSourceToStringTypeConverter x:Key="tosource" />
+            <convert:TangOrderProductStatusTypeConverter x:Key="topstc" />
+            <convert:OrderCategoryToStringTypeConverter x:Key="octc" />
+            <convert:OrderIdentifierToStringValueConverter x:Key="oits" />
+            <convert:MoneyToStringValueConverter x:Key="moneyts" />
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="微软雅黑"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Width="900" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <ScrollViewer>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>订单编号：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding Code}"></TextBlock>
+                    <TextBlock Grid.Column="2">当日流水：</TextBlock>
+                    <TextBlock Grid.Column="3" Text="{Binding Identifier, Converter={StaticResource oits}}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>餐桌：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding DeskName}"></TextBlock>
+                    <TextBlock Grid.Column="2">用餐人数：</TextBlock>
+                    <TextBlock Grid.Column="3" Text="{Binding PeopleNumber}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>结算时间：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding PayTime, Converter={StaticResource dtts}}"></TextBlock>
+                    <TextBlock Grid.Column="2">订单来源：</TextBlock>
+                    <TextBlock Grid.Column="3" Text="{Binding OrderSource, Converter={StaticResource tosource}}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>订单类别：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding OrderMode, Converter={StaticResource octc}}"></TextBlock>
+                    <TextBlock Grid.Column="2">收银员：</TextBlock>
+                    <TextBlock Grid.Column="3" Text="{Binding StaffName}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>订单状态：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding OrderStatus, Converter={StaticResource tostc}}"></TextBlock>
+                    <TextBlock Grid.Column="2">支付备注：</TextBlock>
+                    <TextBlock Grid.Column="3" Text="{Binding PaymentRemark}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>订单备注：</TextBlock>
+                    <TextBlock Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Remark}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>商品原价总额：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding OriginalAmount, Converter={StaticResource moneyts}}"></TextBlock>
+                    <TextBlock Grid.Column="2">餐位费：</TextBlock>
+                    <TextBlock Grid.Column="3" Text="{Binding MealFee, Converter={StaticResource moneyts}}"></TextBlock>
+                </Grid>
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock>订单原价：</TextBlock>
+                    <TextBlock Grid.Column="1" Text="{Binding Amount, Converter={StaticResource moneyts}}"></TextBlock>
+                    <TextBlock Grid.Column="2">订单实收：</TextBlock>
+                    <TextBlock Grid.Column="3" Foreground="Red" Text="{Binding ActualAmount, Converter={StaticResource moneyts}}"></TextBlock>
+                </Grid>
+                <ListView ItemsSource="{Binding TangOrderProducts}" Margin="0,15,0,0">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="商品名称" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Description}" Header="规格描述" />
+                            <GridViewColumn Header="商品状态">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Foreground="Red" Text="{Binding ProductStatus, Converter={StaticResource topstc}}"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Remark}" Header="备注" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Price, Converter={StaticResource moneyts}}" Header="单价" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Quantity}" Header="数量" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView ItemsSource="{Binding TangOrderActivity}" Margin="0,15,0,0">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Remark}" Header="活动名称" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Amount, Converter={StaticResource moneyts}}" Header="优惠金额" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView ItemsSource="{Binding TangOrderPayments}" Margin="0,15,0,0">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="支付方式" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Amount, Converter={StaticResource moneyts}}" Header="支付金额" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Button Grid.Row="1" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            关闭
+        </Button>
+    </Grid>
+</UserControl>

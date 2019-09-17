@@ -333,13 +333,18 @@ namespace Jiandanmao.Code
                 }
                 await Request.UploadDataAsync(products);
 
-                var payments = await service.GetRelativeEntitysAsync<TangOrderPayment, TangOrder>(list.Select(a => a.ObjectId).ToArray());
+                var ids = list.Select(a => a.ObjectId).ToArray();
+                var payments = await service.GetRelativeEntitysAsync<TangOrderPayment, TangOrder>(ids);
                 await Request.UploadDataAsync(payments);
 
+                var activities = await service.GetRelativeEntitysAsync<TangOrderActivity, TangOrder>(ids);
+                await Request.UploadDataAsync(activities);
 
-                service.SyncFinish(list);
-                service.SyncFinish(products);
-                service.SyncFinish(payments);
+
+                service.SyncFinish(list);           // 订单列表同步完成
+                service.SyncFinish(products);       // 订单商品同步完成
+                service.SyncFinish(payments);       // 支付记录同步完成
+                service.SyncFinish(activities);     // 订单活动同步完成
             }
         }
         /// <summary>
@@ -361,7 +366,7 @@ namespace Jiandanmao.Code
                     if (orders == null) break;
                     orders.ForEach(order =>
                     {
-                        if (order.CreateTime.Value.AddDays(30) > now) return;
+                        if (order.CreateTime.Value.AddDays(7) > now) return;
                         service.DeleteOrder(order);
                     });
                 }

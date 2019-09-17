@@ -32,6 +32,12 @@ namespace JdCat.CatClient.IService
         /// <returns></returns>
         List<TangOrderProduct> GetOrderProduct(string objectId);
         /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <param name="objectId"></param>
+        /// <returns></returns>
+        Task<TangOrder> GetOrderDetailAsync(string objectId);
+        /// <summary>
         /// 下单
         /// </summary>
         /// <param name="order"></param>

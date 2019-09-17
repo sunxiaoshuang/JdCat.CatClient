@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="Jiandanmao.Uc.TangOrderList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:convert="clr-namespace:Jiandanmao.Converter"
+             xmlns:local="clr-namespace:Jiandanmao.Uc"
+             x:Name="TangOrderListControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=TangOrderListControl}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <convert:DateTimeToStringValueConverter x:Key="dtts" />
+            <convert:TangOrderStatusToStringTypeConverter x:Key="tosts" />
+            <convert:OrderIdentifierToStringValueConverter x:Key="oits" />
+            <convert:MoneyToStringValueConverter x:Key="moneyts" />
+
+            <Style TargetType="{x:Type TextBlock}" x:Key="ColumnCenter">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer>
+            <StackPanel>
+                <StackPanel>
+                    <TextBlock FontSize="30">堂食订单列表</TextBlock>
+
+                </StackPanel>
+                <ListView ItemsSource="{Binding Items}" ItemContainerStyle="{StaticResource ListViewItemStyle}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Identifier}" Header="当日编号">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock>#</TextBlock>
+                                            <TextBlock Text="{Binding }"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Code}" Header="订单编号" />
+                            <GridViewColumn DisplayMemberBinding="{Binding DeskName}" Header="餐台" />
+                            <GridViewColumn DisplayMemberBinding="{Binding StaffName}" Header="收银员" />
+                            <GridViewColumn DisplayMemberBinding="{Binding CreateTime, Converter={StaticResource dtts}}" Header="下单时间" />
+                            <GridViewColumn DisplayMemberBinding="{Binding PayTime, Converter={StaticResource dtts}}" Header="支付时间" />
+                            <GridViewColumn DisplayMemberBinding="{Binding OrderStatus, Converter={StaticResource tosts}}" Header="订单状态" />
+                            <GridViewColumn DisplayMemberBinding="{Binding ActualAmount, Converter={StaticResource moneyts}}" Header="实收金额" />
+                            <GridViewColumn>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" x:Name="StackPanel">
+                                            <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                                    Command="{Binding CatCommand}"
+                                                    CommandParameter="{Binding DataContext, ElementName=StackPanel}"
+                                                    DataContext="{Binding DataContext, ElementName=TangOrderListControl}"
+                                                    Width="100" Height="30" ToolTip="查看订单详情" Content="查看">
+                                            </Button>
+                                            <Menu>
+                                                <MenuItem Header="打印">
+                                                    <MenuItem Header="整单" DataContext="{Binding DataContext, ElementName=TangOrderListControl}" Command="{Binding PrintAllCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}">
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Printer" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="前台单" DataContext="{Binding DataContext, ElementName=TangOrderListControl}" Command="{Binding PrintFrontCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}" >
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Printer" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="后台单" DataContext="{Binding DataContext, ElementName=TangOrderListControl}" Command="{Binding PrintBackgroundCommand}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}, Mode=FindAncestor}}" >
+                                                        <MenuItem.Icon>
+                                                            <materialDesign:PackIcon Kind="Printer" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </MenuItem>
+                                            </Menu>
+
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="100" Margin="0 0 20 0" Command="{Binding PrePageCommand}" IsEnabled="{Binding PreEnable}">上一页</Button>
+            <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="100" Command="{Binding NextPageCommand}" IsEnabled="{Binding NextEnable}">下一页</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

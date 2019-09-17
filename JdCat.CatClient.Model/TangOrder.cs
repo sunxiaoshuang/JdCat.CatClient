@@ -138,13 +138,6 @@ namespace JdCat.CatClient.Model
         public OrderCategory OrderMode { get; set; }
 
 
-        
-
-        /// <summary>
-        /// 支付方式
-        /// </summary>
-        //[JsonIgnore]
-        public List<TangOrderPayment> TangOrderPayments { get; set; }
 
         /// <summary>
         /// 支付时间
@@ -216,6 +209,38 @@ namespace JdCat.CatClient.Model
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TangOrderProducts"));
             }
         }
+
+
+        private ObservableCollection<TangOrderPayment> _tangOrderPayments;
+        /// <summary>
+        /// 支付方式
+        /// </summary>
+        //[JsonIgnore]
+        public ObservableCollection<TangOrderPayment> TangOrderPayments
+        {
+            get { return _tangOrderPayments; }
+            set
+            {
+                _tangOrderPayments = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TangOrderPayments"));
+            }
+        }
+
+        private ObservableCollection<TangOrderActivity> _tangOrderActivity;
+        /// <summary>
+        /// 订单活动
+        /// </summary>
+        [JsonIgnore]
+        public ObservableCollection<TangOrderActivity> TangOrderActivity
+        {
+            get { return _tangOrderActivity; }
+            set
+            {
+                _tangOrderActivity = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TangOrderActivity"));
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

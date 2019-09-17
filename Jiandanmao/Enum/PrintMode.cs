@@ -23,6 +23,10 @@ namespace Jiandanmao.Enum
         /// <summary>
         /// 退菜单
         /// </summary>
-        Return = 3
+        Return = 3,
+        /// <summary>
+        /// 补打
+        /// </summary>
+        Repeat = 4
     }
 }

@@ -54,7 +54,7 @@ namespace JdCat.CatClient.Service
             var key = AddKeyPrefix(product.ObjectId, typeof(TangOrderProduct).Name);
             Database.StringSet(key, JsonConvert.SerializeObject(product));
             // 保存到订单关联的产品列表中
-            var orderProductKey = AddKeyPrefix($"Order:{product.OrderObjectId}", typeof(TangOrderProduct).Name);
+            var orderProductKey = AddKeyPrefix($"TangOrder:{product.OrderObjectId}", typeof(TangOrderProduct).Name);
             var list = Database.ListRange(orderProductKey);
             var exist = list?.Any(a => a.ToString() == product.ObjectId);
             if (!exist.HasValue || !exist.Value)
@@ -65,12 +65,20 @@ namespace JdCat.CatClient.Service
 
         public List<TangOrderProduct> GetOrderProduct(string objectId)
         {
-            var orderProductKey = AddKeyPrefix($"Order:{objectId}", typeof(TangOrderProduct).Name);
+            var orderProductKey = AddKeyPrefix($"TangOrder:{objectId}", typeof(TangOrderProduct).Name);
             var ids = Database.ListRange(orderProductKey);
             var keys = ids.Select(a => (RedisKey)AddKeyPrefix(a, typeof(TangOrderProduct).Name)).ToArray();
             var vals = Database.StringGet(keys);
             var entitys = vals.Select(a => JsonConvert.DeserializeObject<TangOrderProduct>(a)).ToList();
             return entitys;
+        }
+
+        public async Task<TangOrder> GetOrderDetailAsync(string objectId)
+        {
+            var order = await GetAsync<TangOrder>(objectId);
+            order.TangOrderProducts = (await GetRelativeEntitysAsync<TangOrderProduct, TangOrder>(objectId))?.ToObservable();
+            order.TangOrderPayments = (await GetRelativeEntitysAsync<TangOrderPayment, TangOrder>(objectId))?.ToObservable();
+            return order;
         }
 
         public void SubmitOrder(TangOrder order)
@@ -148,7 +156,7 @@ namespace JdCat.CatClient.Service
                 var key = AddKeyPrefix(product.ObjectId, typeof(TangOrderProduct).Name);
                 Database.KeyDelete(key);
 
-                var orderProductListKey = AddKeyPrefix($"Order:{product.OrderObjectId}", typeof(TangOrderProduct).Name);
+                var orderProductListKey = AddKeyPrefix($"TangOrder:{product.OrderObjectId}", typeof(TangOrderProduct).Name);
                 Database.ListRemove(orderProductListKey, product.ObjectId);
             }
             else
@@ -167,7 +175,15 @@ namespace JdCat.CatClient.Service
             {
                 Save(payment);
             });
+            // 保存订单活动
+            var orderActivityKey = AddKeyPrefix<TangOrderActivity>($"Order:{order.ObjectId}");
+            order.TangOrderActivity.ForEach(activity =>
+            {
+                Save(activity);
+            });
+
             await SetRelativeEntitysAsync<TangOrderPayment, TangOrder>(order.ObjectId, order.TangOrderPayments.ToArray());
+            await SetRelativeEntitysAsync<TangOrderActivity, TangOrder>(order.ObjectId, order.TangOrderActivity.ToArray());
             var key = AddKeyPrefix<TangOrder>("UnFinish");
             Database.ListRemove(key, order.ObjectId);
         }

@@ -53,6 +53,9 @@ namespace Jiandanmao.Code
             AfterPrint();
             Send();
 
+            var content = name + "     *" + quantity;
+            UtilHelper.Log($"打印机：{Printer.Device.Name}，内容：#{Order.DaySeq}，{content}");
+
             //UtilHelper.ErrorLog("编号:" + Order.DaySeq.ToString());
             //UtilHelper.ErrorLog(BufferList);
 

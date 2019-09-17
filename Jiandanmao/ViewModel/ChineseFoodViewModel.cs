@@ -215,6 +215,10 @@ namespace Jiandanmao.ViewModel
         /// 订单折扣
         /// </summary>
         public double OrderDiscount { get => _orderDiscount; set => this.MutateVerbose(ref _orderDiscount, value, RaisePropertyChanged()); }
+        /// <summary>
+        /// 折扣金额
+        /// </summary>
+        public double DiscountAmount { get; set; }
 
         private double _actualAmount;
         /// <summary>
@@ -649,7 +653,7 @@ namespace Jiandanmao.ViewModel
             }
             await Confirm("确定收款吗？");
             if (!IsConfirm) return;
-            order.TangOrderPayments = new List<TangOrderPayment> { new TangOrderPayment { Amount = ActualAmount, Name = payment.Name, OrderObjectId = order.ObjectId, PaymentTypeId = payment.Id, PaymentTypeObjectId = payment.ObjectId } };
+            order.TangOrderPayments = new ObservableCollection<TangOrderPayment> { new TangOrderPayment { Amount = ActualAmount, Name = payment.Name, OrderObjectId = order.ObjectId, PaymentTypeId = payment.Id, PaymentTypeObjectId = payment.ObjectId } };
             await FinishOrder();
         }
         private void RemarkChange(object o)
@@ -753,7 +757,7 @@ namespace Jiandanmao.ViewModel
             var vm = new MixPaymentViewModel(SelectedDesk.Order);
             await DialogHost.Show(new MixPayment { DataContext = vm });
             if (!vm.IsConfirm) return;
-            SelectedDesk.Order.TangOrderPayments = vm.Payments.ToList();
+            SelectedDesk.Order.TangOrderPayments = vm.Payments;
             await FinishOrder();
         }
         private async void ChangeDeskAsync(object o)
@@ -1001,10 +1005,10 @@ namespace Jiandanmao.ViewModel
                 if (product == null || !product.IsDiscount) return;
                 discountProductAmount += item.Amount;
             });
-            var discountAmount = discountProductAmount * (10 - OrderDiscount) / 10;
+            DiscountAmount = discountProductAmount * (10 - OrderDiscount) / 10;
 
 
-            var amount = OrderAmount - discountAmount - PreferentialAmount;
+            var amount = OrderAmount - DiscountAmount - PreferentialAmount;
             var total = Math.Round(amount, 2);
 
             ActualAmount = ReceivedAmount = total;
@@ -1239,11 +1243,49 @@ namespace Jiandanmao.ViewModel
             order.OrderDiscount = OrderDiscount;
             order.StaffId = ApplicationObject.App.Staff.Id;
             order.CashierName = ApplicationObject.App.ClientData.Name;
+            order.TangOrderActivity = new ObservableCollection<TangOrderActivity>();
+            if (PreferentialAmount > 0)
+            {
+                order.TangOrderActivity.Add(new TangOrderActivity
+                {
+                    Amount = PreferentialAmount,
+                    Remark = "整单立减",
+                    Type = OrderActivityType.OrderPreferential,
+                    TangOrderObjectId = order.ObjectId
+                });
+            }
+            if (DiscountAmount > 0)
+            {
+                order.TangOrderActivity.Add(new TangOrderActivity
+                {
+                    Amount = DiscountAmount,
+                    Remark = "整单折扣",
+                    Type = OrderActivityType.OrderDiscount,
+                    TangOrderObjectId = order.ObjectId
+                });
+            }
+            foreach (var item in order.TangOrderProducts)
+            {
+                if (item.OriginalPrice != item.Price)
+                {
+                    order.TangOrderActivity.Add(new TangOrderActivity
+                    {
+                        Amount = Math.Round(item.OriginalPrice - item.Price, 2),
+                        Remark = item.Name + "折扣优惠",
+                        Type = OrderActivityType.ProductDiscount,
+                        TangOrderObjectId = order.ObjectId
+                    });
+                }
+            }
             using (var scope = ApplicationObject.App.DataBase.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IOrderService>();
                 await service.PaymentAsync(order);
             }
+            SelectedDesk.Order = null;
+            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Finish });
+            BackDesk();
+            SnackbarTips("结算成功");
             PrintOrder(new PrintOption
             {
                 Title = "结算单",
@@ -1252,10 +1294,6 @@ namespace Jiandanmao.ViewModel
                 Mode = PrintMode.Payment,
                 Products = order.TangOrderProducts.Where(a => a.ProductStatus != TangOrderProductStatus.Return)
             });
-            SelectedDesk.Order = null;
-            PubSubscribe(new SubscribeObj { DeskId = SelectedDesk.Id, OrderObjectId = order.ObjectId, Mode = SubscribeMode.Finish });
-            BackDesk();
-            SnackbarTips("结算成功");
         }
 
 

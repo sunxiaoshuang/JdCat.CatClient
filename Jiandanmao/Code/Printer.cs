@@ -191,31 +191,52 @@ namespace Jiandanmao.Code
         /// <param name="socket"></param>
         private void PrintOrder(object order, Socket socket)
         {
+            Order order1 = null;
+            ThirdOrder order2 = null;
+            if(order is Order)
+            {
+                order1 = order as Order;
+                UtilHelper.Log($"========开始小程序打印订单：{order1.Identifier}========");
+            }
+            else if (order is ThirdOrder)
+            {
+                order2 = order as ThirdOrder;
+                UtilHelper.Log($"========开始平台打印订单：{order2.DaySeq}========");
+            }
+
             if (Device.Type == 1)
             {
-                if (order is Order entity)
+                if (order is Order)
                 {
-                    ReceptionPrint(entity, socket);
+                    UtilHelper.Log($"================前台打印机[{Device.Name}]开始打印小程序订单：#{order1.Identifier}");
+                    ReceptionPrint(order1, socket);
+                    UtilHelper.Log($"================前台打印机[{Device.Name}]完成打印小程序订单：#{order1.Identifier}");
                 }
-                else if (order is ThirdOrder third)
+                else if (order is ThirdOrder)
                 {
-                    if ((third.PrintType & PrintOrderMode.Reception) > 0)     // 如果订单类型为打印前台票
+                    if ((order2.PrintType & PrintOrderMode.Reception) > 0)     // 如果订单类型为打印前台票
                     {
-                        ReceptionPrint(third, socket);
+                        UtilHelper.Log($"================前台打印机[{Device.Name}]开始打印平台订单：#{order2.DaySeq}");
+                        ReceptionPrint(order2, socket);
+                        UtilHelper.Log($"================前台打印机[{Device.Name}]完成打印平台订单：#{order2.DaySeq}");
                     }
                 }
             }
             else if (Device.Type == 2)
             {
-                if (order is Order entity)
+                if (order1 != null)
                 {
-                    Backstage(entity, socket);
+                    UtilHelper.Log($"================后厨打印机[{Device.Name}]开始打印小程序订单：#{order1.Identifier}");
+                    Backstage(order1, socket);
+                    UtilHelper.Log($"================后厨打印机[{Device.Name}]完成打印小程序订单：#{order1.Identifier}");
                 }
-                else if (order is ThirdOrder third)
+                else if (order2 != null)
                 {
-                    if ((third.PrintType & PrintOrderMode.Backstage) > 0)     // 如果订单类型为打印后台票
+                    if ((order2.PrintType & PrintOrderMode.Backstage) > 0)     // 如果订单类型为打印后台票
                     {
-                        Backstage(third, socket);
+                        UtilHelper.Log($"================后厨打印机[{Device.Name}]开始打印平台订单：#{order2.DaySeq}");
+                        Backstage(order2, socket);
+                        UtilHelper.Log($"================后厨打印机[{Device.Name}]完成打印平台订单：#{order2.DaySeq}");
                     }
                 }
             }
@@ -530,6 +551,10 @@ namespace Jiandanmao.Code
             {
                 bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(2));
                 bufferArr.Add(TextToByte("（预订单）"));
+                bufferArr.Add(PrinterCmdUtils.NextLine());
+                bufferArr.Add(PrinterCmdUtils.FontSizeSetBig(1));
+                bufferArr.Add(PrinterCmdUtils.AlignLeft());
+                bufferArr.Add($"预约时间：{order.DeliveryTime.Value:yyyy-MM-dd HH:mm:ss}".ToByte());
                 bufferArr.Add(PrinterCmdUtils.NextLine());
             }
             bufferArr.Add(PrinterCmdUtils.NextLine());

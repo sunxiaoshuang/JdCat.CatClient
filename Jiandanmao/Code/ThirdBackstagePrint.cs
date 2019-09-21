@@ -58,6 +58,16 @@ namespace Jiandanmao.Code
                 BufferList.Add("（补打）".ToByte());
                 BufferList.Add(PrinterCmdUtils.NextLine());
             }
+            if (Order.DeliveryTime != null)
+            {
+                BufferList.Add(PrinterCmdUtils.FontSizeSetBig(2));
+                BufferList.Add("（预订单）".ToByte());
+                BufferList.Add(PrinterCmdUtils.NextLine());
+                BufferList.Add(PrinterCmdUtils.FontSizeSetBig(1));
+                BufferList.Add(PrinterCmdUtils.AlignLeft());
+                BufferList.Add($"预约时间：{Order.DeliveryTime.Value:yyyy-MM-dd HH:mm:ss}".ToByte());
+                BufferList.Add(PrinterCmdUtils.NextLine());
+            }
             BufferList.Add(PrinterCmdUtils.AlignLeft());
             // 备注
             if (!string.IsNullOrEmpty(Order.Caution))

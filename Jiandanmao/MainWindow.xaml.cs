@@ -44,6 +44,7 @@ namespace Jiandanmao
 
             Init();
             this.KeyDown += Window_KeyDown;
+            NormalWindow();
             //CheckUpdate();
         }
 
@@ -122,6 +123,7 @@ namespace Jiandanmao
                     orders.ForEach(order =>
                     {
                         if (order.Products == null || order.Products.Count == 0) return;
+                        UtilHelper.Log($"接收到小程序订单：#{order.Identifier}");
                         ApplicationObject.Print(order);
                     });
                 }
@@ -139,6 +141,7 @@ namespace Jiandanmao
                         orders.ForEach(order =>
                         {
                             if (order.ThirdOrderProducts == null || order.ThirdOrderProducts.Count == 0) return;
+                            UtilHelper.Log($"接收到平台订单：#{order.DaySeq}");
                             ApplicationObject.Print(order);
                         });
                     }
@@ -358,17 +361,26 @@ namespace Jiandanmao
         {
             if (e.Key == Key.F11)
             {
-                if (this.WindowStyle == WindowStyle.None)//全屏
+                if (this.WindowStyle == WindowStyle.None)
                 {
-                    this.WindowState = WindowState.Normal;
-                    this.WindowStyle = WindowStyle.SingleBorderWindow;
+                    NormalWindow();
                 }
                 else
                 {
-                    this.WindowStyle = WindowStyle.None;
-                    this.WindowState = WindowState.Maximized;
+                    MaxWindow();
                 }
             }
+        }
+
+        private void MaxWindow()
+        {
+            this.WindowStyle = WindowStyle.None;
+            this.WindowState = WindowState.Maximized;
+        }
+        private void NormalWindow()
+        {
+            this.WindowState = WindowState.Normal;
+            this.WindowStyle = WindowStyle.SingleBorderWindow;
         }
 
     }

@@ -114,6 +114,7 @@ namespace Jiandanmao.Code
 
         private Task PrintTask { get; set; }
 
+
         /// <summary>
         /// 开始打印任务
         /// </summary>
@@ -128,6 +129,7 @@ namespace Jiandanmao.Code
                     if (isStop[0]) break;      // 是否停止任务
                     if (_printQueue.Count > 0)
                     {
+
                         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                         //lock (GetLock(Device.IP))
@@ -196,29 +198,23 @@ namespace Jiandanmao.Code
             if(order is Order)
             {
                 order1 = order as Order;
-                UtilHelper.Log($"========开始小程序打印订单：{order1.Identifier}========");
             }
             else if (order is ThirdOrder)
             {
                 order2 = order as ThirdOrder;
-                UtilHelper.Log($"========开始平台打印订单：{order2.DaySeq}========");
             }
 
             if (Device.Type == 1)
             {
                 if (order is Order)
                 {
-                    UtilHelper.Log($"================前台打印机[{Device.Name}]开始打印小程序订单：#{order1.Identifier}");
                     ReceptionPrint(order1, socket);
-                    UtilHelper.Log($"================前台打印机[{Device.Name}]完成打印小程序订单：#{order1.Identifier}");
                 }
                 else if (order is ThirdOrder)
                 {
                     if ((order2.PrintType & PrintOrderMode.Reception) > 0)     // 如果订单类型为打印前台票
                     {
-                        UtilHelper.Log($"================前台打印机[{Device.Name}]开始打印平台订单：#{order2.DaySeq}");
                         ReceptionPrint(order2, socket);
-                        UtilHelper.Log($"================前台打印机[{Device.Name}]完成打印平台订单：#{order2.DaySeq}");
                     }
                 }
             }
@@ -226,17 +222,13 @@ namespace Jiandanmao.Code
             {
                 if (order1 != null)
                 {
-                    UtilHelper.Log($"================后厨打印机[{Device.Name}]开始打印小程序订单：#{order1.Identifier}");
                     Backstage(order1, socket);
-                    UtilHelper.Log($"================后厨打印机[{Device.Name}]完成打印小程序订单：#{order1.Identifier}");
                 }
                 else if (order2 != null)
                 {
                     if ((order2.PrintType & PrintOrderMode.Backstage) > 0)     // 如果订单类型为打印后台票
                     {
-                        UtilHelper.Log($"================后厨打印机[{Device.Name}]开始打印平台订单：#{order2.DaySeq}");
                         Backstage(order2, socket);
-                        UtilHelper.Log($"================后厨打印机[{Device.Name}]完成打印平台订单：#{order2.DaySeq}");
                     }
                 }
             }

@@ -194,9 +194,20 @@ namespace JdCat.CatClient.Common
             }
             var filepath = Path.Combine(dirPath, logfile);
             var content = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {text}";
-            var stream = File.AppendText(filepath);
-            stream.WriteLine(content);
-            stream.Close();
+            while (true)
+            {
+                try
+                {
+                    var stream = File.AppendText(filepath);
+                    stream.WriteLine(content);
+                    stream.Close();
+                    break;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
         }
 
         /// <summary>
